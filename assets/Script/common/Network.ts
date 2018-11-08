@@ -35,6 +35,11 @@ export default class Network{
         return this.nSessionID ;
     }
 
+    tryNewDstIP( newIP : string )
+    {
+        this.mDstIP = newIP ;
+    }
+
     connect( dstIP : string )
     {
        this.mDstIP = dstIP ;

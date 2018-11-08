@@ -23,7 +23,9 @@ export default class ClientNetwork extends cc.Component {
     @property(cc.Node)
     pRootNode : cc.Node = null ;
 
-    vDefaultIP : string[] = ["192.168.1.56"];
+    vDefaultIP : string[] = ["192.168.1.56","192.168.1.6"];
+
+    private strDstIp : string = "" ;
 
     @property
     strDefaultPort : string = "40012" ;
@@ -46,6 +48,8 @@ export default class ClientNetwork extends cc.Component {
     {
         cc.log( "connect failed , will we change ip ?" );
         this.setTipDesc("正在连接服务器........");
+        //this.strDstIp = "new ip "
+        //Network.getInstance().tryNewDstIP(this.getDstIP());
     }
 
     // need to login again, need not change scene
@@ -116,7 +120,11 @@ export default class ClientNetwork extends cc.Component {
 
     protected getDstIP() : string
     {
-        let strDst : string = "ws://" + this.vDefaultIP[0] + ":" + this.strDefaultPort ;
+        if ( this.strDstIp == "" )
+        {
+            this.strDstIp = this.vDefaultIP[0] ;
+        }
+        let strDst : string = "ws://" + this.strDstIp + ":" + this.strDefaultPort ;
         return strDst ;
     }
     // update (dt) {}
