@@ -11,8 +11,8 @@
       true
     ]
   ],
-  "design-resolution-height": 640,
-  "design-resolution-width": 960,
+  "design-resolution-height": 720,
+  "design-resolution-width": 1280,
   "excluded-modules": [
     "ParticleSystem",
     "TiledMap",
@@ -23,7 +23,7 @@
     "WebView",
     "Physics"
   ],
-  "fit-height": true,
+  "fit-height": false,
   "fit-width": false,
   "group-list": [
     "default"
@@ -34,5 +34,6 @@
     "width": 960
   },
   "use-customize-simulator": false,
-  "use-project-simulator-setting": false
+  "use-project-simulator-setting": false,
+  "start-scene": "current"
 }
