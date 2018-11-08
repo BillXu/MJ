@@ -25,11 +25,6 @@ export default class Network{
         return Network.s_pNetwork ;
     }
     
-    setSessionID( newSessionID : number )
-    {
-        this.nSessionID = newSessionID ;
-    }
-
     getSessionID()
     {
         return this.nSessionID ;
@@ -40,14 +35,45 @@ export default class Network{
         this.mDstIP = newIP ;
     }
 
-    connect( dstIP : string )
+    // can ony invoke in init method , only invoke one time , connect other ip ,please use function : tryNewDstIP()
+    connect( dstIP : string ) 
     {
        this.mDstIP = dstIP ;
        console.log( "direct connect to svr" );
        this.doConnect(); 
     }
 
-    doConnect()
+    sendMsg( jsMsg : any , msgID : number, targetPort : number , targetID : number , callBack? : IOneMsgCallback ):boolean
+    {
+        if ( this.mWebSocket.readyState != WebSocket.OPEN )
+        {
+            cc.error( "socket is not open , can not send msgid = " + msgID );
+            return false;
+        }
+        let jsPacket = { } ;
+        jsMsg[clientDefine.msgKey] = msgID ;
+
+        jsPacket["cSysIdentifer"] = targetPort ;
+        jsPacket["nTargetID"] = targetID ;
+        jsPacket["JS"] = JSON.stringify(jsMsg);
+        this.mWebSocket.send(JSON.stringify(jsPacket)) ;
+
+        console.log( "send msg : " + JSON.stringify(jsPacket) );
+        if ( callBack != null ) // reg call back ;
+        {
+            let p : [ number , IOneMsgCallback] ;
+            p = [msgID,callBack];
+            this.vMsgCallBack.push(p) ; 
+        }
+        return true;
+    }
+
+    protected setSessionID( newSessionID : number )
+    {
+        this.nSessionID = newSessionID ;
+    }
+    
+    protected doConnect()
     {
         if ( this.mWebSocket != null && ( this.mWebSocket.readyState == WebSocket.CONNECTING || WebSocket.OPEN == this.mWebSocket.readyState ) )
         {
@@ -64,7 +90,7 @@ export default class Network{
         this.mWebSocket.onerror = this.onError.bind(this);
     }
 
-    onClose( ev: CloseEvent )
+    protected onClose( ev: CloseEvent )
     {
         // if ( this.mWebSocket != null && ( this.mWebSocket.readyState == WebSocket.CONNECTING || WebSocket.OPEN == this.mWebSocket.readyState ) )
         // {
@@ -115,13 +141,13 @@ export default class Network{
         }
     }
 
-    close()
+    protected close()
     {
         console.log( "self colse" );
         this.mWebSocket.close();
     }
 
-    onOpen( ev : any )
+    protected onOpen( ev : any )
     {
         console.log(" on open +  " + this.mWebSocket.readyState );
         if ( this.nReconnectInterval != -1 )
@@ -186,7 +212,7 @@ export default class Network{
         } ) ;      
     }
 
-    onMsg( ev : any )
+    protected onMsg( ev : any )
     {
         //cc.log(" on msg " + ev.data );
         if ( ev.data == "H" )
@@ -229,7 +255,7 @@ export default class Network{
         cc.systemEvent.dispatchEvent(pEvent);
     }
 
-    onError( ev : Event )
+    protected onError( ev : Event )
     {
         this.isSkipOnCloseEnvet = true ;
         cc.log(" on error  " );
@@ -261,32 +287,7 @@ export default class Network{
         }
     }
 
-    sendMsg( jsMsg : any , msgID : number, targetPort : number , targetID : number , callBack? : IOneMsgCallback ):boolean
-    {
-        if ( this.mWebSocket.readyState != WebSocket.OPEN )
-        {
-            cc.error( "socket is not open , can not send msgid = " + msgID );
-            return false;
-        }
-        let jsPacket = { } ;
-        jsMsg[clientDefine.msgKey] = msgID ;
-
-        jsPacket["cSysIdentifer"] = targetPort ;
-        jsPacket["nTargetID"] = targetID ;
-        jsPacket["JS"] = JSON.stringify(jsMsg);
-        this.mWebSocket.send(JSON.stringify(jsPacket)) ;
-
-        console.log( "send msg : " + JSON.stringify(jsPacket) );
-        if ( callBack != null ) // reg call back ;
-        {
-            let p : [ number , IOneMsgCallback] ;
-            p = [msgID,callBack];
-            this.vMsgCallBack.push(p) ; 
-        }
-        return true;
-    }
-
-    doSendHeatBet()
+    protected doSendHeatBet()
     {
         // send heat bet ;
         if ( this.mWebSocket.readyState != WebSocket.OPEN )
@@ -320,7 +321,7 @@ export default class Network{
         }, clientDefine.time_heat_bet * 1000 );
     }
 
-    doTryReconnect()
+    protected doTryReconnect()
     {
        let self = this ;
        this.nReconnectInterval = setInterval(()=>{ console.log("interval try connect"); self.doConnect();},2000);
