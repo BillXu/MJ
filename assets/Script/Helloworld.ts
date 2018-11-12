@@ -10,6 +10,10 @@ export default class Helloworld extends cc.Component {
     text: string = 'hello';
 
     start () {
+
+        let testString : string = "https://......" ;
+        let nPos : number = testString.indexOf("http");
+        console.log( "pos number = " + nPos );
         // init logic
         this.label.string = this.text;
         let v = [{ "a" : 1 }];

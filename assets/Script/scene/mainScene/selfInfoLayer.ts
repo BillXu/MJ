@@ -9,23 +9,71 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-
+import PhotoItem from "../../commonItem/photoItem"
+import ClientData from "../../globalModule/ClientData"
+import { clientDefine } from "../../common/clientDefine"
+import { eMsgType } from "../../common/MessageIdentifer"
 @ccclass
-export default class NewClass extends cc.Component {
+export default class SelfInfoLayer extends cc.Component {
 
     @property(cc.Label)
-    label: cc.Label = null;
+    pLabelName: cc.Label = null;
 
-    @property
-    text: string = 'hello';
+    @property(cc.Label)
+    pLabelUID: cc.Label = null;
+
+    @property(cc.Label)
+    pLabelDiamond: cc.Label = null;
+
+    @property(cc.Label)
+    pLabelCoin : cc.Label = null ;
+
+    @property(cc.Label)
+    pLabelTicket : cc.Label = null ;
+
+    @property(PhotoItem)
+    pPhoto : PhotoItem  = undefined;
+
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
-
-    start () {
-
+    onLoad () 
+    {
+        cc.systemEvent.on(clientDefine.netEventRecievedBaseData,this.onUpdateClientData,this) ;
+        cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this);
     }
 
+    private onUpdateClientData()
+    {
+        let baseDataMsg : Object = ClientData.getInstance().jsSelfBaseDataMsg ;
+        this.pLabelUID.string = baseDataMsg["uid"] || "0";
+        this.pLabelName.string = baseDataMsg["name"] || "0"  ;
+        this.pLabelDiamond.string = baseDataMsg["diamond"] || "0" ;
+        this.pLabelCoin.string = baseDataMsg["coin"] || "0" ;
+        this.pLabelTicket.string = "null";//baseDataMsg[""] ;
+        this.pPhoto.photoURL = baseDataMsg["headIcon"] || "0";
+    }
+
+    private onMsg( event : cc.Event.EventCustom )
+    {
+        let nMsgID : number = event.detail[clientDefine.msgKey] ;
+        let msg : Object = event.detail[clientDefine.msg] ;
+
+        if ( eMsgType.MSG_PLAYER_REFRESH_MONEY == nMsgID )
+        {
+            this.pLabelCoin.string = msg["coin"] ;
+            this.pLabelDiamond.string = msg["diamond"] ;
+            return ;
+        }
+    }
+
+    start () {
+        this.onUpdateClientData();
+    }
+
+    onDestroy()
+    {
+        cc.systemEvent.targetOff(this);
+    }
     // update (dt) {}
 }

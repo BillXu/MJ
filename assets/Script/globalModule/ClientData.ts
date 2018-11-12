@@ -92,23 +92,29 @@ export default class ClientData
     {
         let nMsgID : number = event.detail[clientDefine.msgKey] ;
         let msg : Object = event.detail[clientDefine.msg] ;
-        if ( nMsgID != eMsgType.MSG_PLAYER_BASE_DATA )
+        if ( nMsgID == eMsgType.MSG_PLAYER_BASE_DATA )
         {
+            let uid : number = msg["uid"] ;
+            if ( uid != this.selfUID )
+            {
+                this.selfUID = uid ;
+            }
+            
+            this.jsSelfBaseDataMsg = _.merge(this.jsSelfBaseDataMsg,msg);
+            // we need dispatch reconnected ok event ; because , this msg may invoke by relogin  when reconected failed , in clientNetwork module 
+            let ev : any = clientDefine.netEventRecievedBaseData ;
+            let pEvent = new cc.Event.EventCustom(ev,true) ;
+            pEvent.detail = Network.getInstance().getSessionID();
+            cc.systemEvent.dispatchEvent(pEvent);
             return ;
         }
 
-        let uid : number = msg["uid"] ;
-        if ( uid != this.selfUID )
+        if ( eMsgType.MSG_PLAYER_REFRESH_MONEY == nMsgID )
         {
-            this.selfUID = uid ;
+            this.jsSelfBaseDataMsg["coin"] = msg["coin"] ;
+            this.jsSelfBaseDataMsg["diamond"] = msg["diamond"] ;
+            return ;
         }
-        
-        this.jsSelfBaseDataMsg = _.merge(this.jsSelfBaseDataMsg,msg);
-        // we need dispatch reconnected ok event ; because , this msg may invoke by relogin  when reconected failed , in clientNetwork module 
-        let ev : any = clientDefine.netEventRecievedBaseData ;
-        let pEvent = new cc.Event.EventCustom(ev,true) ;
-        pEvent.detail = Network.getInstance().getSessionID();
-        cc.systemEvent.dispatchEvent(pEvent);
     }
     
 }

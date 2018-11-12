@@ -37,6 +37,13 @@ export default class PhotoItem extends cc.Component {
             cc.error( "url can not be null");
             return ;
         }
+
+        if ( strUrl.indexOf("http") != 0 )
+        {
+            cc.error( "url is not valid = " + strUrl );
+            return ;
+        }
+
         this.pPhotoSprite.node.active = false ;
         this.imgUrl = strUrl ;    
         this.doLoadNetImg();
