@@ -16,6 +16,12 @@ export default class DlgCreateRoom extends DlgBase {
 
     // LIFE-CYCLE CALLBACKS:
 
+    @property(cc.Color)
+    defToggleClr : cc.Color = cc.Color.RED ;
+
+    @property(cc.Color)
+    checkedToggleClr : cc.Color = cc.Color.RED ;
+
     @property([cc.Toggle])
     vMJTypeToggles :cc.Toggle[] = [] ;
 
@@ -42,6 +48,7 @@ export default class DlgCreateRoom extends DlgBase {
     
     onLoad () 
     {
+        super.onLoad();
         for ( let nIdx = 0 ; nIdx < this.vMJTypeToggles.length ; ++nIdx )
         {
             let str = cc.sys.localStorage.getItem("mjopt" + nIdx );
@@ -89,27 +96,39 @@ export default class DlgCreateRoom extends DlgBase {
     {
         console.log( "onSelectRoundType" );
         this.vCircleToggles.forEach(( vtn : cc.Toggle )=>{ vtn.isChecked = false ; }) ;
+
+        this.updateToggleLabelClr(this.vCircleToggles) ;
+        this.updateToggleLabelClr(this.vRoundToggles);
     }
 
     onSelectCircleType( event : cc.Toggle, js : string )
     {
         console.log( "onSelectCircleType" );
         this.vRoundToggles.forEach(( vtn : cc.Toggle )=>{ vtn.isChecked = false ; }) ;
+
+        this.updateToggleLabelClr(this.vCircleToggles) ;
+        this.updateToggleLabelClr(this.vRoundToggles);
     }
 
     onSelectPayType( event : cc.Toggle, js : string )
     {
-         
+        this.updateToggleLabelClr(this.vPayTypeToggles) ;
     }
 
     onSelectPlayerCnt( event : cc.Toggle, js : string )
     {
-         
+         this.updateToggleLabelClr(this.vPlayerCntToggles) ;
     }
 
-    onSelectOpt( event : cc.Toggle, js : string )
+    onSelectOpt( tog : cc.Toggle, js : string )
     {
-         
+        let labelNode = tog.node.getChildByName("label");
+        if ( null == labelNode )
+        {
+            cc.error( "toggle " + tog.node.name + "do not have label child" );
+            return ;
+        }
+        labelNode.color = tog.isChecked ? this.checkedToggleClr : this.defToggleClr ;
     }
 
     onDoCreate( event : cc.Button )
@@ -119,7 +138,14 @@ export default class DlgCreateRoom extends DlgBase {
         let nCircleIdx = _.findIndex(this.vCircleToggles,( togle : cc.Toggle )=>{ return togle.isChecked ; });
         let nPayTypeIdx = _.findIndex(this.vPayTypeToggles,( togle : cc.Toggle )=>{ return togle.isChecked ; });
         let nPlayerCntIdx = _.findIndex(this.vPlayerCntToggles,( togle : cc.Toggle )=>{ return togle.isChecked ; });
+        
+        if ( null == this.vOpts[this.nCurMJTypeIdx] )
+        {
+            this.vOpts[this.nCurMJTypeIdx] = {} ;
+        }
+
         let jsOps = this.vOpts[this.nCurMJTypeIdx] ;
+
         jsOps["roundIdx"] = nRoundIdx ;
         jsOps["circleIdx"] = nCircleIdx ;
         jsOps["payTypeIdx"] = nPayTypeIdx ;
@@ -127,9 +153,8 @@ export default class DlgCreateRoom extends DlgBase {
         jsOps["enableCheat"] = this.isEnableAvoidCheat.isChecked ? 1 : 0 ;
         jsOps["enableDuipu"] = this.isEnableDuipu.isChecked ? 1 : 0 ;
         cc.sys.localStorage.setItem("mjopt" + this.nCurMJTypeIdx , JSON.stringify(jsOps));
-
         // make create room msg send to svr ;
-
+        this.pFuncResult(jsOps);
     }
 
     protected onRestoreMJOptsDisplay()
@@ -141,6 +166,10 @@ export default class DlgCreateRoom extends DlgBase {
             return ;
         }
 
+        this.uncheckAllToggle(this.vRoundToggles);
+        this.uncheckAllToggle(this.vCircleToggles);
+        this.uncheckAllToggle(this.vPayTypeToggles);
+        this.uncheckAllToggle(this.vPlayerCntToggles);
         // get all segment select idx ;
         let nRoundIdx = jsOpts["roundIdx"] ;
         if ( nRoundIdx > this.vRoundToggles.length )
@@ -192,6 +221,35 @@ export default class DlgCreateRoom extends DlgBase {
         this.vPlayerCntToggles[nPlayerCntIdx].isChecked = true ;
         this.isEnableAvoidCheat.isChecked = bIsEnableCheat ;
         this.isEnableDuipu.isChecked = bIsEnableDuiPu ;
+
+        // update selecte color
+        this.updateToggleLabelClr(this.vRoundToggles);
+        this.updateToggleLabelClr(this.vCircleToggles);
+        this.updateToggleLabelClr(this.vPayTypeToggles);
+        this.updateToggleLabelClr(this.vPlayerCntToggles);
+        let v : cc.Toggle[] = [this.isEnableAvoidCheat,this.isEnableDuipu ] ;
+        this.updateToggleLabelClr(v);
+    }
+
+    protected updateToggleLabelClr( vToggles : cc.Toggle[] )
+    {
+        let self = this ;
+        vToggles.forEach( ( tog : cc.Toggle)=>{
+            let labelNode = tog.node.getChildByName("label");
+            if ( null == labelNode )
+            {
+                cc.error( "toggle " + tog.node.name + "do not have label child" );
+                return ;
+            }
+            labelNode.color = tog.isChecked ? self.checkedToggleClr : self.defToggleClr ;
+        } ) ;
+    }
+
+    protected uncheckAllToggle( vToggles : cc.Toggle[] )
+    {
+        vToggles.forEach( ( tog : cc.Toggle)=>{
+                tog.isChecked = false ;
+        } ) ;
     }
     // update (dt) {}
 }

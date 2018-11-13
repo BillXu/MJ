@@ -22,6 +22,9 @@ export default class DlgBase extends cc.Component {
     @property()
     isClickOutsideClose : boolean = false ;
 
+    @property()
+    isPopout : boolean = false ; // show dlg effect
+
     protected pFuncResult : ( jsResult : Object ) => void = null ;
     protected pOnCloseCallBack : ( pTargetDlg : DlgBase ) => void = null ;
     // LIFE-CYCLE CALLBACKS:
@@ -81,8 +84,15 @@ export default class DlgBase extends cc.Component {
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void  )
     {
         this.pFuncResult = pfResult ;
+        this.pOnCloseCallBack = pfOnClose ;
         this.pRootNode.active = true ;
         console.log( " super is showDlg ");
+        if ( this.isPopout )
+        {
+            this.pBgImgArea.scale = 0.8;
+            let s : cc.ActionInterval = cc.scaleTo(0.5,1);
+            this.pBgImgArea.runAction(s.easing(cc.easeBounceOut()) );
+        }
     }
 
     closeDlg()

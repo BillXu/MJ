@@ -9,16 +9,20 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-
+import DlgCreateRoom from "./dlgCreateRoom"
+import DlgJoinRoomOrClub from "./dlgJoinRoomOrClub"
+import Bacground from "./background"
 @ccclass
-export default class NewClass extends cc.Component {
+export default class MiddleLayer extends cc.Component {
 
-    @property(cc.Label)
-    label: cc.Label = null;
+    @property(DlgCreateRoom)
+    dlgCreateRoom: DlgCreateRoom = null;
 
-    @property
-    text: string = 'hello';
+    @property(DlgJoinRoomOrClub)
+    dlgJoinRoom : DlgJoinRoomOrClub = null ;
 
+    @property(Bacground)
+    pBackground : Bacground = null ;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -27,5 +31,37 @@ export default class NewClass extends cc.Component {
 
     }
 
+    onClickClubBtn( btn : cc.Button )
+    {
+
+    }
+
+    onClickCreateRoom( btn : cc.Button )
+    {
+        this.pBackground.hide();
+        let self = this ;
+        this.dlgCreateRoom.showDlg( this.onCreateRoomDlgResult.bind(this) ,null,(dlg : DlgCreateRoom)=>{ self.pBackground.show();});
+    }
+
+    protected onCreateRoomDlgResult( msgCreateRoom : Object )
+    {
+        console.log( "onCreateRoomDlgResult" );
+    }
+
+    onClickJoinRoom( btn : cc.Button )
+    {
+        this.dlgJoinRoom.setDlgTitle(true); // must invoke ,before show ;
+        this.dlgJoinRoom.showDlg( this.onJoinRoomDlgResult.bind(this));
+    }
+
+    protected onJoinRoomDlgResult( nJoinRoomID : string )
+    {
+        console.log( "onJoinRoomDlgResult " + nJoinRoomID );
+    }
+
+    onClickCompetition( btn : cc.Button )
+    {
+
+    }
     // update (dt) {}
 }
