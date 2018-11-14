@@ -17,11 +17,83 @@ import * as _ from "lodash"
 export default class ClientData  
 {
  
+    private _version : string = "1.0.0" ;
     private  static s_Data : ClientData = null ;
     private strCurAccount : string = "";
     private strCurPassword : string = "";
     private nSelfUID : number = 0 ;
     public jsSelfBaseDataMsg : Object = {} ;
+    
+    private _effectVolume : number = 0.5 ;
+    private _musicVolume : number = 0.5 ;
+    private _musicTypeIdx : number = 0 ;
+    private _deskBgIdx : number = 0 ;
+    private _mjBgIdx : number = 0 ;
+
+    set effectVolume( v : number )
+    {
+        this._effectVolume = v ;
+        cc.sys.localStorage.setItem( "_effectVolume", this._effectVolume );
+    }
+
+    get effectVolume()
+    {
+        return this._effectVolume ;
+    }
+
+    set musicVolume( v : number )
+    {
+        this._musicVolume = v ;
+        cc.sys.localStorage.setItem( "_musicVolume", this._musicVolume );
+    }
+
+    get musicVolume()
+    {
+        return this._musicVolume ;
+    }
+
+    set musicTypeIdx( v : number )
+    {
+        this._musicTypeIdx = v ;
+        cc.sys.localStorage.setItem( "_musicTypeIdx", v );
+    }
+
+    get musicTypeIdx()
+    {
+        return this._musicTypeIdx ;
+    }
+
+    set deskBgIdx( v : number )
+    {
+        this._deskBgIdx = v ;
+        cc.sys.localStorage.setItem( "_deskBgIdx", v );
+    }
+
+    get deskBgIdx()
+    {
+         return this._deskBgIdx ;
+    }
+
+    set mjBgIdx( v : number )
+    {
+        this._mjBgIdx = v ;
+        cc.sys.localStorage.setItem( "_mjBgIdx", v );
+    }
+
+    get mjBgIdx()
+    {
+         return this._mjBgIdx ;
+    }
+
+    set version( strVersion )
+    {
+        this._version = strVersion ;
+    }
+
+    get version()
+    {
+        return this._version ;
+    }
 
     get selfUID() : number 
     {
@@ -86,6 +158,34 @@ export default class ClientData
         }
 
         cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this);
+
+        // load settings
+        this._deskBgIdx = cc.sys.localStorage("_deskBgIdx");
+        if ( null == this._deskBgIdx )
+        {
+            this._deskBgIdx = 0 ;
+        }
+
+        this._effectVolume = cc.sys.localStorage("_effectVolume");
+        if ( this._effectVolume == null )
+        {
+            this._effectVolume = 0.5 ;
+        }
+        this._mjBgIdx = cc.sys.localStorage("_mjBgIdx");
+        if ( null == this._mjBgIdx )
+        {
+            this._mjBgIdx = 0 ;
+        }
+        this._musicTypeIdx = cc.sys.localStorage("_musicTypeIdx");
+        if ( null == this._musicTypeIdx )
+        {
+            this._musicTypeIdx = 0 ;
+        }
+        this._musicVolume = cc.sys.localStorage("_musicVolume");
+        if ( null == this._musicVolume )
+        {
+            this._musicVolume = 0.5 ;
+        }
     }
 
     public onMsg( event : cc.Event.EventCustom )
@@ -115,6 +215,15 @@ export default class ClientData
             this.jsSelfBaseDataMsg["diamond"] = msg["diamond"] ;
             return ;
         }
+    }
+
+    public clearWhenLogout()
+    {
+        this.selfUID = 0 ;
+        this.curAccount = "";
+        this.curPwd = "" ;
+        this.jsSelfBaseDataMsg = {} ;
+        cc.sys.localStorage.clear();
     }
     
 }

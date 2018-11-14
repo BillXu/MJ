@@ -9,15 +9,12 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-
+import DlgSetting from "./dlgSetting"
 @ccclass
-export default class NewClass extends cc.Component {
+export default class BottomLayer extends cc.Component {
 
-    @property(cc.Label)
-    label: cc.Label = null;
-
-    @property
-    text: string = 'hello';
+    @property(DlgSetting)
+    pDlgSetting: DlgSetting = null;
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -25,6 +22,11 @@ export default class NewClass extends cc.Component {
 
     start () {
 
+    }
+
+    onBtnSetting()
+    {
+        this.pDlgSetting.showDlg();
     }
 
     // update (dt) {}
