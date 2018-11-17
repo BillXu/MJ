@@ -39,6 +39,30 @@ export enum eArrowDirect
     eDirect_Opposite,
 };
 
+
+export enum eMJActType
+{
+	eMJAct_None,
+	eMJAct_Mo = eMJAct_None, // 摸牌
+	eMJAct_Chi, // 吃
+	eMJAct_Peng,  // 碰牌
+	eMJAct_MingGang,  // 明杠
+	eMJAct_AnGang, // 暗杠
+	eMJAct_BuGang,  // 补杠 
+	eMJAct_BuGang_Pre, // 补杠第一阶段
+	eMJAct_BuGang_Declare = eMJAct_BuGang_Pre, // 声称要补杠 
+	eMJAct_BuGang_Done, //  补杠第二阶段，执行杠牌
+	eMJAct_Hu,  //  胡牌
+	eMJAct_Chu, // 出牌
+	eMJAct_Pass, //  过 
+	eMJAct_BuHua,  // 补花
+	eMJAct_HuaGang, // 花杠
+	eMJAct_Followed, // 连续跟了4张牌，要罚钱了
+	eMJAct_4Feng, // 前4张出了4张不一样的风牌
+	eMJAct_Ting,
+	eMJAct_Max,
+};
+
 let RoomEvent = 
 {
     Event_changeMJ : "event_changeMJ" ,

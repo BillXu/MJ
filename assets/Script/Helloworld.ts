@@ -7,11 +7,22 @@ export default class Helloworld extends cc.Component {
     @property(cc.Label)
     label: cc.Label = null;
 
+    @property(cc.Node)
+    pTestNode : cc.Node = null ;
+
     @property
     text: string = 'hello';
 
+ 
     start () {
 
+        let self = this ;
+        setTimeout(() => {
+             self.pTestNode.anchorX = 0 ;
+             self.pTestNode.position = cc.v2(408,269);
+        }, 3000 );
+  
+        
         let v : number[] = [] ;
         v[0] = 1 ;
         let v2 : number[] = [2,4,5,1] ;

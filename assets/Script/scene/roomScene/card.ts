@@ -52,6 +52,38 @@ export default class Card extends cc.Component {
         this._ID = cardID ;
     }
 
+    set anchorX( x : number )
+    {
+        this.setAnchor(this.node,x,true);
+    }
+
+    set anchorY( Y : number )
+    {
+        this.setAnchor(this.node,Y,false);
+    }
+
+    setAnchor( pNode : cc.Node, anchor : number , isX : boolean )
+    {
+        if ( isX )
+        {
+            pNode.anchorX = anchor ;
+        }
+        else
+        {
+            pNode.anchorY = anchor ;
+        }
+
+        if ( pNode.childrenCount == 0 )
+        {
+            return ;
+        }
+
+        for ( let nIdx = 0 ; nIdx < pNode.childrenCount ; ++nIdx )
+        {
+            this.setAnchor(pNode.children[nIdx],anchor,isX);
+        }
+    }
+
     get cardNumber() : number
     {
         return this.vCardNumber[0] ;
@@ -103,7 +135,7 @@ export default class Card extends cc.Component {
         this.vCardNumber = this.vCardNumber.concat(vCardNums);
         let self = this; 
         this.vCardNumber.forEach( ( n : number , index : number )=>{
-            this.vCardsSpriteName[index] = self.getSpriteName(n); 
+            self.vCardsSpriteName[index] = self.getSpriteName(n); 
         } ) ;
         this.refreshCard(cardsAtlas);
     }
@@ -183,7 +215,7 @@ export default class Card extends cc.Component {
     private getCardPartName( nCardNumer : number ) : string 
     {
         let vTypeString : string[] = [ "" ,"W","B","T","F","J","H"] ;
-        let numValue : number = Card.parseCardValue(this.cardNumber);
+        let numValue : number = Card.parseCardValue(nCardNumer);
         return vTypeString[Card.parseCardType(nCardNumer)] + "" + numValue.toString(); 
     }
 

@@ -21,9 +21,9 @@ export default class CardFactory extends cc.Component {
     pLeftAnGang : cc.Prefab = null ;
     pLeftAnGangPool : cc.NodePool = new cc.NodePool();
 
-    @property(cc.Prefab)
-    pLeftEat : cc.Prefab = null ;
-    pLeftEatPool : cc.NodePool = new cc.NodePool();
+    // @property(cc.Prefab)
+    // pLeftEat : cc.Prefab = null ;
+    // pLeftEatPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
     pLeftHold : cc.Prefab = null ;
@@ -38,8 +38,8 @@ export default class CardFactory extends cc.Component {
     pLeftOutPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
-    pLeftPeng : cc.Prefab = null ;
-    pLeftPengPool : cc.NodePool = new cc.NodePool();
+    pLeftPengEat : cc.Prefab = null ;
+    pLeftPengEatPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
     pRightHold : cc.Prefab = null ;
@@ -49,9 +49,9 @@ export default class CardFactory extends cc.Component {
     pSelfAnGang : cc.Prefab = null ;
     pSelfAnGangPool : cc.NodePool = new cc.NodePool();
 
-    @property(cc.Prefab)
-    pSelfEat : cc.Prefab = null ;
-    pSelfEatPool : cc.NodePool = new cc.NodePool();
+    // @property(cc.Prefab)
+    // pSelfEat : cc.Prefab = null ;
+    // pSelfEatPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
     pSelfHold : cc.Prefab = null ;
@@ -66,8 +66,8 @@ export default class CardFactory extends cc.Component {
     pSelfOutPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
-    pSelfPeng : cc.Prefab = null ;
-    pSelfPengPool : cc.NodePool = new cc.NodePool();
+    pSelfPengEat : cc.Prefab = null ;
+    pSelfPengEatPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
     pUpHold : cc.Prefab = null ;
@@ -86,33 +86,33 @@ export default class CardFactory extends cc.Component {
     // onLoad () {}
 
     start () {
-        let nPosIdx = 2 ;
-        // test 
-        let cardNum = Card.makeCardNum(4,1) ;
-        let pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_AnGang) ;
-        pnode.position = cc.v2(-326,260);
-        this.node.addChild(pnode);
+        // let nPosIdx = 2 ;
+        // // test 
+        // let cardNum = Card.makeCardNum(4,1) ;
+        // let pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_AnGang) ;
+        // pnode.position = cc.v2(-326,260);
+        // this.node.addChild(pnode);
 
-        pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_MingGang) ;
-        pnode.position = cc.v2(-351,-51);
-        this.node.addChild(pnode);
+        // pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_MingGang) ;
+        // pnode.position = cc.v2(-351,-51);
+        // this.node.addChild(pnode);
 
-        pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_Hold) ;
-        pnode.position = cc.v2(192,188);
-        this.node.addChild(pnode);
+        // pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_Hold) ;
+        // pnode.position = cc.v2(192,188);
+        // this.node.addChild(pnode);
 
-        pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_Peng) ;
-        pnode.position = cc.v2(192,-43);
-        this.node.addChild(pnode);
+        // pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_Peng) ;
+        // pnode.position = cc.v2(192,-43);
+        // this.node.addChild(pnode);
 
-        pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_Out) ;
-        pnode.position = cc.v2(68,-315);
-        this.node.addChild(pnode);
+        // pnode = this.createCard(cardNum,nPosIdx,eCardSate.eCard_Out) ;
+        // pnode.position = cc.v2(68,-315);
+        // this.node.addChild(pnode);
         // test 
 
     }
 
-    createCard( cardNum : number , posIdx : number , cardType : eCardSate , nArrowDirection? : eArrowDirect ) : cc.Node
+    createCard( cardNum : any , posIdx : number , cardType : eCardSate , nArrowDirection? : eArrowDirect ) : cc.Node
     {
         let pCardNode : cc.Node = null ;
         let isSelf = 0 == posIdx ;
@@ -149,18 +149,6 @@ export default class CardFactory extends cc.Component {
                 // up 
                 pCardNode = this.pUpAnGangPool.get() || cc.instantiate(this.pUpAnGang);
                 pPool = this.pUpAnGangPool ;
-            }
-            break ;
-            case eCardSate.eCard_Eat:
-            {
-                if ( isLeft || isRight )  
-                {
-                    pCardNode = this.pLeftEatPool.get() || cc.instantiate(this.pLeftEat);
-                    pPool = this.pLeftEatPool ;
-                    break ;
-                }
-                pCardNode = this.pSelfEatPool.get() || cc.instantiate(this.pSelfEat);
-                pPool = this.pSelfEatPool ;
             }
             break ;
             case eCardSate.eCard_Hold:
@@ -229,16 +217,17 @@ export default class CardFactory extends cc.Component {
 
             }
             break ;
+            case eCardSate.eCard_Eat:
             case eCardSate.eCard_Peng:
             {
                 if ( isLeft || isRight )  
                 {
-                    pCardNode = this.pLeftPengPool.get() || cc.instantiate(this.pLeftPeng);
-                    pPool = this.pLeftPengPool ;
+                    pCardNode = this.pLeftPengEatPool.get() || cc.instantiate(this.pLeftPengEat);
+                    pPool = this.pLeftPengEatPool ;
                     break ;
                 }
-                pCardNode = this.pSelfPengPool.get() || cc.instantiate(this.pSelfPeng);
-                pPool = this.pSelfPengPool ;
+                pCardNode = this.pSelfPengEatPool.get() || cc.instantiate(this.pSelfPengEat);
+                pPool = this.pSelfPengEatPool ;
             }
             break ;
             default:
@@ -269,6 +258,15 @@ export default class CardFactory extends cc.Component {
             pCard.pDirection.node.rotation = nRotation ;
         }
         pCardNode.scale = vScale[posIdx][cardType] ;
+        if ( isSelf || isUp )
+        {
+            pCard.anchorX = (isSelf || isUp ) ? 0 : 0.5 ;
+            pCard.anchorY = (isLeft || isRight ) ? 0 : 0.5 ;
+        }
+        else
+        {
+
+        }
         return pCardNode ;
     }
 
@@ -282,26 +280,23 @@ export default class CardFactory extends cc.Component {
         }
 
         let pool : cc.NodePool = pCard.pRecyclePool ;
-        pCard.pRecyclePool = null ;
         pool.put(pNode);
+
+        console.log(" pool size = " + pool.size() );
     }
 
     onDestroy()
     {
         this.pLeftAnGangPool.clear();
-        this.pLeftEatPool.clear();
         this.pLeftHoldPool.clear();
         this.pLeftMingGangPool.clear();
         this.pLeftOutPool.clear();
-        this.pLeftPengPool.clear();
         this.pRightHoldPool.clear();
 
         this.pSelfAnGangPool.clear();
-        this.pSelfEatPool.clear();
         this.pSelfHoldPool.clear();
         this.pSelfMingGangPool.clear();
         this.pSelfOutPool.clear();
-        this.pSelfPengPool.clear();
         this.pUpHoldPool.clear();
 
     }
