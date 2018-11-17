@@ -56,6 +56,10 @@ export default class PlayerCard extends cc.Component {
     private vHoldCards : cc.Node[] = [] ;
     private pFetchedCard : cc.Node = null ;
 
+    // 
+    @property
+    nChuCardMoveSpeed : number = 300 ;
+
     isLeft() : boolean { return 3 == this.nPosIdx } 
     isRight() : boolean { return 1 == this.nPosIdx } 
     isUp() : boolean { return 2 == this.nPosIdx ; }
@@ -157,11 +161,6 @@ export default class PlayerCard extends cc.Component {
         this.vMingCards.forEach( ( pnode : cc.Node , nidx : number )=>{ pnode.position = self.getMingCardPosByIdx(nidx);} );
         // layout holdCards ;
         this.relayoutHoldCards();
-        // layout fetched cards ;
-        if ( this.pFetchedCard )
-        {
-            this.pFetchedCard.position = this.getFetchedCardPos();
-        }
     }
 
     private getOutCardPosByIdx( nIdx : number ) : cc.Vec2
@@ -362,16 +361,26 @@ export default class PlayerCard extends cc.Component {
 
         let self = this ;
         this.vHoldCards.forEach( ( pnode : cc.Node , nidx : number )=>{ pnode.position = self.getHoldCardPosByIdx(nidx); } );
+
+        // layout fetched cards ;
+        if ( this.pFetchedCard )
+        {
+            this.pFetchedCard.position = this.getFetchedCardPos();
+        }
     }
 
     start () {
+        this.testLayoutCards();
+    }
 
+    testLayoutCards()
+    {
         let cardWan = Card.makeCardNum(1,1);
         let cardTong = Card.makeCardNum(2,1);
         let cardTiao = Card.makeCardNum(3,1);
         let cardTFeng = Card.makeCardNum(4,1);
 
-        let vHold : number[] = [  cardTiao , cardTiao + 1 , cardTiao + 3 , cardTFeng + 1 ,cardTFeng ] ;
+        let vHold : number[] = [  cardTiao , cardTong + 1 , cardTiao + 3 , cardTFeng + 1 ,cardTFeng ] ;
     
         let vMIng : IHoldMingPai[]= [ 
             { "mjStateType" : eCardSate.eCard_Peng ,"nCard" : cardWan,"nInvokerClientIdx" : 2}
@@ -389,5 +398,250 @@ export default class PlayerCard extends cc.Component {
         this.onRefreshCards(vHold,vHold.length,vMIng,vOut,0) ;
     }
 
+    private doRemoveCardFromHold( cardNum : number , cnt : number = 1 ) : cc.Node[] 
+    {
+        let vRemoved : cc.Node[] = [] ;
+        let nCnt = cnt ;
+        if ( this.pFetchedCard )
+        {
+            if ( this.isSelf() || this.isReplay )
+            {
+                let card : Card = this.pFetchedCard .getComponent(Card);
+                if ( card.cardNumber == cardNum )
+                {
+                    this.pCardFactory.recycleNode(this.pFetchedCard); 
+                    vRemoved.push(this.pFetchedCard);
+                    this.pFetchedCard = null ; 
+                    --nCnt
+                }
+            }
+            else
+            {
+                this.pCardFactory.recycleNode(this.pFetchedCard);
+                vRemoved.push(this.pFetchedCard);
+                this.pFetchedCard = null ; 
+                --nCnt
+            }
+        }
+
+        if ( nCnt == 0 )
+        {
+            return vRemoved ;
+        }
+
+        let self = this ;
+        let num = cardNum ;
+       let vRet = _.remove(this.vHoldCards,( pnode : cc.Node )=>{ 
+             if ( nCnt <= 0 )
+             {
+                  return false;
+            } 
+
+            let card : Card = pnode.getComponent(Card);
+            if ( card.cardNumber != num && ( self.isSelf() || self.isReplay ) )
+            {
+                return false ;
+            }
+            self.pCardFactory.recycleNode(pnode); 
+            --nCnt ; 
+            return true ;  
+        } ) ;
+
+        vRemoved = vRemoved.concat(vRet);
+
+        let isRemoveSucees = nCnt == 0 ;
+        if ( isRemoveSucees == false )
+        {
+            cc.error( "remove card = " + cardNum + " cnt = " + cnt +  " error , hold not enough"  );
+        }
+        return vRemoved ;
+    }
+
+    getDirectByInvokerClientIdx( invokerClientIdx : number ) : eArrowDirect
+    {
+        return 0 ;
+    }
     // update (dt) {}
+    onPeng( cardNum : number , invokerClientIdx : number )
+    {
+        this.doRemoveCardFromHold(cardNum,2);
+        let pPengNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_Peng,this.getDirectByInvokerClientIdx(invokerClientIdx)) ;
+        this.pRootNode.addChild(pPengNode);
+        pPengNode.position = this.getMingCardPosByIdx(this.vMingCards.length);
+        this.vMingCards.push(pPengNode);
+         // layout holdCards ;
+         this.relayoutHoldCards();
+    }
+
+    onZhiMingGang( cardNum : number , invokerClientIdx : number )
+    {
+        this.doRemoveCardFromHold(cardNum,3);
+        let pMingGangNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_MingGang,this.getDirectByInvokerClientIdx(invokerClientIdx)) ;
+        this.pRootNode.addChild(pMingGangNode);
+        pMingGangNode.position = this.getMingCardPosByIdx(this.vMingCards.length);
+        this.vMingCards.push(pMingGangNode);
+
+        // layout holdCards ;
+        this.relayoutHoldCards();
+    }
+
+    onBuMingGang( cardNum : number , invokerClientIdx : number )
+    {
+        // find peng node and then recyle ; but keep idx ;
+        let idx = _.findIndex(this.vMingCards,( pnode : cc.Node)=>{
+            let c : Card = pnode.getComponent(Card);
+            return c.cardNumber == cardNum ;
+        }) ;
+
+        if ( idx == -1 )
+        {
+            cc.error( "you don not peng , how to bu gang ? ");
+            return ;
+        }
+        this.pCardFactory.recycleNode(this.vMingCards[idx]);
+
+        this.doRemoveCardFromHold(cardNum,1);
+        let pMingGangNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_MingGang,this.getDirectByInvokerClientIdx(invokerClientIdx)) ;
+        this.pRootNode.addChild(pMingGangNode);
+        pMingGangNode.position = this.getMingCardPosByIdx(idx);
+        this.vMingCards[idx] = pMingGangNode ;
+        this.relayoutHoldCards();
+    }
+
+    onAngGang( cardNum : number , invokerClientIdx : number )
+    {
+        this.doRemoveCardFromHold(cardNum,4);
+        let pGangNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_AnGang) ;
+        this.pRootNode.addChild(pGangNode);
+        pGangNode.position = this.getMingCardPosByIdx(this.vMingCards.length);
+        this.vMingCards.push(pGangNode);
+        // layout holdCards ;
+        this.relayoutHoldCards();
+    }
+
+    onEat( targetCardNum : number , selfCardA : number , selfCardB : number )
+    {
+        this.doRemoveCardFromHold(selfCardA,1);
+        this.doRemoveCardFromHold(selfCardB,1);
+        let v = [targetCardNum,selfCardA,selfCardB];
+        let pNode = this.pCardFactory.createCard(v,this.nPosIdx,eCardSate.eCard_Eat,eArrowDirect.eDirect_Left) ;
+        this.pRootNode.addChild(pNode);
+        pNode.position = this.getMingCardPosByIdx(this.vMingCards.length);
+        this.vMingCards.push(pNode);
+        this.relayoutHoldCards();
+    }
+
+    onMo( cardNum? : number )
+    {
+        if ( this.pFetchedCard )
+        {
+            this.pFetchedCard.position = this.getHoldCardPosByIdx(this.vHoldCards.length);
+            this.vHoldCards.push(this.pFetchedCard);
+            this.pFetchedCard = null ;
+            if ( this.isReplay || this.isSelf() )
+            {
+                this.relayoutHoldCards();
+            }
+        }
+
+        this.pFetchedCard = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_Hold);
+        this.pRootNode.addChild(this.pFetchedCard);
+        this.pFetchedCard.position = this.getFetchedCardPos();
+        if ( this.isRight() || this.isUp() )
+        {
+            this.pFetchedCard.zIndex = this.vHoldCards.length ;
+        }
+    }
+
+    onChu( cardNum : number )
+    {
+        if ( this.isReplay == false && this.isSelf() )
+        {
+            cc.error( "in game situation , self chu will not invoke this , player will click or drag targe" );
+            return ;
+        }
+
+        let pChuNodePos : cc.Vec2 = cc.Vec2.ZERO ;
+        let v = this.doRemoveCardFromHold(cardNum,1);
+        if ( v.length == 0 )
+        {
+            cc.error( "you do not have card , how to remove ? cardNum = " + cardNum );
+            return ;
+        }
+        pChuNodePos = v[0].position ;
+        this.doChuAnimation(cardNum,pChuNodePos,this.onChuPaiAniFinish.bind(this));
+    }
+
+    private onChuPaiAniFinish()
+    {
+        if ( this.pFetchedCard )
+        {
+            this.pFetchedCard.position = this.getHoldCardPosByIdx(this.vHoldCards.length);
+            this.vHoldCards.push(this.pFetchedCard);
+            this.pFetchedCard = null ;
+        }
+
+        if ( this.isReplay || this.isSelf() )
+        {
+            this.relayoutHoldCards();
+        }
+    }
+
+    private doChuAnimation( cardNum : number , holdCardPos : cc.Vec2 , callBackFinishAni? : ()=>void )
+    {
+        // a simple animation 
+        let pNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_Out) ;
+        (this.isRight() || this.isUp() ) ? this.pRootNode.addChild(pNode,-1 * this.vOutCards.length ) : this.pRootNode.addChild(pNode);
+        let chuPos = this.getOutCardPosByIdx(this.vOutCards.length);
+        this.vOutCards.push(pNode);
+        holdCardPos.subSelf(chuPos);
+        let dis = holdCardPos.mag();
+        let moveTime = dis / Math.max(this.nChuCardMoveSpeed,10) ; 
+        if ( callBackFinishAni )
+        {
+            pNode.runAction(cc.sequence(cc.moveTo(moveTime,chuPos),cc.callFunc(callBackFinishAni)));
+        }  
+        else
+        {
+            pNode.runAction(cc.moveTo(moveTime,chuPos));
+        }
+    }
+
+    onCardBeEatGangPeng( cardNum : number )
+    {
+        if ( this.vOutCards.length == 0 )
+        {
+            cc.error( "out card is empty can not be other need , this function only invok once, one round num =" + cardNum );
+            return ;
+        }
+
+        let cardNode = this.vOutCards[this.vOutCards.length-1] ;
+        let card : Card = cardNode.getComponent(Card);
+        if ( cardNum != card.cardNumber )
+        {
+            cc.error( "more than one player need the card , but the card can only remove once , card = " + cardNum );
+            return ;
+        }
+
+        this.pCardFactory.recycleNode(cardNode);
+        this.vOutCards.pop();
+    }
+
+    doSelfUserClickOrDragChu( pnode : cc.Node )
+    {
+        let card : Card = pnode.getComponent(Card);
+        let cardNum = card.cardNumber;
+        if ( pnode == this.pFetchedCard )
+        {
+            this.pFetchedCard = null ;
+        }
+        else
+        {
+            _.pull(this.vHoldCards,pnode) ;
+        }
+        this.pCardFactory.recycleNode(pnode);
+
+        let pos = pnode.position;
+        this.doChuAnimation(cardNum,pos,this.onChuPaiAniFinish.bind(this));
+    }
 }
