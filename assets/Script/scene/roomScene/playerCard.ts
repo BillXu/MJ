@@ -17,8 +17,8 @@ import * as _ from "lodash"
 @ccclass
 export default class PlayerCard extends cc.Component {
 
-    @property(cc.Node)
-    pOutStartPos : cc.Node = null;
+    @property(cc.Vec2)
+    ptOutStartPos : cc.Vec2 = cc.v2(0,0);
     @property
     nOutXOffset : number = 0 ;
     @property
@@ -30,8 +30,8 @@ export default class PlayerCard extends cc.Component {
     @property({tooltip : "相对于第一排，其他排左边超出多少个麻将,决定其他排 水平方向开始位置"})
     nOtherRowLeftExtenCnt : number = 1;
 
-    @property(cc.Node)
-    pHoldStartPos : cc.Node = null;
+    @property(cc.Vec2)
+    ptHoldStartPos : cc.Vec2 = cc.v2(0,0);;
     @property
     nHoldOffset : number = 0 ;
 
@@ -64,8 +64,6 @@ export default class PlayerCard extends cc.Component {
     // LIFE-CYCLE CALLBACKS:
     onLoad ()
     {
-        this.pOutStartPos.active = false ;
-        this.pHoldStartPos.active = false ;
         if ( this.pRootNode == null )
         {
             this.pRootNode = this.node ;
@@ -97,7 +95,8 @@ export default class PlayerCard extends cc.Component {
                 cc.error( "create hold card failed num = " + nNum + " client Pos idx = " + this.nPosIdx  );
                 continue ;
             }
-            this.pRootNode.addChild(pNode);
+
+            this.isRight() ? this.pRootNode.addChild(pNode,-1*nIdx) : this.pRootNode.addChild(pNode) ;
             this.vHoldCards.push(pNode);
         }
 
@@ -123,14 +122,14 @@ export default class PlayerCard extends cc.Component {
             self.vMingCards.push(pNode);
         } ) ;
 
-        vOutCards.forEach( ( nNum : number )=>{
+        vOutCards.forEach( ( nNum : number, nIdx : number )=>{
             let pNode = self.pCardFactory.createCard( nNum,self.nPosIdx,eCardSate.eCard_Out);
             if ( null == pNode )
             {
                 cc.error( "cannot create out card  = " + nNum + " posidx = " + self.nPosIdx );
                 return ;
             }
-            self.pRootNode.addChild(pNode);
+            (this.isRight() || this.isUp())  ? this.pRootNode.addChild(pNode,-1*nIdx) : this.pRootNode.addChild(pNode) ;
             self.vOutCards.push(pNode);
         } ) ;
 
@@ -184,7 +183,7 @@ export default class PlayerCard extends cc.Component {
 
         if ( this.isLeft() || this.isRight() )
         {
-            let vStartPos = cc.v2( this.pOutStartPos.position.x,this.pOutStartPos.position.y );
+            let vStartPos = cc.v2( this.ptOutStartPos );
             if ( 0 != nRowIdx )
             {
                 vStartPos.y += ( this.isLeft() ? 1 : -1  ) * this.nOutYOffset * this.nOtherRowLeftExtenCnt ;
@@ -196,7 +195,7 @@ export default class PlayerCard extends cc.Component {
         }
         else
         {
-            let vStartPos = cc.v2( this.pOutStartPos.position );
+            let vStartPos = cc.v2( this.ptOutStartPos );
             if ( 0 != nRowIdx )
             {
                 vStartPos.x += ( this.isSelf() ? -1 : 1  ) * this.nOutXOffset * this.nOtherRowLeftExtenCnt ;
@@ -212,7 +211,25 @@ export default class PlayerCard extends cc.Component {
     {
         if ( 0 == nIdx )
         {
-            return this.pHoldStartPos.position ;
+            let pBox = this.vMingCards[nIdx].getBoundingBox();
+            let preV = cc.v2(this.ptHoldStartPos);
+            if ( this.isLeft() )
+            {
+                preV.y -= pBox.height * 0.5 ;
+            }
+            else if ( this.isRight() )
+            {
+                preV.y += pBox.height * 0.5 ;
+            }
+            else if ( this.isUp() )
+            {
+                preV.x -= pBox.width * 0.5;
+            }
+            else
+            {
+                preV.x -= pBox.width * 0.5 ;
+            }
+            return preV ;
         }
 
         let pPreBox = this.vMingCards[nIdx-1].getBoundingBox();
@@ -244,28 +261,46 @@ export default class PlayerCard extends cc.Component {
             if ( this.vMingCards.length > 0 )
             { 
                 let pPreBox = this.vMingCards[this.vMingCards.length - 1].getBoundingBox();
+                let pBox = this.vHoldCards[nIdx].getBoundingBox();
                 preV = cc.v2(this.vMingCards[this.vMingCards.length - 1].position);
                 if ( this.isLeft() )
                 {
-                    preV.y -= ( pPreBox.height + this.nHoldOffset );
+                    preV.y -= ( pPreBox.height * 0.5 + pBox.height * 0.5 + this.nHoldOffset );
                 } 
                 else if ( this.isRight() )
                 {
-                    preV.y += ( pPreBox.height + this.nHoldOffset );
+                    preV.y += ( pPreBox.height * 0.5 + pBox.height * 0.5 + this.nHoldOffset );
                 }
                 else if ( this.isSelf() )
                 {
-                    preV.x += ( pPreBox.width + this.nHoldOffset );
+                    preV.x += ( pPreBox.width * 0.5 + pBox.width * 0.5 + this.nHoldOffset );
                 }
                 else
                 {
-                    preV.x -= ( pPreBox.width + this.nHoldOffset );
+                    preV.x -= ( pPreBox.width * 0.5 + pBox.width * 0.5 + this.nHoldOffset );
                 }
                 return preV;
             }
             else
             {
-                preV = cc.v2( this.pHoldStartPos.position);
+                let pBox = this.vHoldCards[nIdx].getBoundingBox();
+                let preV = cc.v2(this.ptHoldStartPos);
+                if ( this.isLeft() )
+                {
+                    preV.y -= pBox.height * 0.5 ;
+                }
+                else if ( this.isRight() )
+                {
+                    preV.y += pBox.height * 0.5 ;
+                }
+                else if ( this.isUp() )
+                {
+                    preV.x -= pBox.width * 0.5 ;
+                }
+                else
+                {
+                    preV.x += pBox.width * 0.5 ;
+                }
                 return preV;
             }
         }
@@ -316,11 +351,14 @@ export default class PlayerCard extends cc.Component {
 
     private relayoutHoldCards()
     {
-        this.vHoldCards.sort( ( a : cc.Node , b : cc.Node )=>{
-            let cardA : Card = a.getComponent(Card);
-            let cardB : Card = b.getComponent(Card);
-            return cardA.cardNumber - cardB.cardNumber ;
-        } ) ;
+        if ( this.isSelf() || this.isReplay )
+        {
+            this.vHoldCards.sort( ( a : cc.Node , b : cc.Node )=>{
+                let cardA : Card = a.getComponent(Card);
+                let cardB : Card = b.getComponent(Card);
+                return cardA.cardNumber - cardB.cardNumber ;
+            } ) ;
+        }
 
         let self = this ;
         this.vHoldCards.forEach( ( pnode : cc.Node , nidx : number )=>{ pnode.position = self.getHoldCardPosByIdx(nidx); } );
@@ -342,7 +380,7 @@ export default class PlayerCard extends cc.Component {
             { "mjStateType" : eCardSate.eCard_Peng ,"nCard" : cardWan,"nInvokerClientIdx" : 2}
             //,{ "mjStateType" : eCardSate.eCard_MingGang ,"nCard" : cardTiao,"nInvokerClientIdx" : 2}
             //,{ "mjStateType" : eCardSate.eCard_AnGang ,"nCard" : cardTFeng,"nInvokerClientIdx" : 2}
-            ,{ "mjStateType" : eCardSate.eCard_Eat ,"nCard" : cardTFeng, "vEatWithCards" : [cardTong , cardTong + 1 , cardTong + 2] ,"nInvokerClientIdx" : 2}
+            //,{ "mjStateType" : eCardSate.eCard_Eat ,"nCard" : cardTFeng, "vEatWithCards" : [cardTong , cardTong + 1 , cardTong + 2] ,"nInvokerClientIdx" : 2}
         ] ;
         let vOut : number[] = [ cardWan + 1 , cardWan + 2,cardWan + 3 ,cardTiao , cardTiao + 1 , cardTiao + 3, cardTiao + 4 ] ;
         vOut = vOut.concat(vHold);
@@ -350,7 +388,7 @@ export default class PlayerCard extends cc.Component {
         vHold.length = 0 ;
         vHold.push(cardTFeng);
 
-        this.onRefreshCards(vHold,vHold.length,vMIng,vOut,0) ;
+        this.onRefreshCards(vHold,10,vMIng,vOut,0) ;
     }
 
     // update (dt) {}

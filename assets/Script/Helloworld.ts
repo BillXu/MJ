@@ -14,6 +14,10 @@ export default class Helloworld extends cc.Component {
     text: string = 'hello';
 
  
+    log( strings : string  )
+    {
+        console.log(strings);
+    }
     start () {
 
         let self = this ;
@@ -22,7 +26,8 @@ export default class Helloworld extends cc.Component {
              self.pTestNode.position = cc.v2(408,269);
         }, 3000 );
   
-        
+        let c = false ;
+        c ? this.log("true conditon") : this.log("fase conditon");
         let v : number[] = [] ;
         v[0] = 1 ;
         let v2 : number[] = [2,4,5,1] ;

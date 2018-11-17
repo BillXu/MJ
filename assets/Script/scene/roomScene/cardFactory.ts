@@ -18,68 +18,16 @@ export default class CardFactory extends cc.Component {
     pCurCardAtlas: cc.SpriteAtlas = null;
 
     @property(cc.Prefab)
-    pLeftAnGang : cc.Prefab = null ;
-    pLeftAnGangPool : cc.NodePool = new cc.NodePool();
-
-    // @property(cc.Prefab)
-    // pLeftEat : cc.Prefab = null ;
-    // pLeftEatPool : cc.NodePool = new cc.NodePool();
+    pLeftRightEatPengGang : cc.Prefab = null ;
+    pLeftRightEatPengGangPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
-    pLeftHold : cc.Prefab = null ;
-    pLeftHoldPool : cc.NodePool = new cc.NodePool();
+    pSelfUpEatPengGang : cc.Prefab = null ;
+    pSelfUpEatPengGangPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
-    pLeftMingGang : cc.Prefab = null ;
-    pLeftMingGangPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pLeftOut : cc.Prefab = null ;
-    pLeftOutPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pLeftPengEat : cc.Prefab = null ;
-    pLeftPengEatPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pRightHold : cc.Prefab = null ;
-    pRightHoldPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pSelfAnGang : cc.Prefab = null ;
-    pSelfAnGangPool : cc.NodePool = new cc.NodePool();
-
-    // @property(cc.Prefab)
-    // pSelfEat : cc.Prefab = null ;
-    // pSelfEatPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pSelfHold : cc.Prefab = null ;
-    pSelfHoldPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pSelfMingGang : cc.Prefab = null ;
-    pSelfMingGangPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pSelfOut : cc.Prefab = null ;
-    pSelfOutPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pSelfPengEat : cc.Prefab = null ;
-    pSelfPengEatPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pUpHold : cc.Prefab = null ;
-    pUpHoldPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pUpAnGang : cc.Prefab = null ;
-    pUpAnGangPool : cc.NodePool = new cc.NodePool();
-
-    @property(cc.Prefab)
-    pUpMingGang : cc.Prefab = null ;
-    pUpMingGangPool : cc.NodePool = new cc.NodePool();
+    pSingleCard : cc.Prefab = null ;
+    pSingleCardPool : cc.NodePool = new cc.NodePool();
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -131,105 +79,30 @@ export default class CardFactory extends cc.Component {
         switch( cardType )
         {
             case eCardSate.eCard_AnGang:
-            {
-                if ( isLeft || isRight )  
-                {
-                    pCardNode = this.pLeftAnGangPool.get() || cc.instantiate(this.pLeftAnGang);
-                    pPool = this.pLeftAnGangPool ;
-                    break ;
-                }
-
-                if ( isSelf )
-                {
-                    pCardNode = this.pSelfAnGangPool.get() || cc.instantiate(this.pSelfAnGang);
-                    pPool = this.pSelfAnGangPool ;
-                    break ;
-                }
-
-                // up 
-                pCardNode = this.pUpAnGangPool.get() || cc.instantiate(this.pUpAnGang);
-                pPool = this.pUpAnGangPool ;
-            }
-            break ;
-            case eCardSate.eCard_Hold:
-            {
-                if ( isLeft )
-                {
-                    pCardNode = this.pLeftHoldPool.get() || cc.instantiate(this.pLeftHold);
-                    pPool = this.pLeftHoldPool ;
-                    break ;
-                }
-
-                if ( isRight )
-                {
-                    pCardNode = this.pRightHoldPool.get() || cc.instantiate(this.pRightHold);
-                    pPool = this.pRightHoldPool ;
-                    break ;
-                }
-
-                if ( isSelf )
-                {
-                    pCardNode = this.pSelfHoldPool.get() || cc.instantiate(this.pSelfHold);
-                    pPool = this.pSelfHoldPool ;
-                    break ;
-                }
-
-                if ( isUp )
-                {
-                    pCardNode = this.pUpHoldPool.get() || cc.instantiate(this.pUpHold);
-                    pPool = this.pUpHoldPool ;
-                    break ;
-                }
-            }
-            break;
-            case eCardSate.eCard_Out:
-            case eCardSate.eCard_Hu:
-            {
-                if ( isLeft || isRight )  
-                {
-                    pCardNode = this.pLeftOutPool.get() || cc.instantiate(this.pLeftOut);
-                    pPool = this.pLeftOutPool ;
-                    break ;
-                }
-                pCardNode = this.pSelfOutPool.get() || cc.instantiate(this.pSelfOut);
-                pPool = this.pSelfOutPool ;
-            }
-            break;
-            case eCardSate.eCard_MingGang:
-            {
-                if ( isLeft || isRight )  
-                {
-                    pCardNode = this.pLeftMingGangPool.get() || cc.instantiate(this.pLeftMingGang);
-                    pPool = this.pLeftMingGangPool ;
-                    break ;
-                }
-
-                if ( isSelf )
-                {
-                    pCardNode = this.pSelfMingGangPool.get() || cc.instantiate(this.pSelfMingGang);
-                    pPool = this.pSelfMingGangPool ;
-                    break ;
-                }
-
-                // up 
-                pCardNode = this.pUpMingGangPool.get() || cc.instantiate(this.pUpMingGang);
-                pPool = this.pUpMingGangPool ;
-
-            }
-            break ;
             case eCardSate.eCard_Eat:
+            case eCardSate.eCard_MingGang:
             case eCardSate.eCard_Peng:
             {
                 if ( isLeft || isRight )  
                 {
-                    pCardNode = this.pLeftPengEatPool.get() || cc.instantiate(this.pLeftPengEat);
-                    pPool = this.pLeftPengEatPool ;
+                    pCardNode = this.pLeftRightEatPengGangPool.get() || cc.instantiate(this.pLeftRightEatPengGang);
+                    pPool = this.pLeftRightEatPengGangPool ;
                     break ;
                 }
-                pCardNode = this.pSelfPengEatPool.get() || cc.instantiate(this.pSelfPengEat);
-                pPool = this.pSelfPengEatPool ;
+
+                // up and sel
+                pCardNode = this.pSelfUpEatPengGangPool.get() || cc.instantiate(this.pSelfUpEatPengGang);
+                pPool = this.pSelfUpEatPengGangPool ;
             }
             break ;
+            case eCardSate.eCard_Hold:
+            case eCardSate.eCard_Out:
+            case eCardSate.eCard_Hu:
+            {
+                pCardNode = this.pSingleCardPool.get() || cc.instantiate(this.pSingleCard);
+                pPool = this.pSingleCardPool ;
+            }
+            break;
             default:
             cc.error( "invalid state card type " + cardType );
         }
@@ -258,15 +131,6 @@ export default class CardFactory extends cc.Component {
             pCard.pDirection.node.rotation = nRotation ;
         }
         pCardNode.scale = vScale[posIdx][cardType] ;
-        if ( isSelf || isUp )
-        {
-            pCard.anchorX = (isSelf || isUp ) ? 0 : 0.5 ;
-            pCard.anchorY = (isLeft || isRight ) ? 0 : 0.5 ;
-        }
-        else
-        {
-
-        }
         return pCardNode ;
     }
 
@@ -287,18 +151,9 @@ export default class CardFactory extends cc.Component {
 
     onDestroy()
     {
-        this.pLeftAnGangPool.clear();
-        this.pLeftHoldPool.clear();
-        this.pLeftMingGangPool.clear();
-        this.pLeftOutPool.clear();
-        this.pRightHoldPool.clear();
-
-        this.pSelfAnGangPool.clear();
-        this.pSelfHoldPool.clear();
-        this.pSelfMingGangPool.clear();
-        this.pSelfOutPool.clear();
-        this.pUpHoldPool.clear();
-
+        this.pLeftRightEatPengGangPool.clear();
+        this.pSelfUpEatPengGangPool.clear();
+        this.pSingleCardPool.clear();
     }
 
     loadNewCardAtals( idx : number )

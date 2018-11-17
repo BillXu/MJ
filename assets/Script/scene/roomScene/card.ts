@@ -19,10 +19,12 @@ export default class Card extends cc.Component {
     @property([cc.Sprite])
     vCard: cc.Sprite[] = [];
 
-    @property({tooltip : "hold = 0,out = 1,peng=2 ,mingGang = 3,Angang = 4,eat = 5 , hu = 6"})
-    eState : number = 0 ; // eCardSate ;
-    
-    @property( { tooltip : "self = 0 , right = 1 , up = 2 , left = 3 "})
+    @property(cc.Node)
+    pMingGangCover : cc.Node = null ;
+    @property(cc.Node)
+    pAnGangCover : cc.Node = null ;
+
+    _eState : eCardSate = 0 ; // eCardSate ;
     nPosIdx : number = 0 ;  // self = 0 , right = 1 , up = 2 , left = 3 ;
     
     vCardNumber : number[] = [] ;
@@ -31,6 +33,25 @@ export default class Card extends cc.Component {
     pRecyclePool : cc.NodePool = null ;
     // LIFE-CYCLE CALLBACKS:
     // onLoad () {}
+
+    set eState ( state : eCardSate )
+    {
+        this._eState = state ;
+        if ( this.pMingGangCover )
+        {
+            this.pMingGangCover.active = state == eCardSate.eCard_MingGang ;
+        }
+        
+        if ( this.pAnGangCover )
+        {
+            this.pAnGangCover.active = state == eCardSate.eCard_AnGang ;
+        }
+    }
+
+    get eState()
+    {
+        return this._eState ;
+    }
 
     private _ID : string = "" ;
     get ID () : string 
@@ -106,6 +127,7 @@ export default class Card extends cc.Component {
     refreshCard( cardsAtlas : cc.SpriteAtlas )
     {
         let self = this ;
+        let vSize : cc.Size = cc.size(0,0);
         this.vCard.forEach( ( sp : cc.Sprite, index : number )=>{ 
             
             let strSpriteFrame : string = self.vCardsSpriteName[0] ;
@@ -126,7 +148,17 @@ export default class Card extends cc.Component {
                 return ;
             }
             sp.spriteFrame = cardSprite ;
+            if ( index < 3 )
+            {
+                vSize.width += cardSprite.getOriginalSize().width ;
+                vSize.height += cardSprite.getOriginalSize().height ;
+            }
         } ) ;
+
+        if ( this.vCard.length > 1 )
+        {
+            this.vCard[0].node.getParent().setContentSize(vSize);
+        }
     }
 
     private setEatCards( vCardNums : number[] , cardsAtlas : cc.SpriteAtlas )
