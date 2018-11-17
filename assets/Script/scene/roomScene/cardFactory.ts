@@ -22,8 +22,12 @@ export default class CardFactory extends cc.Component {
     pLeftRightEatPengGangPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
-    pSelfUpEatPengGang : cc.Prefab = null ;
-    pSelfUpEatPengGangPool : cc.NodePool = new cc.NodePool();
+    pSelfEatPengGang : cc.Prefab = null ;
+    pSelfEatPengGangPool : cc.NodePool = new cc.NodePool();
+
+    @property(cc.Prefab)
+    pUpEatPengGang : cc.Prefab = null ;
+    pUpEatPengGangPool : cc.NodePool = new cc.NodePool();
 
     @property(cc.Prefab)
     pSingleCard : cc.Prefab = null ;
@@ -91,8 +95,15 @@ export default class CardFactory extends cc.Component {
                 }
 
                 // up and sel
-                pCardNode = this.pSelfUpEatPengGangPool.get() || cc.instantiate(this.pSelfUpEatPengGang);
-                pPool = this.pSelfUpEatPengGangPool ;
+                if ( isSelf )
+                {
+                    pCardNode = this.pSelfEatPengGangPool.get() || cc.instantiate(this.pSelfEatPengGang);
+                    pPool = this.pSelfEatPengGangPool ;
+                    break ;
+                }
+
+                pCardNode = this.pUpEatPengGangPool.get() || cc.instantiate(this.pUpEatPengGang);
+                pPool = this.pUpEatPengGangPool ;
             }
             break ;
             case eCardSate.eCard_Hold:
@@ -152,7 +163,8 @@ export default class CardFactory extends cc.Component {
     onDestroy()
     {
         this.pLeftRightEatPengGangPool.clear();
-        this.pSelfUpEatPengGangPool.clear();
+        this.pUpEatPengGangPool.clear();
+        this.pSelfEatPengGangPool.clear();
         this.pSingleCardPool.clear();
     }
 

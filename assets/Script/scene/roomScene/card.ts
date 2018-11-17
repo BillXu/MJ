@@ -73,37 +73,37 @@ export default class Card extends cc.Component {
         this._ID = cardID ;
     }
 
-    set anchorX( x : number )
-    {
-        this.setAnchor(this.node,x,true);
-    }
+    // set anchorX( x : number )
+    // {
+    //     this.setAnchor(this.node,x,true);
+    // }
 
-    set anchorY( Y : number )
-    {
-        this.setAnchor(this.node,Y,false);
-    }
+    // set anchorY( Y : number )
+    // {
+    //     this.setAnchor(this.node,Y,false);
+    // }
 
-    setAnchor( pNode : cc.Node, anchor : number , isX : boolean )
-    {
-        if ( isX )
-        {
-            pNode.anchorX = anchor ;
-        }
-        else
-        {
-            pNode.anchorY = anchor ;
-        }
+    // setAnchor( pNode : cc.Node, anchor : number , isX : boolean )
+    // {
+    //     if ( isX )
+    //     {
+    //         pNode.anchorX = anchor ;
+    //     }
+    //     else
+    //     {
+    //         pNode.anchorY = anchor ;
+    //     }
 
-        if ( pNode.childrenCount == 0 )
-        {
-            return ;
-        }
+    //     if ( pNode.childrenCount == 0 )
+    //     {
+    //         return ;
+    //     }
 
-        for ( let nIdx = 0 ; nIdx < pNode.childrenCount ; ++nIdx )
-        {
-            this.setAnchor(pNode.children[nIdx],anchor,isX);
-        }
-    }
+    //     for ( let nIdx = 0 ; nIdx < pNode.childrenCount ; ++nIdx )
+    //     {
+    //         this.setAnchor(pNode.children[nIdx],anchor,isX);
+    //     }
+    // }
 
     get cardNumber() : number
     {
@@ -127,7 +127,6 @@ export default class Card extends cc.Component {
     refreshCard( cardsAtlas : cc.SpriteAtlas )
     {
         let self = this ;
-        let vSize : cc.Size = cc.size(0,0);
         this.vCard.forEach( ( sp : cc.Sprite, index : number )=>{ 
             
             let strSpriteFrame : string = self.vCardsSpriteName[0] ;
@@ -148,19 +147,7 @@ export default class Card extends cc.Component {
                 return ;
             }
             sp.spriteFrame = cardSprite ;
-            if ( index < 3 )
-            {
-                vSize.width += cardSprite.getOriginalSize().width ;
-                vSize.height += cardSprite.getOriginalSize().height ;
-            }
         } ) ;
-
-        if ( this.vCard.length > 1 && 2 == this.nPosIdx )
-        {
-            //console.log( "----this.vCard[0] = " + this.vCard[0].node.getParent().getContentSize().height );
-            this.vCard[0].node.getParent().setContentSize(vSize);
-            //console.log( "this.vCard[0] = " + this.vCard[0].node.getParent().getContentSize().height );
-        }
     }
 
     private setEatCards( vCardNums : number[] , cardsAtlas : cc.SpriteAtlas )
