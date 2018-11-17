@@ -155,9 +155,11 @@ export default class Card extends cc.Component {
             }
         } ) ;
 
-        if ( this.vCard.length > 1 )
+        if ( this.vCard.length > 1 && 2 == this.nPosIdx )
         {
+            //console.log( "----this.vCard[0] = " + this.vCard[0].node.getParent().getContentSize().height );
             this.vCard[0].node.getParent().setContentSize(vSize);
+            //console.log( "this.vCard[0] = " + this.vCard[0].node.getParent().getContentSize().height );
         }
     }
 

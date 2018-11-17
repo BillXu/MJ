@@ -227,7 +227,7 @@ export default class PlayerCard extends cc.Component {
             }
             else
             {
-                preV.x -= pBox.width * 0.5 ;
+                preV.x += pBox.width * 0.5 ;
             }
             return preV ;
         }
@@ -371,24 +371,22 @@ export default class PlayerCard extends cc.Component {
         let cardTiao = Card.makeCardNum(3,1);
         let cardTFeng = Card.makeCardNum(4,1);
 
-        let vHold : number[] = [ cardWan + 1 , cardWan + 2,cardWan + 3 ,cardTiao , cardTiao + 1 , cardTiao + 3 , cardTFeng + 1 ,cardTFeng ] ;
-        vHold.push(cardTong + 7);
-        vHold.push(cardTong + 2 );
-        vHold.push(cardTong + 5 );
+        let vHold : number[] = [  cardTiao , cardTiao + 1 , cardTiao + 3 , cardTFeng + 1 ,cardTFeng ] ;
     
         let vMIng : IHoldMingPai[]= [ 
             { "mjStateType" : eCardSate.eCard_Peng ,"nCard" : cardWan,"nInvokerClientIdx" : 2}
-            //,{ "mjStateType" : eCardSate.eCard_MingGang ,"nCard" : cardTiao,"nInvokerClientIdx" : 2}
+            ,{ "mjStateType" : eCardSate.eCard_MingGang ,"nCard" : cardTiao,"nInvokerClientIdx" : 2}
             //,{ "mjStateType" : eCardSate.eCard_AnGang ,"nCard" : cardTFeng,"nInvokerClientIdx" : 2}
             //,{ "mjStateType" : eCardSate.eCard_Eat ,"nCard" : cardTFeng, "vEatWithCards" : [cardTong , cardTong + 1 , cardTong + 2] ,"nInvokerClientIdx" : 2}
         ] ;
         let vOut : number[] = [ cardWan + 1 , cardWan + 2,cardWan + 3 ,cardTiao , cardTiao + 1 , cardTiao + 3, cardTiao + 4 ] ;
         vOut = vOut.concat(vHold);
         vOut = vOut.concat(vHold);
-        vHold.length = 0 ;
+        //vHold.length = 0 ;
+        vHold.push(cardTFeng);
         vHold.push(cardTFeng);
 
-        this.onRefreshCards(vHold,10,vMIng,vOut,0) ;
+        this.onRefreshCards(vHold,vHold.length,vMIng,vOut,0) ;
     }
 
     // update (dt) {}
