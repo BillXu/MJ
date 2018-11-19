@@ -63,6 +63,13 @@ export enum eMJActType
 	eMJAct_Max,
 };
 
+export enum eEatType
+{
+	eEat_Left , // xAB
+	eEat_Middle,// AxB
+	eEat_Righ, // ABX,
+}
+
 let RoomEvent = 
 {
     Event_changeMJ : "event_changeMJ" ,
