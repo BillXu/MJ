@@ -59,6 +59,8 @@ export default class PlayerCard extends cc.Component {
     @property
     isReplay : boolean = false ;
 
+    private isWaitChu : boolean = false ;
+
     //------inter property ;
     private vOutCards : cc.Node[] = [] ;
     private vMingCards : cc.Node[] = [] ;
@@ -72,11 +74,22 @@ export default class PlayerCard extends cc.Component {
     @property
     nMaxChuCardMoveTime : number = 0.3;
 
+    @property
+    nCardOutstandOffset : number = 30 ;
+    pOutstandNode : cc.Node = null ;
+
+    @property([cc.Component.EventHandler])
+    vDoChuPaiHandle : cc.Component.EventHandler[] = [] ;
+
     isLeft() : boolean { return 3 == this.nPosIdx } 
     isRight() : boolean { return 1 == this.nPosIdx } 
     isUp() : boolean { return 2 == this.nPosIdx ; }
     isSelf() : boolean { return 0 == this.nPosIdx ; }
 
+    onWaitChu()
+    {
+        this.isWaitChu = true ;
+    }
     // LIFE-CYCLE CALLBACKS:
     onLoad ()
     {
@@ -90,6 +103,7 @@ export default class PlayerCard extends cc.Component {
             this.pRootNode.on(cc.Node.EventType.TOUCH_START,this.onTouchStart,this) ;
             this.pRootNode.on(cc.Node.EventType.TOUCH_MOVE,this.onTouchMoved,this) ;
             this.pRootNode.on(cc.Node.EventType.TOUCH_END,this.onTouchEnd,this) ;
+            this.pRootNode.on(cc.Node.EventType.TOUCH_CANCEL,this.onTouchEnd,this) ;
         }
     }
 
@@ -131,7 +145,7 @@ export default class PlayerCard extends cc.Component {
 
     onTouchMoved( touchEvent : cc.Event.EventTouch )
     {
-        console.log( "onTouchMoved + " + touchEvent.getDeltaY() );
+        console.log( "onTouchMoved + " + touchEvent.getDeltaY() + "  x " + touchEvent.getDeltaX() );
 
         let pSelNode : cc.Node = this.optNodeProperty["node"] ;
         let localPos = this.pRootNode.convertToNodeSpaceAR(touchEvent.getLocation());
@@ -141,15 +155,22 @@ export default class PlayerCard extends cc.Component {
         }
         else
         {
-            
-            let ptOrigPos : cc.Vec2 = this.optNodeProperty["orgPos"] ;
-            let v = localPos.sub(ptOrigPos);
+            if ( this.optNodeProperty["moveOrg"] == null )
+            {
+                this.optNodeProperty["moveOrg"] = touchEvent.getLocation();
+                return ;
+            }
+
+            let ptOrigPos : cc.Vec2 = this.optNodeProperty["moveOrg"] ;
+            let v = ptOrigPos.sub(touchEvent.getLocation());
             if ( Math.abs(v.x) > 8 || Math.abs(v.y) > 8 )
             {
                 // treat it as moveing drag ;
                 //pSelNode.position = localPos ;
                 this.optNodeProperty["state"] = eOptNodeState.eDrag_Sel ;
                 pSelNode.zIndex = 10 ; // darging node should cover others ;
+                this.optNodeProperty["moveOrg"] = null ;
+                console.log( "as draging state" );
             }
         }
     }
@@ -164,7 +185,7 @@ export default class PlayerCard extends cc.Component {
             this.optNodeProperty["waitClickTimer"] = setTimeout(() => {
                 self.onClickCardNode(this.optNodeProperty["node"] );
                 self.optNodeProperty = {} ;
-            }, 200);
+            }, 150);
             return ;
         }
         
@@ -183,26 +204,77 @@ export default class PlayerCard extends cc.Component {
             this.optNodeProperty = {} ;
             return ;
         }
-
         console.error( "unknown state touch end = " + state );
     }
 
+    onTouchCancel( touchEvent : cc.Event.EventTouch )
+    {
+        let state : eOptNodeState = this.optNodeProperty["state"] ;
+        if ( state == eOptNodeState.eDrag_Sel )
+        {
+            let node : cc.Node = this.optNodeProperty["node"] ;
+            node.position = this.optNodeProperty["orgPos"] ;
+            console.log("touch event cannel");
+        }
+    }
 
     onClickCardNode( pNode : cc.Node )
     {
         console.log( "click card node" );
+        if ( pNode == this.pOutstandNode )
+        {
+            if ( this.isWaitChu )
+            {
+                this.doSelfUserClickOrDragChu(pNode) ;
+            }
+            else
+            {
+                this.pOutstandNode.position = cc.v2( this.pOutstandNode.position.x,this.pOutstandNode.position.y - this.nCardOutstandOffset );
+                this.pOutstandNode = null ;
+            }
+            return ;
+        }
+
+        if ( this.pOutstandNode )
+        {
+            this.pOutstandNode.position = cc.v2( this.pOutstandNode.position.x,this.pOutstandNode.position.y - this.nCardOutstandOffset );
+            this.pOutstandNode = null ;
+        }
+       
+        this.pOutstandNode = pNode ;
+        this.pOutstandNode.position = cc.v2( this.pOutstandNode.position.x,this.pOutstandNode.position.y + this.nCardOutstandOffset );
     }
 
     onDoubleClickCardNode( pNode : cc.Node )
     {
         console.log( "double click card node" );
+        if ( this.isWaitChu )
+        {
+            this.doSelfUserClickOrDragChu(pNode) ;
+        }
     }
 
     onDragEndCardNode( pNode : cc.Node , nodeOrgPos : cc.Vec2 )
     {
         console.log( "drag card node" );
+        if ( this.isWaitChu == false )
+        {
+            pNode.position = nodeOrgPos ;
+            return ;
+        } 
+
+        let obx = pNode.getBoundingBox();
+        if ( pNode.position.y - nodeOrgPos.y > obx.height )
+        {
+            this.doSelfUserClickOrDragChu(pNode) ;
+        }
+        else
+        {
+            pNode.position = nodeOrgPos ;
+            return ;
+        }
         //pNode.position = nodeOrgPos ;
-        this.doSelfUserClickOrDragChu(pNode) ;
+        
     }
 
     onRefreshCards( vHoldCards : number[] , holdCnt : number , vMingCards : IHoldMingPai[] , vOutCards : number[] , nFetchedCard: number )
@@ -602,9 +674,10 @@ export default class PlayerCard extends cc.Component {
         this.vMingCards.push(pPengNode);
          // layout holdCards ;
          this.relayoutHoldCards();
+         this.onWaitChu();
     }
 
-    onZhiMingGang( cardNum : number , invokerClientIdx : number )
+    onZhiMingGang( cardNum : number , invokerClientIdx : number , gangNewCard : number )
     {
         this.doRemoveCardFromHold(cardNum,3);
         let pMingGangNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_MingGang,this.getDirectByInvokerClientIdx(invokerClientIdx)) ;
@@ -613,10 +686,11 @@ export default class PlayerCard extends cc.Component {
         this.vMingCards.push(pMingGangNode);
 
         // layout holdCards ;
+        this.onMo(gangNewCard) ;
         this.relayoutHoldCards();
     }
 
-    onBuMingGang( cardNum : number , invokerClientIdx : number )
+    onBuMingGang( cardNum : number , invokerClientIdx : number , gangNewCard : number )
     {
         // find peng node and then recyle ; but keep idx ;
         let idx = _.findIndex(this.vMingCards,( pnode : cc.Node)=>{
@@ -637,9 +711,10 @@ export default class PlayerCard extends cc.Component {
         pMingGangNode.position = this.getMingCardPosByIdx(idx);
         this.vMingCards[idx] = pMingGangNode ;
         this.relayoutHoldCards();
+        this.onMo(gangNewCard) ;
     }
 
-    onAngGang( cardNum : number , invokerClientIdx : number )
+    onAngGang( cardNum : number , invokerClientIdx : number, gangNewCard : number )
     {
         this.doRemoveCardFromHold(cardNum,4);
         let pGangNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_AnGang) ;
@@ -648,6 +723,7 @@ export default class PlayerCard extends cc.Component {
         this.vMingCards.push(pGangNode);
         // layout holdCards ;
         this.relayoutHoldCards();
+        this.onMo(gangNewCard) ;
     }
 
     onEat( targetCardNum : number , selfCardA : number , selfCardB : number )
@@ -660,6 +736,7 @@ export default class PlayerCard extends cc.Component {
         pNode.position = this.getMingCardPosByIdx(this.vMingCards.length);
         this.vMingCards.push(pNode);
         this.relayoutHoldCards();
+        this.onWaitChu();
     }
 
     onMo( cardNum? : number )
@@ -682,6 +759,7 @@ export default class PlayerCard extends cc.Component {
         {
             this.pFetchedCard.zIndex = this.vHoldCards.length ;
         }
+        this.onWaitChu();
     }
 
     onChu( cardNum : number )
@@ -787,6 +865,9 @@ export default class PlayerCard extends cc.Component {
         this.pCardFactory.recycleNode(pnode);
 
         let pos = pnode.position;
+
+        this.isWaitChu = false ;
         this.doChuAnimation(cardNum,pos,this.onChuPaiAniFinish.bind(this));
+        cc.Component.EventHandler.emitEvents(this.vDoChuPaiHandle,cardNum) ;
     }
 }

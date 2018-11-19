@@ -654,6 +654,8 @@
     "isReplay": false,
     "nChuCardMoveSpeed": 300,
     "nMaxChuCardMoveTime": 0.3,
+    "nCardOutstandOffset": 30,
+    "pDoChuPaiHandle": [],
     "_id": "0a6fsy5EdMbZB+9Pnp/vhw"
   },
   {
@@ -782,6 +784,8 @@
     "isReplay": false,
     "nChuCardMoveSpeed": 300,
     "nMaxChuCardMoveTime": 0.3,
+    "nCardOutstandOffset": 30,
+    "pDoChuPaiHandle": [],
     "_id": "13OmDEWG9EMIzdVhiJ5pfV"
   },
   {
@@ -910,6 +914,8 @@
     "isReplay": false,
     "nChuCardMoveSpeed": 300,
     "nMaxChuCardMoveTime": 0.3,
+    "nCardOutstandOffset": 30,
+    "pDoChuPaiHandle": [],
     "_id": "edAyQURW1OFaX82ISoJccz"
   },
   {
@@ -1065,6 +1071,8 @@
     "isReplay": false,
     "nChuCardMoveSpeed": 1300,
     "nMaxChuCardMoveTime": 0.3,
+    "nCardOutstandOffset": 24,
+    "pDoChuPaiHandle": [],
     "_id": "14XTObmxJFmqYXBdgsH+0A"
   },
   {
