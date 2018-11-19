@@ -14,6 +14,15 @@ import {eCardSate, eArrowDirect, RoomEvent } from "./roomDefine"
 import { IHoldMingPai } from "./roomInterface"
 import Card from "./card";
 import * as _ from "lodash"
+
+enum eOptNodeState 
+{
+    eClick_Sel ,
+    eWaitClick_Event,
+    eDoubleClick_Sel,
+    eDrag_Sel,
+} ;
+
 @ccclass
 export default class PlayerCard extends cc.Component {
 
@@ -56,9 +65,12 @@ export default class PlayerCard extends cc.Component {
     private vHoldCards : cc.Node[] = [] ;
     private pFetchedCard : cc.Node = null ;
 
+    private optNodeProperty : Object = { } ; // { node : cc.Node , state : eOptNodeState , orgPos : cc.Vec2 , waitClickTimer : -1  } 
     // 
     @property
-    nChuCardMoveSpeed : number = 300 ;
+    nChuCardMoveSpeed : number = 5700 ;
+    @property
+    nMaxChuCardMoveTime : number = 0.3;
 
     isLeft() : boolean { return 3 == this.nPosIdx } 
     isRight() : boolean { return 1 == this.nPosIdx } 
@@ -72,6 +84,125 @@ export default class PlayerCard extends cc.Component {
         {
             this.pRootNode = this.node ;
         }
+
+        if ( this.isSelf() && !this.isReplay )
+        {
+            this.pRootNode.on(cc.Node.EventType.TOUCH_START,this.onTouchStart,this) ;
+            this.pRootNode.on(cc.Node.EventType.TOUCH_MOVE,this.onTouchMoved,this) ;
+            this.pRootNode.on(cc.Node.EventType.TOUCH_END,this.onTouchEnd,this) ;
+        }
+    }
+
+    onTouchStart( touchEvent : cc.Event.EventTouch )
+    {
+        console.log( "onTouchStart" );
+        let localPos = this.pRootNode.convertToNodeSpaceAR(touchEvent.getLocation());
+        let node = _.find( this.vHoldCards,( node : cc.Node)=>{
+            let pBox = node.getBoundingBox();
+            return pBox.contains(localPos);
+        } ) ;
+        
+        if ( node == undefined )
+        {
+            return ;
+        }
+
+        let preSelNode = this.optNodeProperty["node"] ;
+        if ( preSelNode && preSelNode == node )
+        {
+            this.optNodeProperty["state"] = eOptNodeState.eDoubleClick_Sel ;
+            // canncel click ;
+            if ( this.optNodeProperty["waitClickTimer"] != undefined && this.optNodeProperty["waitClickTimer"] != -1 )
+            {
+                clearTimeout(this.optNodeProperty["waitClickTimer"]);
+            }
+        }
+        else
+        {
+            this.optNodeProperty["node"] = node ;
+            this.optNodeProperty["state"] = eOptNodeState.eClick_Sel ;
+            this.optNodeProperty["orgPos"] = node.position ;
+            if ( this.optNodeProperty["waitClickTimer"] != undefined && this.optNodeProperty["waitClickTimer"] != -1 )
+            {
+                clearTimeout(this.optNodeProperty["waitClickTimer"]);
+            }
+        }
+    }
+
+    onTouchMoved( touchEvent : cc.Event.EventTouch )
+    {
+        console.log( "onTouchMoved + " + touchEvent.getDeltaY() );
+
+        let pSelNode : cc.Node = this.optNodeProperty["node"] ;
+        let localPos = this.pRootNode.convertToNodeSpaceAR(touchEvent.getLocation());
+        if ( this.optNodeProperty["state"] == eOptNodeState.eDrag_Sel )
+        {
+            pSelNode.position = cc.v2(pSelNode.position.x + touchEvent.getDeltaX() , pSelNode.position.y + touchEvent.getDeltaY() );
+        }
+        else
+        {
+            
+            let ptOrigPos : cc.Vec2 = this.optNodeProperty["orgPos"] ;
+            let v = localPos.sub(ptOrigPos);
+            if ( Math.abs(v.x) > 8 || Math.abs(v.y) > 8 )
+            {
+                // treat it as moveing drag ;
+                //pSelNode.position = localPos ;
+                this.optNodeProperty["state"] = eOptNodeState.eDrag_Sel ;
+                pSelNode.zIndex = 10 ; // darging node should cover others ;
+            }
+        }
+    }
+
+    onTouchEnd( touchEvent : cc.Event.EventTouch )
+    {
+        console.log( "onTouchEnd" );
+        let state : eOptNodeState = this.optNodeProperty["state"] ;
+        if ( eOptNodeState.eClick_Sel == state )
+        {
+            let self = this ;
+            this.optNodeProperty["waitClickTimer"] = setTimeout(() => {
+                self.onClickCardNode(this.optNodeProperty["node"] );
+                self.optNodeProperty = {} ;
+            }, 200);
+            return ;
+        }
+        
+        if ( eOptNodeState.eDoubleClick_Sel == state )
+        {
+            this.onDoubleClickCardNode(this.optNodeProperty["node"]);
+            this.optNodeProperty = {} ;
+            return ;
+        }
+
+        if ( eOptNodeState.eDrag_Sel == state )
+        {
+            let node : cc.Node = this.optNodeProperty["node"] ;
+            node.zIndex = 0 ; // reset draging z order ;
+            this.onDragEndCardNode(this.optNodeProperty["node"],this.optNodeProperty["orgPos"]);
+            this.optNodeProperty = {} ;
+            return ;
+        }
+
+        console.error( "unknown state touch end = " + state );
+    }
+
+
+    onClickCardNode( pNode : cc.Node )
+    {
+        console.log( "click card node" );
+    }
+
+    onDoubleClickCardNode( pNode : cc.Node )
+    {
+        console.log( "double click card node" );
+    }
+
+    onDragEndCardNode( pNode : cc.Node , nodeOrgPos : cc.Vec2 )
+    {
+        console.log( "drag card node" );
+        //pNode.position = nodeOrgPos ;
+        this.doSelfUserClickOrDragChu(pNode) ;
     }
 
     onRefreshCards( vHoldCards : number[] , holdCnt : number , vMingCards : IHoldMingPai[] , vOutCards : number[] , nFetchedCard: number )
@@ -90,20 +221,6 @@ export default class PlayerCard extends cc.Component {
         }
 
         // create cards ;
-        for ( let nIdx = 0 ; nIdx < holdCnt ; ++nIdx )
-        {
-            let nNum : number = nIdx < vHoldCards.length ? vHoldCards[nIdx] : 0 ;
-            let pNode = this.pCardFactory.createCard(nNum,this.nPosIdx,eCardSate.eCard_Hold) ;
-            if ( pNode == null )
-            {
-                cc.error( "create hold card failed num = " + nNum + " client Pos idx = " + this.nPosIdx  );
-                continue ;
-            }
-
-            this.isRight() ? this.pRootNode.addChild(pNode,-1*nIdx) : this.pRootNode.addChild(pNode) ;
-            this.vHoldCards.push(pNode);
-        }
-
         vMingCards = vMingCards || [] ;
         vOutCards = vOutCards || [] ;
 
@@ -136,6 +253,20 @@ export default class PlayerCard extends cc.Component {
             (this.isRight() || this.isUp())  ? this.pRootNode.addChild(pNode,-1*nIdx) : this.pRootNode.addChild(pNode) ;
             self.vOutCards.push(pNode);
         } ) ;
+
+        for ( let nIdx = 0 ; nIdx < holdCnt ; ++nIdx )
+        {
+            let nNum : number = nIdx < vHoldCards.length ? vHoldCards[nIdx] : 0 ;
+            let pNode = this.pCardFactory.createCard(nNum,this.nPosIdx,eCardSate.eCard_Hold) ;
+            if ( pNode == null )
+            {
+                cc.error( "create hold card failed num = " + nNum + " client Pos idx = " + this.nPosIdx  );
+                continue ;
+            }
+
+            this.isRight() ? this.pRootNode.addChild(pNode,-1*nIdx) : this.pRootNode.addChild(pNode) ;
+            this.vHoldCards.push(pNode);
+        }
 
         if ( nFetchedCard != 0 )
         {
@@ -547,7 +678,7 @@ export default class PlayerCard extends cc.Component {
         this.pFetchedCard = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_Hold);
         this.pRootNode.addChild(this.pFetchedCard);
         this.pFetchedCard.position = this.getFetchedCardPos();
-        if ( this.isRight() || this.isUp() )
+        if ( this.isRight() )
         {
             this.pFetchedCard.zIndex = this.vHoldCards.length ;
         }
@@ -597,13 +728,27 @@ export default class PlayerCard extends cc.Component {
         holdCardPos.subSelf(chuPos);
         let dis = holdCardPos.mag();
         let moveTime = dis / Math.max(this.nChuCardMoveSpeed,10) ; 
+        moveTime = Math.min(moveTime,this.nMaxChuCardMoveTime);
+        let actMove : cc.ActionInterval = cc.moveTo(moveTime,chuPos);
+        let oriScale = pNode.scale ;
+        if ( this.isSelf() || this.isReplay )
+        {
+            pNode.scale = this.vHoldCards.length > 0 ? this.vHoldCards[0].getContentSize().width / pNode.getContentSize().width : 1.2 ;
+        }
+        else
+        {
+            pNode.scale = 1.2;
+        }
+
+        let actScale : cc.ActionInterval = cc.scaleTo(moveTime,oriScale) ;
+        let spawn = cc.spawn(actMove,actScale) ;
         if ( callBackFinishAni )
         {
-            pNode.runAction(cc.sequence(cc.moveTo(moveTime,chuPos),cc.callFunc(callBackFinishAni)));
+            pNode.runAction(cc.sequence(spawn,cc.callFunc(callBackFinishAni)));
         }  
         else
         {
-            pNode.runAction(cc.moveTo(moveTime,chuPos));
+            pNode.runAction(spawn);
         }
     }
 
