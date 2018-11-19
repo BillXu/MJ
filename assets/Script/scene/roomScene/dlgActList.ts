@@ -43,16 +43,11 @@ export default class DlgActList extends cc.Component {
             this.pRootNode = this.node ;
         }
         this.ptDisplayPos = cc.v2(this.pRootNode.position);
-        //this.closeDlg();
-        this.showDlg([eMJActType.eMJAct_Chi,eMJActType.eMJAct_Peng,8]);
+        this.pRootNode.active = false ;
     }
 
     start () {
-        let self = this ;
-        setTimeout(() => {
-            console.log("do show dlg");
-            self.showDlg([eMJActType.eMJAct_Chi,eMJActType.eMJAct_Peng,8]);
-        }, 5000);
+
     }
 
     onClickBtn( btn : cc.Button )

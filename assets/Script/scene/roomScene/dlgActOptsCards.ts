@@ -54,6 +54,7 @@ export default class DlgActOptsCards extends cc.Component {
         }
 
         this.vMask.forEach( (node : cc.Node )=>{ node.active = false ; node.zIndex = 1 ;}  ) ;
+        this.pRootNode.active = false ;
     }
 
     start () {
