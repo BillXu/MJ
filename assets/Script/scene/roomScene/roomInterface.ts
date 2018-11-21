@@ -16,3 +16,24 @@ export interface IHoldMingPai
     vEatWithCards? : number[] ; // must contain 3 cards ;
 }
 
+export interface IPlayerCards
+{
+    vHoldCard : number[] ;
+    nHoldCardCnt : number ; 
+    
+    vMingCards : IHoldMingPai[] ;
+    vChuCards : number[] ;
+}
+
+export interface playerBaseData
+{
+    uid : number ;
+    svrIdx : number ;
+    clientIdx : number ;
+    headIconUrl : string ;
+    name : string ;
+    chip : number ;
+    isOnline : boolean ; 
+    cards : IPlayerCards ;
+    isReady : boolean ;
+}

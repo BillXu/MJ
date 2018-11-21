@@ -70,6 +70,13 @@ export enum eEatType
 	eEat_Righ, // ABX,
 }
 
+export enum eClientRoomState
+{
+	State_WaitReady,
+	State_StartGame,
+	State_GameOver,
+};
+
 let RoomEvent = 
 {
     Event_changeMJ : "event_changeMJ" ,

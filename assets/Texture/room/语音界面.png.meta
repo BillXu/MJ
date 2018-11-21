@@ -1,15 +1,15 @@
 {
   "ver": "2.2.0",
-  "uuid": "639405ac-1cde-4e12-9b26-5a925c63d09c",
+  "uuid": "cc21a0ac-4e51-4ced-9f74-85c29877bf26",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
   "subMetas": {
-    "waitplayer_bg_tiao": {
+    "语音界面": {
       "ver": "1.0.3",
-      "uuid": "80e57747-f2ba-4c97-aa6a-6eb3b4d76d4a",
-      "rawTextureUuid": "639405ac-1cde-4e12-9b26-5a925c63d09c",
+      "uuid": "2e13914a-4d1d-4164-b0b9-1efc3d3cdade",
+      "rawTextureUuid": "cc21a0ac-4e51-4ced-9f74-85c29877bf26",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -17,14 +17,14 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 98,
-      "height": 30,
-      "rawWidth": 98,
-      "rawHeight": 30,
+      "width": 1280,
+      "height": 720,
+      "rawWidth": 1280,
+      "rawHeight": 720,
       "borderTop": 0,
       "borderBottom": 0,
-      "borderLeft": 40,
-      "borderRight": 41,
+      "borderLeft": 0,
+      "borderRight": 0,
       "subMetas": {}
     }
   }

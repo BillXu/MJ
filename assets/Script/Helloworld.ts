@@ -13,28 +13,29 @@ export default class Helloworld extends cc.Component {
     @property
     text: string = 'hello';
 
+    vec : cc.Vec2 = cc.v2(0,0);
  
     log( strings : string  )
     {
         console.log(strings);
     }
-    start () {
 
-        let self = this ;
-        setTimeout(() => {
-             self.pTestNode.anchorX = 0 ;
-             self.pTestNode.position = cc.v2(408,269);
-        }, 3000 );
+    getVec() : cc.Vec2
+    {
+        return cc.v2(this.vec );
+    }
+    
+    start () {
+        let v = this.getVec();
+        v.x = 100 ;
+        console.log( "this is " + this.vec.x );
+
+        let vt = this.vec ;
+        vt.x = 200 ;
+        console.log( "after " + this.vec.x );
+        
   
-        let c = false ;
-        c ? this.log("true conditon") : this.log("fase conditon");
-        let v : number[] = [] ;
-        v[0] = 1 ;
-        let v2 : number[] = [2,4,5,1] ;
-        v.concat(v2);
-        console.log( "not asign" + v);
-        v = v.concat(v2);
-        console.log("asign" + v);
+ 
         // let testString : string = "https://......" ;
         // let nPos : number = testString.indexOf("http");
         // console.log( "pos number = " + nPos );

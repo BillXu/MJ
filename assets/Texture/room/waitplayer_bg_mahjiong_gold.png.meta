@@ -1,15 +1,15 @@
 {
   "ver": "2.2.0",
-  "uuid": "639405ac-1cde-4e12-9b26-5a925c63d09c",
+  "uuid": "e6cf1ca2-64c5-49e7-a64f-06a63c20feeb",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
   "subMetas": {
-    "waitplayer_bg_tiao": {
+    "waitplayer_bg_mahjiong_gold": {
       "ver": "1.0.3",
-      "uuid": "80e57747-f2ba-4c97-aa6a-6eb3b4d76d4a",
-      "rawTextureUuid": "639405ac-1cde-4e12-9b26-5a925c63d09c",
+      "uuid": "ad2f624b-c72f-4a3f-9d98-55de4c8221f6",
+      "rawTextureUuid": "e6cf1ca2-64c5-49e7-a64f-06a63c20feeb",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -17,14 +17,14 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 98,
-      "height": 30,
-      "rawWidth": 98,
-      "rawHeight": 30,
+      "width": 375,
+      "height": 304,
+      "rawWidth": 375,
+      "rawHeight": 304,
       "borderTop": 0,
       "borderBottom": 0,
-      "borderLeft": 40,
-      "borderRight": 41,
+      "borderLeft": 0,
+      "borderRight": 0,
       "subMetas": {}
     }
   }

@@ -23,8 +23,8 @@
       "rawHeight": 30,
       "borderTop": 0,
       "borderBottom": 0,
-      "borderLeft": 0,
-      "borderRight": 0,
+      "borderLeft": 42,
+      "borderRight": 39,
       "subMetas": {}
     }
   }
