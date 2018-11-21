@@ -12,6 +12,11 @@ const {ccclass, property} = cc._decorator;
 import DlgCreateRoom from "./dlgCreateRoom"
 import DlgJoinRoomOrClub from "./dlgJoinRoomOrClub"
 import Bacground from "./background"
+import ClientData from "../../globalModule/ClientData";
+import Network from "../../common/Network";
+import { eMsgType } from "../../common/MessageIdentifer";
+import Utility from "../../globalModule/Utility";
+import { SceneName } from "../../common/clientDefine"
 @ccclass
 export default class MiddleLayer extends cc.Component {
 
@@ -24,8 +29,6 @@ export default class MiddleLayer extends cc.Component {
     @property(Bacground)
     pBackground : Bacground = null ;
     // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
 
     start () {
 
@@ -45,7 +48,22 @@ export default class MiddleLayer extends cc.Component {
 
     protected onCreateRoomDlgResult( msgCreateRoom : Object )
     {
+        msgCreateRoom["uid"] = ClientData.getInstance().selfUID;
         console.log( "onCreateRoomDlgResult" );
+        let port = ClientData.getInstance().getMsgPortByGameType(msgCreateRoom["gameType"]);
+        let self = this ;
+        Network.getInstance().sendMsg(msgCreateRoom,eMsgType.MSG_CREATE_ROOM,port,msgCreateRoom["uid"],( msg : Object)=>{
+            let ret = msg["ret"] ;
+            let roomID = msg["roomID"] ;
+            if ( ret )
+            {
+                Utility.showTip("error code " + ret ) ;
+                return true;
+            }
+            self.onJoinRoomDlgResult(roomID) ;
+            return true ;
+        });
+
     }
 
     onClickJoinRoom( btn : cc.Button )
@@ -57,6 +75,22 @@ export default class MiddleLayer extends cc.Component {
     protected onJoinRoomDlgResult( nJoinRoomID : string )
     {
         console.log( "onJoinRoomDlgResult " + nJoinRoomID );
+        let msg = { } ;
+        msg["roomID"] = parseInt(nJoinRoomID);
+        msg["uid"] = ClientData.getInstance().selfUID;
+        let port = ClientData.getInstance().getMsgPortByRoomID(parseInt(nJoinRoomID));
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_ENTER_ROOM,port,parseInt(nJoinRoomID),( msg : Object)=>
+        {
+            let ret = msg["ret"] ;
+            if ( ret )
+            {
+                Utility.showTip( "error code " + ret );
+                return ;
+            }
+            ClientData.getInstance().stayInRoomID = msg["roomID"] ;
+            cc.director.loadScene(SceneName.Scene_Room ) ;
+            return true ;
+        } );
     }
 
     onClickCompetition( btn : cc.Button )

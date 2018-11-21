@@ -9,8 +9,8 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import {clientDefine,SceneName} from "../common/clientDefine"
-import { eMsgType } from "../common/MessageIdentifer"
+import {clientDefine,eGameType} from "../common/clientDefine"
+import { eMsgType, eMsgPort } from "../common/MessageIdentifer"
 import Network from "../common/Network"
 import * as _ from "lodash"
 @ccclass
@@ -23,6 +23,8 @@ export default class ClientData
     private strCurPassword : string = "";
     private nSelfUID : number = 0 ;
     public jsSelfBaseDataMsg : Object = {} ;
+    public stayInRoomID : number = 0 ;
+    public stayInRoomType : eGameType = 0 ;
     
     private _effectVolume : number = 0.5 ;
     private _musicVolume : number = 0.5 ;
@@ -160,28 +162,28 @@ export default class ClientData
         cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this);
 
         // load settings
-        this._deskBgIdx = cc.sys.localStorage("_deskBgIdx");
+        this._deskBgIdx = cc.sys.localStorage.getItem("_deskBgIdx");
         if ( null == this._deskBgIdx )
         {
             this._deskBgIdx = 0 ;
         }
 
-        this._effectVolume = cc.sys.localStorage("_effectVolume");
+        this._effectVolume = cc.sys.localStorage.getItem("_effectVolume");
         if ( this._effectVolume == null )
         {
             this._effectVolume = 0.5 ;
         }
-        this._mjBgIdx = cc.sys.localStorage("_mjBgIdx");
+        this._mjBgIdx = cc.sys.localStorage.getItem("_mjBgIdx");
         if ( null == this._mjBgIdx )
         {
             this._mjBgIdx = 0 ;
         }
-        this._musicTypeIdx = cc.sys.localStorage("_musicTypeIdx");
+        this._musicTypeIdx = cc.sys.localStorage.getItem("_musicTypeIdx");
         if ( null == this._musicTypeIdx )
         {
             this._musicTypeIdx = 0 ;
         }
-        this._musicVolume = cc.sys.localStorage("_musicVolume");
+        this._musicVolume = cc.sys.localStorage.getItem("_musicVolume");
         if ( null == this._musicVolume )
         {
             this._musicVolume = 0.5 ;
@@ -226,4 +228,38 @@ export default class ClientData
         cc.sys.localStorage.clear();
     }
     
+    getMsgPortByGameType( game : eGameType ) : eMsgPort
+    {
+        switch( game )
+        {
+            case eGameType.eGame_CFMJ:
+            {
+                return eMsgPort.ID_MSG_PORT_CFMJ;
+            }
+            break;
+            case eGameType.eGame_NCMJ:
+            {
+                return eMsgPort.ID_MSG_PORT_NCMJ;
+            }
+            break ;
+            case eGameType.eGame_AHMJ:
+            {
+                return eMsgPort.ID_MSG_PORT_AHMJ;
+            }
+            break ;
+        }
+        return undefined ;
+    }
+
+   getMsgPortByRoomID( nRoomID : number ) {
+        // begin(2) , portTypeCrypt (2),commonNum(2)
+        let nComNum = nRoomID % 100;
+        let portTypeCrypt = (Math.floor(nRoomID / 100)) % 100;
+        if (nComNum >= 50) {
+            portTypeCrypt = portTypeCrypt + 100 - nComNum;
+        } else {
+            portTypeCrypt = portTypeCrypt + 100 + nComNum;
+        }
+        return (portTypeCrypt %= 100);
+    }
 }

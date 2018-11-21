@@ -7,6 +7,7 @@ export enum eMsgPort
 	ID_MSG_PORT_VERIFY,
 	ID_MSG_PORT_RECORDER_DB,
 	ID_MSG_PORT_DATA,
+	ID_MSG_PORT_CLUB = ID_MSG_PORT_DATA,
 	ID_MSG_PORT_DB,
 	ID_MSG_PORT_MJ,
 	ID_MSG_PORT_BI_JI,
@@ -14,12 +15,17 @@ export enum eMsgPort
 	ID_MSG_PORT_DOU_DI_ZHU,
 	ID_MSG_PORT_GOLDEN,
 	ID_MSG_PORT_SCMJ,
-	ID_MSG_PORT_THIRTEEN,
+	ID_MSG_PORT_MQMJ,
+	ID_MSG_PORT_LUOMJ,
+	ID_MSG_PORT_FXMJ,
+	ID_MSG_PORT_CFMJ,
+	ID_MSG_PORT_AHMJ,
+	ID_MSG_PORT_NCMJ,
 	ID_MSG_PORT_ALL_SERVER,
 	ID_MSG_PORT_MAX,
 };
 
-export enum eMsgType 
+export enum eMsgType
 {
 	MSG_NONE,
 	//--new define begin---
@@ -41,7 +47,9 @@ export enum eMsgType
 
 	MSG_REQUEST_PLAYER_DATA, // request player brif data 
 	// client : { nReqID : 23  isDetail : 0 }
-	// svr : { uid : 23 , name : "hello" , headIcon : "http://weshg.wx.com",sex : 1 , ip : "1.0.0.1" , J : 23.0002, W : 232.234}  // J , W : GPS positon , maybe null ;
+	// svr : { uid : 23 , name : "hello" , headIcon : "http://weshg.wx.com",sex : 1 , ip : "1.0.0.1" , J : 23.0002, W : 232.234, isInRoom : 0 ,isOnline : 0 ,lastLoginTime : 2345234 }  // J , W : GPS positon , maybe null ;
+	// isInRoom : only when player is online , have this key .
+	// loginTime : only when player is offline , have this key .
 	MSG_PLAYER_OTHER_LOGIN,  // more than one place login , prelogin need disconnect ; client recived must disconnect from server
 	// svr : null 
 	MSG_PLAYER_BASE_DATA,
@@ -92,6 +100,23 @@ export enum eMsgType
 	MSG_ROOM_INTERACT_EMOJI,
 	// svr : { invokerIdx : 1 ,targetIdx : 0 , emoji : 23 } 
 
+	MSG_REQUEST_JOINED_CLUBS,
+	// client : {}
+	// svr : { clubs : [ 23,1,23 ] } 
+
+	MSG_PLAYER_RECIEVED_NEW_MAIL,
+	// svr : { maxMailID : 23 }
+
+	MSG_PLAYER_REQ_MAILS,
+	// client : { clientMaxMailID : 23   }
+	// svr : { pageIdx : 1 , mails : [ { mailID : 234 , type : 0 ,state : 0 ,time : 234523, detail : { } }, ....  ] } 
+	// 10 cnt per page ,if mails size < 10 , means end ;
+	
+	MSG_PLAYER_PROCESS_MAIL,
+	// client : { mailID : 23 , state : eMailState, arg : {}  } . arg : can be null , depend on mail type and process type ;
+	// svr : { ret : 0 ,mailID : 23 ,state : eMailState }
+	// ret : 0 success , 1 mail state error , 2 arg invliad ;
+
 	MSG_CREATE_ROOM = 300,
 	// client: { uid : 234 ,gameType : 0 , seatCnt : 4 , payType : 1 , level : 2 , opts : {  .... }  }
 	// payType : 0 the room owner pay cards , 1 AA pay card type , 2 big winer pay cards 
@@ -103,7 +128,7 @@ export enum eMsgType
 
 	MSG_ENTER_ROOM,
 	// client : { roomID : 23, uid : 23 }
-	// svr: { roomID : 23 , ret : 0 } // ret : 0 success , 1 can not find room , 2 you already in other room ;3, room is full , 4, uid error ,5 , can not enter room , 6 unknown error, 7 arg not allow enter , 8 dianmond not enough;
+	// svr: { roomID : 23 , ret : 0 } // ret : 0 success , 1 can not find room , 2 you already in other room ;3, room is full , 4, uid error ,5 , can not enter room , 6 unknown error, 7 arg not allow enter , 8 dianmond not enough, 9 can not enter club room;
 	MSG_ROOM_CHANGE_STATE,
 	// svr : { lastState : 23 , newState : 23 }
 	MSG_ROOM_INFO, 
@@ -166,6 +191,12 @@ export enum eMsgType
 	// client : null
 	// svr : { list : [ 23, 232,52 ... ] } 
 
+	MSG_ROOM_TEMP_OWNER_UPDATED,
+	// svr : { uid : 23 }
+
+	MSG_ROOM_KICK_PLAYER,
+	// svr : { uid : 23 , targetUID : 123 }
+
 	MSG_PLAYER_SET_READY = 600,   	// player do ready
 	// client : { dstRoomID : 2345 } ;
 	// svr : { ret : 1 , curState : 23 } // 1 you are not in room , 2 you are not state waitNextGame, tell curState ;
@@ -208,7 +239,7 @@ export enum eMsgType
 
 	MSG_REQ_ROOM_ITEM_INFO,
 	// client : { roomID : 23 }
-	// svr : { state : 2 ,isOpen : 0 , roomID: 23, opts: {} , players: [23,234,23 ..] }
+	// svr : { state : 2 ,isOpen : 0 ,leftRound : 2 , roomID: 23, opts: {} , players: [23,234,23 ..] }
 
 	MSG_NN_PLAYER_UPDATE_TUO_GUAN,
 	// client : { isTuoGuan : 0  }
@@ -307,10 +338,115 @@ export enum eMsgType
 	MSG_DDZ_ROOM_TI_LA_CHUAI,
 	// svr: { idx : 0 , isTiLaChuai : 0 }
 
+	MSG_DDZ_PLAYER_DOUBLE,
+	// svr : {ret : 0} if 0 add {idx : 0} send all
+	// svr : {state : 1} //��ʼ�ӱ�������Ϣ
+
 	MSG_DDZ_MAX = 1500,
-	
-		
-		
+
+	    // club msg 
+	MSG_CLUB_MSG = 2800,
+	MSG_CLUB_CREATE_CLUB,
+	// client : { name : "23",opts : {} }
+	// svr : { ret : 0 , clubID : 2 } 
+	// ret : 0 success , 1 condition is not meet , 2 name duplicate;
+
+	MSG_CLUB_DISMISS_CLUB,
+	// client : { clubID : 23 }
+	// svr : { ret : 0 }
+	// ret : 0 , 1 invalid privilige ,3 still have playing room , can not dissmiss , 4 player is null;
+
+	MSG_CLUB_SET_STATE,
+	// client: { clubID : 23 , isPause : 0 }
+	// svr : { ret : 0 }
+	// ret : 0 success , 1 invalid privilige 
+
+	MSG_CLUB_APPLY_JOIN, 
+    // client : { clubID : 23 }
+	// svr : { ret : 0 }
+	// ret : 0 success , 1 already in club , 2 already applyed , do not apply again , 3 memeber cnt  reach limit , 4 player is null ;
+	MSG_CLUB_KICK_PLAYER,
+	// client : { clubID : 23 , kickUID : 23 }
+	// svr : { ret : 0 }
+	// ret : 0 success ,1  kickUID not in club , 2 you are not mangager , 4 you do not login , invalid player 
+	MSG_CLUB_PLAYER_LEAVE,
+	// client : { clubID : 0 }
+	// svr : { ret : 0 }
+	// ret : 0 success , 1 you are not in club ,4 you do not login , invalid player  ;
+	MSG_CLUB_SET_ROOM_OPTS,
+	// client : { clubID : 0 , opts : { }  }
+	// svr : { ret :0 }
+	// ret : 0 success , 1 privilige too low ,4 you do not login , invalid player  ; .
+	// opts : create room opts ;
+	MSG_CLUB_UPDATE_PRIVILIGE,
+	// client : { clubID : 0 , playerUID : 234 , privilige : eClubPrivilige }
+	// svr : { ret : 0 }
+	// ret : 0 success , 1 privilige invalid, 2 mgr cnt reach limit ,  3 player not in club , 4 you do not login , invalid player , 5 the same privilige ;
+	MSG_CLUB_REQ_EVENTS,
+	// client : { clubID : 23, clientMaxEventID : 23, state : eEventState   }
+	// svr : { ret : 0 ,pageIdx : 0 , vEvents : [ { eventID : 8 , type : eClubEvent , state : eEventState , time : 23452 ,detail : {} } ] }
+	// ret : 0 success , 4 ,you do not login , invalid player , 1 privilige invalid 
+	// ps : if vEvents's size less then 10 , means last page ;
+	MSG_CLUB_PROCESS_EVENT,
+	// client : { clubID : 23 , eventID : 23 ,  detial : {} }
+	// svr : { ret : 0 }
+	// ret : 0 success , 1 event not exsit , 2 already processed ,3 invalid privilige , 4 you are not login, 5 invalid detail ;
+	MSG_CLUB_REQ_INFO,
+	// client : { clubID : 23 }
+	// svr : {  inviteCnt : 23 , notice : "this is notice" name : 2 , creator : 23, mgrs : [23,23,52], clubID : 23,diamond : 23 , state : 0, curCnt : 23, capacity : 23 , maxEventID : 23 ,opts : {} }
+	// state : 0 normal , 1 pause ;
+	MSG_CLUB_REQ_ROOMS,
+	// client : { clubID : 0 }
+	// svr : { clubID : 234, name : 23, fullRooms : [ 23,23,4 ], emptyRooms :  [  23,2, .... ]  }
+
+	MSG_CLUB_REQ_PLAYERS,
+	// client : { clubID : 10  }
+	// svr : { pageIdx : 0 ,players : [ { uid : 235, privilige : eClubPrivilige  } .... ] } 
+	// ret : 0 , players's size < 10 means last page;
+	MSG_CLUB_INVITE_JOIN,
+	// client : { clubID : 3, invites : [ 23,45,2] }
+	// svr : { ret : 0 }
+	// ret : 0 , 1 invalid privilige 
+	MSG_CLUB_RESPONE_INVITE,
+	// client : { clubID : 3 , nIsAgree : 0  }
+	// svr : { ret : 0 }
+	// ret : 0 success , 1 member cnt reach limit , 2 invitation time out ;
+	MSG_CLUB_REQ_INVITATIONS ,
+	// client : { clubID : 3 }
+	// svr : { ret : 0 , invitations : [ 23,23,42] } ;
+	MSG_CLUB_UPDATE_NOTICE,
+	// client : { clubID : 23 , notice : "hello hapyy join" }
+	// svr : { ret : 0 , notice : "hello" }
+	// ret : 0 , 1 invalid privilige
+	MSG_CLUB_UPDATE_NAME,
+	// client : { clubID : 23 , name : "hello hapyy join" }
+	// svr : { ret : 0 , name : "hello" }
+	// ret : 0 , 1 invalid privilige , 2 new name is the same as old name , 3 duplicate name 
+
+	MSG_CLUB_CHECK_NAME, // check if the name is duplicate 
+	// client : { name : 234 }
+	// svr : { ret : 0 } // ret : 0 ok , 1 duplicate 
+
+	MSG_CLUB_UPDATE_DIAMOND, 
+	// client : { clubID : 23 }
+	// svr : { ret : 0 ,clubID : 23, diamond : 23 }
+
+	MSG_CLUB_SET_PLAYER_INIT_POINTS,
+	// client : { clubID : 23 , uid : 23 , points : 23 }
+	// svr : { ret : 0 ,clubID : 23 , uid : 23 , points : 23 }
+	// ret : 0 success , 1 privilige is invalid , 2 player is not in club , 3 invalid points ;
+
+	MSG_CLUB_RESET_PLAYER_POINTS,
+	// client : { clubID : 23 , uid : 23 }
+	// svr : { ret : 0 ,clubID : 23 , uid : 23 }
+	// ret : 0 success , 1 privilige is invalid , 2 player is not in club ;
+
+	MSG_CLUB_CREATE_PRIVATE_ROOM, //�����齫���ֲ�����Խ�����
+
+	MSG_CLUB_PLAYER_APPLY_LEAVE, //�����齫��������뿪���ֲ�
+
+	MSG_CLUB_MSG_END = 2900,
+
 	// mj specail msg ;
 	MSG_PLAYER_WAIT_ACT_ABOUT_OTHER_CARD,  // ���˳���һ���ƣ��ȴ���Ҫ�����Ƶ���� ���������� �����ܣ���
 	// svr : { invokerIdx : 2,cardNum : 32 , acts : [type0, type 1 , ..] }  ;
@@ -436,19 +572,19 @@ export enum eMsgType
 	// uid : ��ҵ�uid��curCoin ����ʱʣ��Ǯ��
 
 	// su zhou ma jiang
-MSG_ROOM_SZ_PLAYER_HU, // �����齫��Һ��� 
-// svr : { isZiMo : 0 ,isFanBei : 0 , detail : {} }
-//  ����������ʱ��isZiMo : 1 , detail = { huIdx : 234 , winCoin : 234,huHuaCnt : 23,holdHuaCnt : 0, isGangKai :0 , invokerGangIdx : 0, vhuTypes : [ eFanxing , ] }
-// ������������ʱ��isZiMo : 0 , detail = { dianPaoIdx : 23 , isRobotGang : 0 , nLose : 23, huPlayers : [{ idx : 234 , win : 234 , huHuaCnt : 23,holdHuaCnt : 0, vhuTypes : [ eFanxing , ] } , .... ] } 
-// huPlayers : json ������������ͣ���ʾ������ҵ����飬һ�ڶ��죬�ж��������� 
-// ����������: idx :������ҵ�idx �� huaCnt : ��������offset ���������Ӯ��Ǯ��isGangKai ����������Ƿ��Ǹܿ��� vhuTypes ��һ�����飬��ʾ����ʱ��� ���ַ��͵���,
-// invokerGangIdx : �����ߵ������������ܣ�ֱ�ܲ������keyֵ,���ܵ�ʱ��������Ǻ������Լ�
+	MSG_ROOM_SZ_PLAYER_HU, // �����齫��Һ��� 
+   // svr : { isZiMo : 0 ,isFanBei : 0 , detail : {} }
+   //  ����������ʱ��isZiMo : 1 , detail = { huIdx : 234 , winCoin : 234,huHuaCnt : 23,holdHuaCnt : 0, isGangKai :0 , invokerGangIdx : 0, vhuTypes : [ eFanxing , ] }
+   // ������������ʱ��isZiMo : 0 , detail = { dianPaoIdx : 23 , isRobotGang : 0 , nLose : 23, huPlayers : [{ idx : 234 , win : 234 , huHuaCnt : 23,holdHuaCnt : 0, vhuTypes : [ eFanxing , ] } , .... ] } 
+   // huPlayers : json ������������ͣ���ʾ������ҵ����飬һ�ڶ��죬�ж��������� 
+   // ����������: idx :������ҵ�idx �� huaCnt : ��������offset ���������Ӯ��Ǯ��isGangKai ����������Ƿ��Ǹܿ��� vhuTypes ��һ�����飬��ʾ����ʱ��� ���ַ��͵���,
+   // invokerGangIdx : �����ߵ������������ܣ�ֱ�ܲ������keyֵ,���ܵ�ʱ��������Ǻ������Լ�
 
-MSG_ROOM_SZ_GAME_OVER, // �����齫����
-// svr: { isLiuJu : 0 , isNextFanBei : 0 , detail : [ {idx : 0 , offset : 23 }, ...  ] } 
-// svr : isLiuJu : �Ƿ�������
- // detail : �������ÿ����ҵı��ֵ�������Ӯ ��
- // isNextFanBei : ��һ���Ƿ�Ҫ����
+	MSG_ROOM_SZ_GAME_OVER, // �����齫����
+	// svr: { isLiuJu : 0 , isNextFanBei : 0 , detail : [ {idx : 0 , offset : 23 }, ...  ] } 
+   // svr : isLiuJu : �Ƿ�������
+	// detail : �������ÿ����ҵı��ֵ�������Ӯ ��
+	// isNextFanBei : ��һ���Ƿ�Ҫ����
 
 	MSG_ROOM_UPDATE_PLAYER_NET_STATE, // ���·�������ҵ�����״̬
 	// svr : { idx : 0 , isOnLine : 0 } // isOnline 0 �����ߣ�1 ���� ��  
@@ -498,6 +634,13 @@ MSG_ROOM_SZ_GAME_OVER, // �����齫����
 	// participate : ������
 	// lose : �����
 
+	MSG_ROOM_GOLDEN_GAME_CANCLE_TRUSTEE, //����ȡ���й�
+	// sur : { ret : 0}
+
+	MSG_ROOM_GOLDEN_GAME_UPDATE_TRUSTEE, //�����й�״̬�仯
+	// sur : { idx : 1 , state : 1 }
+	// state : 0, ȡ���й�  1, �й�
+
 	MSG_ROOM_GOLDEN_END = 1900, //��������Ž�����ʶ
 
 
@@ -517,356 +660,216 @@ MSG_ROOM_SZ_GAME_OVER, // �����齫����
 	MSG_ROOM_SICHUAN_MAJIANG_END = 2100, //�Ĵ��齫����Ž�����ʶ
 
 
-	/*13ˮ��Ϣ�б�
-		(2200 - 2300)
-		ret: 0�ɹ�, >1 ʧ��
-	*/
-	MSG_ROOM_THIRTEEN_BEGIN = 2200, //13ˮ����ſ�ʼ���
-
-	MSG_ROOM_THIRTEEN_GAME_END, //13ˮ��Ϸ����
-	// svr: { result : [ { idx : 23 , offset : 23, cards : [[1,2,3], [4,5,6,7,8], [9,10,11,12,13]], cardsType : [1,1,1], cardsWeight : [12,12,12], swat : 0 , shoot : [0 , 1 , 2] }, .... ] }
-	// swat �첨�ˣ�ֵΪ���IDX
-	// shoot ��ǹ : ���鱻��ǹ��ҵ�IDX
-
-	MSG_ROOM_THIRTEEN_GAME_WAIT_ACT, //�����б���ʼ�źţ�
-	// null
-
-	MSG_ROOM_THIRTEEN_GAME_PUT_CARDS, //ʮ������Ұ���
-	// client: { cards : [1, 2, 3, ... , 13] }
-	// svr : { ret : 1 } ��ȷʱ�޷��أ�����ʱ����Ϊ����0��ֵ
-	// ret : 1, �Ҳ��������  2, ������Ϣ����  3, ���ƴ����޷�����  4, �Ѱ���
-
-	MSG_ROOM_THIRTEEN_GAME_PUT_CARDS_UPDATE, //ʮ������Ұ��Ƹ���
-	// svr : { idx : 1 , state : 0/1 , sys : 1}
-	// sys : system auto put cards, if not do not send this key
-
-	MSG_ROOM_THIRTEEN_GAME_SHOW_CARDS, //ʮ�����������
-	// client: null
-	// svr : { ret : 1 }
-	// 1, ��Ҳ�����  2, ״̬�������ʧ��  3, ��ǰ���䲻������  4, ��Ҳ���  7, ����ʱ
-
-	MSG_ROOM_THIRTEEN_GAME_DELAY_PUT, //ʮ�������Ӱ���ʱ��
-	// client: ��ʱ����null, ÿ�����ӹ̶���ʱ��
-	// svr : { ret : 1 }
-	// 1, ��Ҳ����� 
+	MSG_ROOM_MOQI_MAJIANG_BEGIN = 2200, //Ī���齫����ſ�ʼ���
 
-	MSG_ROOM_THIRTEEN_UPDATE_CARDS_PUT_TIME, //ʮ���Ű���ʱ�����
-	// svr : {idx : 1, time : int}
-
-	MSG_ROOM_THIRTEEN_START_ROT_BANKER, //ʮ��ˮ��ʼ��ׯ�ź�
-	// svr : {}
-
-	MSG_ROOM_THIRTEEN_ROT_BANKER, //ʮ������ׯ
-	// client: {state : 1}
-	// state : 1, rot banker; 0, do not rot banker
-	// svr : { ret : 0 }
-	// 1, ��Ҳ�����  2, ״̬�������ʧ��  3, ��ǰ���䲻����ׯ  4, ��Ҳ���  5, ���ֲ���  7, ����ʱ 
-
-	MSG_ROOM_THIRTEEN_PRODUCED_BANKER, //ʮ��ˮׯ��Ϣ
-	// svr : {bankerIdx : 1, rotBanker : 1}
-	// rotBanker : 1, banker is rotted; 0, normal banker
-
-	//MSG_ROOM_THIRTEEN_SHOW_CARDS, //ʮ��ˮ��������
-	// client : {}
-	// svr : {ret : 0}
-
-	MSG_ROOM_THIRTEEN_SHOW_CARDS_UPDATE, //ʮ��ˮ������Ƹ���
-	// svr : {idx : 1, cards : [1,2, ... 13], waitTime: int}
-
-	MSG_ROOM_THIRTEEN_GOLDEN_UPDATE, //ʮ������Ϸ��ʣ���Ҹ���
-	// svr : { idx : 1 , chips : 123 }
-
-	MSG_ROOM_THIRTEEN_APPLAY_DRAG_IN, //���������
-	// client : {amount : 100, clubID : 123}
-	// svr : {ret : 0}
-	// 1, ��Ҳ�����  2 3, ���������  4, ��Ҳ���  5 6, ���ֲ�ѡ�����  7, ����ʱ
-
-	MSG_ROOM_THIRTEEN_DRAG_IN,//�����ҷ�����Ϣ
-	// svr : {idx : 1 , chips : 123}
-
-	MSG_ROOM_THIRTEEN_NEED_DRAGIN, //��Ҫ�����Ҳ��ܼ���
-	// svr : {idx : 1, clubIDs : [123,123,123], min : 100, max : 200}
-
-	MSG_ROOM_THIRTEEN_REAL_TIME_RECORD, //ʮ��ˮʵʱս��
-	// svr : {idx : 0, detail : [{uid : 123, chip : 123, drag : 123, round : 123}, ...]}
-	// 10 tips per page
-
-	MSG_ROOM_THIRTEEN_STAND_PLAYERS, //ʮ��ˮΧ�������Ϣ
-	// client : {}
-	// svr : {idx : 0, players : [123, 123, 123...]}
-	// 20/per page
-
-	MSG_ROOM_THIRTEEN_BOARD_GAME_RECORD, //ʮ��ˮ�Ͼֻع�
-	// client : {idx : -1}
-	// -1 : last game (stat form 0)
-	// svr : {ret : 0, idx : 123, detail : [{uid : 123, offset : 123, cards : [12, 12, ...], types : [1, 2, 3]}, ...]}
-
-	MSG_ROOM_REQUEST_THIRTEEN_ROOM_INFO, //ʮ��ˮ���󷿼������Ϣ
-	// client : as request room info
-	// svr : {ret : 0, roomID : 123, leftTime : 123, opts : {json::opts}}
-
-	MSG_ROOM_THIRTEEN_PLAYER_AUTO_STANDUP, //ʮ��ˮ����Զ�վ���л�
-	// clinet : {state : 1}
-	// state : 1 auto stand up,  0 cancle auto stand up
-	// svr : {ret : 0, state : 1}
-	// 1, ��Ҳ�����  2, ��������
-
-	MSG_ROOM_THIRTEEN_PLAYER_AUTO_LEAVE, //ʮ��ˮ����Զ��뿪�л�
-	// clinet : {state : 1}
-	// state : 1 auto leave,  0 cancle auto leave
-	// svr : {ret : 0, state : 1}
-	// 1, ��Ҳ�����  2, ��������
-
-	MSG_ROOM_THIRTEEN_CLIENT_OVER, //ʮ��ˮ��Ϸ�ͻ��˽���
-	// client : {}
-
-	MSG_ROOM_THIRTEEN_DECLINE_DRAG_IN, //�����Ҿܾ�������Ϣ
-	// svr : {}
-
-	MSG_ROOM_THIRTEEN_REPUT_CARDS, //ʮ��ˮ��Ϸ���°���
-	// client : {}
-	// svr : {ret : 0}
-	// 1, ��Ҳ�����  2, ��������  3, δ����
-
-	MSG_ROOM_THIRTEEN_RBPOOL_UPDATE, //ʮ������ׯ�ط����仯
-	// svr : {pool : 123}
-
-	MSG_ROOM_THIRTEEN_CANCEL_DRAGIN, //ʮ��ˮȡ������
-	// client : {}
-
-	MSG_ROOM_THIRTEEN_DISMISS_ROOM, //ʮ��ˮ��ɢ����
-	// client : {uid : 123}
-	// svr : {ret : 0}
-	// 1, uid is null or is not correct  2, uid is not the owner
-
-	MSG_ROOM_THIRTEEN_DELAY_TIME, //ʮ��ˮ������ʱ
-	// client : {uid : 123, time : 30}
-	// svr : {ret : 0}
-	// 1, game is over  2, uid is miss  4, time out
-	// time : is not 30 will be 60
-
-	MSG_ROOM_THIRTEEN_END = 2300, //13ˮ����Ž������
-
-
-
-	/*Club��Ϣ�б�
-		(2400 - 2500)
-		ret: 0�ɹ�, >1 ʧ��
-	*/
-	MSG_CLUB_MESSAGE_BEGIN = 2400,
-
-	MSG_CLUB_PLAYER_CLUB_INFO, //��Ҿ��ֲ���Ϣ
-	//client : {nTargetID : playerUID}
-	//svr : {joined : [111, 222, 333] , created : [111, 222, 333]}
-
-	MSG_CLUB_CREATE_CLUB, //�������ֲ�
-	//client : targetID: playerUID, {name : "str", region : "str", description : "null", icon : "str"}
-	//svr : {ret : 0, clubID : 123}
-	// 1, ���ֲ���Ϊ��  2, ����Ϊ��  3, ���ֲ��Ѵ���
-
-	MSG_CLUB_DISMISS_CLUB, //��ɢ���ֲ�
-	//client : targetID: clubID, {uid : 123}
-	//svr : {ret : 0, clubID : 123}
-	// 1, ���ֲ�����  2, Ȩ�޲���  3, ����ʧ��
-
-	MSG_CLUB_APPLY_JOIN, //������������ֲ�
-	//client : targetID: clubID, {uid : 123}
-	//svr : {ret : 0}
-	// 1, ���ֲ�����  2, �Ѽ���  3, ������
-
-	MSG_CLUB_FIRE_PLAYER, //�߳����
-	//client : targetID: clubID, {uid : 123, fireUID : 123}
-	//svr : {ret : 0}
-	// 1 2, �����Ϣ����  3, Ȩ�޲���  4, ������Ч
-
-	MSG_CLUB_QUIT_CLUB, //��������˳����ֲ�
-	//client : targetID: clubID, {uid : 123}
-	//svr : {ret : 0}
-	// 1, �����Ϣ����  2, ���ֲ�Ⱥ���޷��˳�  3, ������Ч
-	
-	MSG_CLUB_APPLY_CLUB_INFO, //���������ֲ���Ϣ
-	//client : targetID: clubID, {}
-	//svr : {ret : 0, clubID : 123, name : "str", creator : 123, nom : 12, lom : 12, region : "str", description : "str", icon : "url", nor : 123}
-	//nom : number of member	lom : limit of member amount	nor : number of room
-
-	MSG_CLUB_APPLY_CLUB_DETAIL, //���������ֲ�����
-	//client : targetID: clubID, {}
-	//svr : {ret : 0, creator : 123, members : [{id : 123, level : 1}, {id : 321, level : 1}, ...], createType : 1, searchLimit : 1, foundation : 123}
-	//createType : who can create room (0: everyone, 1: administrator or creator, 2: creator)
-	//searchLimit : who can search dao this club(0: everyone, 1: nobody)
-
-	MSG_CLUB_APPLY_ROOM_INFO, //���������ֲ��ƾ���Ϣ
-	//client : targetID: clubID, {}
-	//svr : {ret : 0, clubID : 123, rooms : [{id : 123, port : 13}, {id : 321, port : 12}, ...]}
-	// 1, ���ӳ�ʱ���ƾ���Ϣ���ܲ�ȫ
-
-	MSG_CLUB_INFO_UPDATE_ICON, //�޸�ͷ��
-	//client : targetID: clubID, {uid : 123, icon : "url"}
-	//svr : {ret : 0, clubID : 123}
-	// 1, �����Ϣ����  2, Ȩ�޲���
-
-	MSG_CLUB_INFO_UPDATE_NAME, //�޸�����
-	//client : targetID: clubID, {uid : 123, name : "str"}
-	//svr : {ret : 0, clubID : 123}
-	// 1, �����Ϣ����  2, Ȩ�޲���  3, ����Ϊ��
-
-	MSG_CLUB_INFO_UPDATE_CREATE_TYPE, //�޸Ľ���Ȩ��
-	//client : targetID: clubID, {uid : 123, state : 1}
-	//svr : {ret : 0, clubID : 123, state : 1}
-	// 1, �����Ϣ����  2, Ȩ�޲���  3 4, ��Ϣ����
-
-	MSG_CLUB_INFO_UPDATE_SEARCH_LIMIT, //�޸���������
-	//client : targetID: clubID, {uid : 123, state : 1}
-	//svr : {ret : 0, clubID : 123, state : 1}
-	// 1, �����Ϣ����  2, Ȩ�޲���  3 4, ��Ϣ����
-
-	MSG_CLUB_INFO_UPDATE_DESCRIPTION, //�޸�����
-	//client : targetID: clubID, {uid : 123, description : "str"}
-	//svr : {ret : 0, clubID : 123}
-	// 1, �����Ϣ����  2, Ȩ�޲���  3 4, ��Ϣ����
-
-	MSG_CLUB_INFO_UPDATE_LEVEL, //�޸���ҵȼ�Ȩ��
-	//client : targetID: clubID, {uid : 123, memberUID : 321, level : 1}
-	//svr : {ret : 0}
-	// 1 3, �����Ϣ����  2, Ȩ�޲���  4, ���δ����  5, ��Ϣ����  6, ������Ч
-
-	MSG_CLUB_INFO_UPDATE_MEMBER_LIMIT, //�޸ľ��ֲ���������
-	//client : targetID: clubID, {uid : 123, amount : 1}
-	//svr : {ret : 0}
-	//amount : update times, +10/per time
-
-	MSG_CLUB_MEMBER_INFO, //���ֲ���Ա��Ϣ
-	//client : targetID : clubID, {}
-	//svr : {ret : 0, clubID : 123, members : {123, 123, 123...}}
-
-	MSG_CLUB_MEMBER_DETAIL, //���ֲ���Ա����
-	//client : targetID : clubID, {memberUID : 123}
-	//svr : {ret : 0, clubID : 123, uid : 123, level : 123, remark : '123'}
-	// 1, �����Ϣ����  4, ���δ����  
-
-	MSG_CLUB_MEMBER_UPDATE_REMARK, //���ֲ��޸ĳ�Ա��ע
-	//client : targetID : clubID, {uid : 123, memberUID : 123, remark : '123'}
-	//svr : {ret : 0, uid : 123}
-	// 1 3, �����Ϣ����  2, Ȩ�޲���  4, ���δ����  6, ������Ч
-
-	MSG_CLUB_EVENT_GRANT_FOUNDATION, //���Ż���
-	//client : targetID: clubID, {uid : 123, memberUID : 321, amount : 1000}
-	//svr : {ret : 0}
-	// 1, �����Ϣ����  2, Ȩ�޲���  3, ��Ϣ����  4, ���δ����  5, ������  6, ������
-
-	MSG_CLUB_EVENT_GRANT_RECORDER, //���ֲ����Ż����¼
-	//client : targetID: clubID, {}
-	//svr : {ret : 0, clubID : 123, events : [{eventID : 123, time: 123456, disposer:123, detail : {json}}, ... ]}
-
-	MSG_CLUB_EVENT_JOIN, //���������Ϣ�б�
-	//client : targetID: clubID, {}
-	//svr : {ret : 0, events : [{eventID: 123, time: 123456, state: 0, disposer: 123, detail : {json}}, ...]}
-	//state : 0, wait access	1, apply accede		2, apply refused
-	//disposer : treat uid, if 0 no body or treat by system
-	//detail : json received from client
-
-	MSG_CLUB_EVENT_ACTIVE_UPDATE, //���������������¼��б����
-	//svr : {clubID : 123, type : 0}
-	//type : eClubEventType
-
-	MSG_CLUB_EVENT_ENTRY, //���������Ϣ�б�
-	//client : targetID: clubID, {}
-	//svr : {ret : 0, events : [{eventID: 123, time: 123456, detail : {json}}, ...]}
-
-	MSG_CLUB_EVENT_ENTRY_UPDATE, //���������ܿͻ��������¼��б����
-	//client : targetID: clubID, {uid : 123}
-	//svr : {ret : 0, clubID : 123, detail : [{type : 0, amount : 0}, ...]}
-
-	MSG_CLUB_EVENT_ENTRY_RECORDER, //���������Ϣ��¼�б�
-	//client : targetID: clubID, {}
-	//svr : {ret : 0, events : [{eventID: 123, time: 123456, state: 0, disposer: 123, detail : {json}}, ...]}
-	//state : 0, wait access	1, apply accede		2, apply refused
-	//disposer : treat uid, if 0 no body or treat by system
-	//detail : json received from client
-
-	MSG_CLUB_EVENT_ENTRY_RECORDER_UPDATE, //��������¼�б����
-	//wait
-
-	MSG_CLUB_EVENT_APPLY_TREAT, //���봦����ֲ��¼�
-	//client : targetID: clubID, {uid : 123, eventID : 321, state : 0}
-	//svr : {ret : 0}
-	//state : 1, accede		2, refused
-	// 1, �����Ϣ����  2 3 5 10, ��Ϣ����  6, �¼��Ѵ���  7, Ȩ�޲���  8, ��������  9, �¼����ʹ���  11, ���˻��ֲ���  12, ����ʱ  13, ����ҽ�Ҳ���
-
-	MSG_LEAGUE_CLUB_LEAGUE_INFO, //���ֲ�������Ϣ
-	//client : targetID: clubID, {}
-	//svr : {joined : [111, 222, 333] , created : [111, 222, 333]}
-
-	MSG_LEAGUE_CREATE_LEAGUE, //�������˲�
-	//client : targetID: clubID, {uid : 123, name : "str", icon : "url:null"}
-	//svr : {ret : 0}
-	// 1, ����Ϊ��  3, �����Ѵ���
-
-	MSG_LEAGUE_APPLY_LEAGUE_INFO, //�������������Ϣ
-	//client : targetID: leagueID, {}
-	//svr : {ret : 0, leagueID : 123, name : "str", creator : 123}
-
-	MSG_LEAGUE_APPLY_LEAGUE_DETAIL, //���������������
-	//client : targetID: leagueID, {}
-	//svr : {ret : 0, leagueID : 123, name : "str", creator : 123, members : [{id : 123, level : 1}, {id : 321, level : 1}, ...], joinLimit : 1, joinEvents : [{eventID : 123, time : 123, detail : {json}}, ...]}
-	//joinLimit : 0, all club can join		1, no one can search dao
-
-	MSG_LEAGUE_JOIN_LEAGUE, //��������
-	//client : targetID: leagueID, {uid : 123, clubID : 123}
-	//svr : {ret : 0}
-	// 1, ���ֲ���Ϣ����  2, �����Ϣ����  3, ������  4, Ȩ�޲���  6, ���˾ܾ�����  7, ����ʱ
-
-	MSG_LEAGUE_UPDATE_JOIN_LIMIT, //�޸�������������
-	//client : targetID: leagueID, {uid : 123, clubID : 123, state : 1}
-	//svr : {ret : 0, clubID : 123, state : 1}
-	// 1, ���ֲ���Ϣ����  2, �����Ϣ����  3 4, ��Ϣ����  5, Ȩ�޲���
-
-	MSG_LEAGUE_FIRE_CLUB, //�߳����ֲ�
-	//client : targetID: leagueID, {uid : 123, clubID : 123, fireCID : 123}
-	//svr : {ret : 0}
-	// 1, ���ֲ���Ϣ����  2, �����Ϣ����  3 4, ��Ϣ����  5 6, Ȩ�޲���  7, ����ʱ
-
-	MSG_LEAGUE_DISMISS_LEAGUE, //��ɢ����
-	//client : targetID: leagueID, {uid : 123, clubID : 123}
-	//svr : {ret : 0}
-	// 1, ���ֲ���Ϣ����  2, �����Ϣ����  3, ��Ϣ����  5, Ȩ�޲���  7, ����ʱ
-
-	MSG_LEAGUE_QUIT_LEAGUE, //�˳�����
-	//client : targetID: leagueID, {uid : 123, clubID : 123}
-	//svr : {ret : 0}
-	// 1, ���ֲ���Ϣ����  2, �����Ϣ����  3, ��Ϣ����  5, ����ʧ��  7, ����ʱ
-
-	MSG_LEAGUE_EVENT_JOIN, //������������б�
-	//client : targetID: leagueID, {}
-	//svr : {ret : 0, events : [{eventID: 123, time: 123456, state: 0, disposer: 123, detail : {json}}, ...]}
-	//state : 0, wait access	1, apply accede		2, apply refused
-	//disposer : treat uid, if 0 no body or treat by system
-	//detail : json received from client
-
-	MSG_LEAGUE_EVENT_APPLY_TREAT, //���봦�������¼�
-	//client : targetID: leagueID, {uid : 123, eventID : 321, clubID : 123, state : 0}
-	//svr : {ret : 0}
-	//state : 1, accede		2, refused
-	// 1, �����Ϣ����  2 4 5 8, ��Ϣ����  3, ���ֲ���Ϣ����  6 10, Ȩ�޲���  7, ����ʱ  9, �¼��Ѵ���  11, ����ʧ��  12, �¼��޷�����
-
-	MSG_LEAGUE_EVENT_ACTIVE_UPDATE, //�������������������¼��б����
-	//svr : {leagueID : 123, clubID : 123, type : 0}
-
-	MSG_LEAGUE_EVENT_ACTIVE_LIST_UPDATE, //���������ܿͻ������������¼��б����
-	//client : targetID: leagueID, {uid : 123, clubID : 123}
-	//svr : {ret : 0, clubID : 123, leagueID : 123, detail : [{type : 0, amount : 0}, ...]}
-
-	MSG_CLUB_SYSTEM_AUTO_ADD_PLAYER, //�������Զ�������Ҽ�����ֲ���������
-	//client : targetID: clubID, {uid : 123}
-	//svr : {}
-
-	MSG_CLUB_MESSAGE_END = 2500,
-
-	MSG_PLAYER_RESET_PASSWORD, //�����������
-	//client : {number : 11111111, password : "123456"}
-	//DATASERVER��Ϣ targetID �����ID
-	//svr : {ret : 0} 0�ɹ�������0ʧ��
+	MSG_ROOM_MQMJ_GAME_START, //Ī���齫��Ϸ��ʼ��Ϣ
+
+	MSG_ROOM_MQMJ_PLAYER_HU, //Ī���齫��
+
+	MSG_ROOM_MQMJ_WAIT_ACT_AFTER_CP, //Ī���齫������ȴ���Ҳ���
+
+	MSG_ROOM_FXMJ_PLAYER_TING,
+
+	MSG_ROOM_FXMJ_WAIT_GANG_TING, //�����齫�ȴ���Ҹܺ��Ƿ�����
+
+	MSG_ROOM_FXMJ_DO_GANG_TING, //�����齫���ѡ������������
+
+	MSGNU_CLUB_CREATE_PRIVATE_ROOM, //�����齫���ֲ�����Խ�����
+
+	MSG_ROOM_FXMJ_PLAYER_ONFOLLOW, //�����齫��Ҵ��Ƹ�ׯ
+
+	MSG_ROOM_FXMJ_REAL_TIME_CELL, //�����齫ʵʱ����
+
+	MSG_ROOM_PLAYER_EXCHANGE_SEAT, //�齫������·���λ��
+
+	MSG_ROOM_PLAYER_WAIT_IDX, //�齫���͵ȴ��������
+
+	MSGNU_CLUB_PLAYER_APPLY_LEAVE, //�����齫��������뿪���ֲ�
+
+	MSG_GET_SHARE_PRIZE, //��������
+	// sur : {diamond : 0, sharetimes : 0}
+
+	MSG_PLAYER_REFRESH_GATE_IP, //ˢ��gateIP
+
+	MSG_ROOM_CHIFENG_MAJIANG_BEGIN = 2300, //����齫����ſ�ʼ��ʶ
+
+	MSG_ROOM_CF_GUA_PU, //����齫������Ϣ
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	///------new define end---
+	MSG_SERVER_AND_CLIENT_COMMON_BEGIN,  // server and client common msg , beyond specail game 
+	MSG_PLAYER_ENTER_GAME,    // after check , enter game 
 	
+	//MSG_PLAYER_CONTINUE_LOGIN,  // contiune login prize ;
+	
+	MSG_CREATE_ROLE,
+	// player base Data 
+	
+	MSG_SHOW_CONTINUE_LOGIN_DLG,
+	MSG_GET_CONTINUE_LOGIN_REWARD,
+
+	MSG_PLAYER_UPDATE_VIP_LEVEL,
+
+
+	// slot machine 
+	MSG_PLAYER_SLOT_MACHINE, // lao hu ji ;
+
+	// item 
+	MSG_REQUEST_ITEM_LIST ,
+	MSG_SAVE_ITEM_LIST,
+	MSG_PLAYER_PAWN_ASSERT, //  dian dang zi chan
+	MSG_PLAYER_USE_GIFT,
+	// rank
+	MSG_REQUEST_RANK,
+	MSG_REQUEST_RANK_PEER_DETAIL,
+	// inform 
+	MSG_INFORM_NEW_NOTICES ,
+	MSG_PLAYER_REQUEST_NOTICE,
+	MSG_GLOBAL_BROCAST,
+	MSG_PLAYER_SAY_BROCAST,
+	// shop 
+	MSG_SAVE_SHOP_BUY_RECORD,
+	MSG_GET_SHOP_BUY_RECORD,
+	MSG_PLAYER_REQUEST_SHOP_LIST,
+	
+	MSG_PLAYER_RECIEVED_SHOP_ITEM_GIFT,
+	// mission 
+	MSG_GAME_SERVER_SAVE_MISSION_DATA,
+	MSG_GAME_SERVER_GET_MISSION_DATA,
+	MSG_PLAYER_REQUEST_MISSION_LIST,
+	MSG_PLAYER_NEW_MISSION_FINISHED,
+	MSG_PLAYER_REQUEST_MISSION_REWORD,
+
+	// online box 
+	MSG_PLAYER_REQUEST_ONLINE_BOX_REWARD,
+	MSG_PLAYER_REQUEST_ONLINE_BOX_STATE,
+
+	// room common msg ;
+	MSG_ROOM_MSG_BEGIN,
+	MSG_ROOM_RET,
+	MSG_ROOM_SPEAK,
+	MSG_ROOM_OTHER_SPEAK,  
+	MSG_ROOM_REQUEST_PEER_DETAIL,
+	MSG_ROOM_KICK_PEER,
+	MSG_ROOM_OTHER_KICK_PEER,
+	MSG_ROOM_EXE_BE_KICKED,
+	MSG_ROOM_PROCESSE_KIKED_RESULT,
+
+	MSG_ROOM_ENTER,
+	//MSG_ROOM_PLAYER_ENTER,  // MSG_ROOM_PLAYER_x means other player actions 
+	MSG_PLAYER_FOLLOW_TO_ROOM, // zhui zong pai ju 
+
+	MSG_ROOM_LEAVE,
+	//MSG_ROOM_PLAYER_LEAVE,
+	// private room 
+	MSG_PLAYER_CREATE_PRIVATE_ROOM,  // create private Room ;
+
+	// message for robot 
+	MSG_ROBOT_ORDER_TO_ENTER_ROOM = 25000,
+	MSG_ROBOT_APPLY_TO_LEAVE,
+	MSG_ROBOT_CHECK_BIGGIEST,
+	MSG_ROBOT_INFORM_IDLE,
+	
+	// all room msg above ,
+
+	// golden room 
+	MSG_GOLDEN_ROOM_ENTER,
+	MSG_GOLDEN_ROOM_LEAVE,
+	MSG_GOLDEN_ROOM_INFO,
+	MSG_GOLDEN_ROOM_STATE,
+
+	MSG_GOLDEN_ROOM_PLAYER_SHOW_CARD,
+	MSG_GOLDEN_ROOM_SHOW_CARD,
+
+	MSG_GOLDEN_ROOM_PLAYER_CHANGE_CARD,
+	MSG_GOLDEN_ROOM_CHANGE_CARD,
+
+	MSG_GOLDEN_ROOM_PLAYER_PK_TIMES,
+	MSG_GOLDEN_ROOM_PK_TIMES,
+
+	MSG_GOLDEN_ROOM_PLAYER_READY,
+	MSG_GOLDEN_ROOM_READY,
+
+	
+	MSG_GOLDEN_ROOM_INFORM_ACT,
+	
+	//MSG_GOLDEN_ROOM_PLAYER_LOOK,
+	//MSG_GOLDEN_ROOM_LOOK,
+	
+	MSG_GOLDEN_ROOM_PLAYER_GIVEUP,
+	MSG_GOLDEN_ROOM_GIVEUP,
+
+	MSG_GOLDEN_ROOM_PLAYER_FOLLOW,
+	MSG_GOLDEN_ROOM_FOLLOW,
+
+	MSG_GOLDEN_ROOM_PLAYER_ADD,
+	MSG_GOLDEN_ROOM_ADD,
+
+	MSG_GOLDEN_ROOM_PLAYER_PK,
+
+	MSG_GOLDEN_ROOM_RESULT,
 };

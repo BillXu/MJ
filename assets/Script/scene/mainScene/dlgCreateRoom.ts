@@ -11,6 +11,7 @@
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../common/DlgBase"
 import * as _ from "lodash"
+import { eGameType } from "../../common/clientDefine"
 @ccclass
 export default class DlgCreateRoom extends DlgBase {
 
@@ -154,7 +155,27 @@ export default class DlgCreateRoom extends DlgBase {
         jsOps["enableDuipu"] = this.isEnableDuipu.isChecked ? 1 : 0 ;
         cc.sys.localStorage.setItem("mjopt" + this.nCurMJTypeIdx , JSON.stringify(jsOps));
         // make create room msg send to svr ;
-        this.pFuncResult(jsOps);
+        let createMsg = {} ;
+        let vGameType = [eGameType.eGame_CFMJ,eGameType.eGame_AHMJ,eGameType.eGame_NCMJ] ;
+        createMsg["gameType"] = vGameType[this.nCurMJTypeIdx];
+        createMsg["payType"] = nPayTypeIdx ;
+        let level = 0 ;
+        if ( nCircleIdx == -1 )
+        {
+            level = nRoundIdx ;
+        }
+        else
+        {
+            level = nCircleIdx + 2 ;
+        }
+        createMsg["level"] = level ;
+        let vSeat = [2,3,4] ;
+        createMsg["seatCnt"] = vSeat[nPlayerCntIdx] ;
+        let opts = {} ;
+        opts["circle"] = nRoundIdx == -1 ? 1 : 0 ;
+        opts["guapu"] = this.isEnableDuipu.isChecked ? 1 : 0 ;
+        createMsg["opts"] = opts;
+        this.pFuncResult(createMsg);
     }
 
     protected onRestoreMJOptsDisplay()
