@@ -12,6 +12,7 @@
 const {ccclass, property} = cc._decorator;
 import {eMJActType }from "./roomDefine"
 import * as _ from "lodash"
+import Card from "./card";
 @ccclass
 export default class DlgActList extends cc.Component {
 
@@ -36,6 +37,15 @@ export default class DlgActList extends cc.Component {
 
     ptDisplayPos : cc.Vec2 = cc.Vec2.ZERO ;
     mjGangType : eMJActType = undefined ;
+
+    taregetCard : number = -1 ;
+
+    vCanGangCards : number[] = [] ; // only when self recieved card, is valid ;
+    isSelfRecievedCardAct()
+    {
+        return -1 == this.taregetCard ;
+    }
+
     onLoad () 
     {
         if ( this.pRootNode == null )
@@ -80,8 +90,15 @@ export default class DlgActList extends cc.Component {
     }
 
 
-    showDlg( actList : eMJActType[] )
+    showDlg( actList : eMJActType[] , ncard : number = -1, canGangCards? : number[] )
     {
+        this.vCanGangCards.length = 0 ;
+        if ( canGangCards != null && canGangCards.length > 0 )
+        {
+            this.vCanGangCards = this.vCanGangCards.concat(canGangCards);
+        }
+        
+        this.taregetCard = ncard ;
         this.pBtnEat.active = _.find(actList,( v : eMJActType )=>{ return v == eMJActType.eMJAct_Chi }) != undefined;
         this.pBtnPeng.active = _.find(actList,( v : eMJActType )=>{ return v == eMJActType.eMJAct_Peng }) != undefined;
         this.pBtnHu.active = _.find(actList,( v : eMJActType )=>{ return v == eMJActType.eMJAct_Hu }) != undefined;

@@ -226,7 +226,7 @@ export default class RoomPlayerInfo extends cc.Component {
     }
 
     start () {
-        this.onTextMsg( "dflaskjdghasjdfashgasjdfadf" );
+        //this.onTextMsg( "dflaskjdghasjdfashgasjdfadf" );
     }
 
     // update (dt) {}

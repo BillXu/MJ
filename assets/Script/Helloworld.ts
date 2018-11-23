@@ -34,7 +34,7 @@ export default class Helloworld extends cc.Component {
         vt.x = 200 ;
         console.log( "after " + this.vec.x );
         
-  
+       
  
         // let testString : string = "https://......" ;
         // let nPos : number = testString.indexOf("http");

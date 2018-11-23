@@ -34,6 +34,11 @@ export default class LoginScene extends cc.Component {
     }
 
     start () {
+        if ( CC_DEBUG )
+        {
+            cc.log( "debug , not auto login" );
+            return ;
+        }
         if ( clientData.getInstance().curAccount.length > 1 && clientData.getInstance().curPwd.length > 1 )
         {
             this.strAccount = clientData.getInstance().curAccount ;
@@ -50,7 +55,15 @@ export default class LoginScene extends cc.Component {
     // clientData will recieved base data , and invoke loading scene ;
     onRecievedBaseData()
     {
-        cc.director.loadScene(SceneName.Scene_Main) ;
+        if ( clientData.getInstance().stayInRoomID && clientData.getInstance().stayInRoomID > 0 )
+        {
+            cc.director.loadScene(SceneName.Scene_Room) ;
+        }
+        else
+        {
+            cc.director.loadScene(SceneName.Scene_Main) ;
+        }
+        
     }
 
     onConnectedToSvr()
@@ -76,7 +89,7 @@ export default class LoginScene extends cc.Component {
         let self = this ;
         Network.getInstance().sendMsg(msgLogin,eMsgType.MSG_PLAYER_LOGIN,eMsgPort.ID_MSG_PORT_GATE,1,
             ( jsmg : Object )=>{
-                let ret : number = jsmg["ret"] ;
+                let ret : number = jsmg["nRet"] ;
                 self.pTipMask.active = ret == 0 ;
                 if ( ret == 0 )  // clientData will recieved base data , and invoke loading scene ;
                 {

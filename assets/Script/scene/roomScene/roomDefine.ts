@@ -21,17 +21,6 @@ export enum eMJCardType
     eCT_Max,
 };
 
-export enum eCardSate
-{
-    eCard_Hold,
-    eCard_Out,
-    eCard_Peng,
-    eCard_MingGang,
-    eCard_AnGang,
-    eCard_Eat,
-    eCard_Hu,
-};
-
 export enum eArrowDirect
 {
     eDirect_Left,
@@ -61,6 +50,17 @@ export enum eMJActType
 	eMJAct_4Feng, // 前4张出了4张不一样的风牌
 	eMJAct_Ting,
 	eMJAct_Max,
+};
+
+export enum eCardSate
+{
+    eCard_Hold,
+    eCard_Out,
+    eCard_Peng ,
+    eCard_MingGang,
+    eCard_AnGang,
+    eCard_Eat,
+    eCard_Hu,
 };
 
 export enum eEatType

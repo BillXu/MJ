@@ -23,7 +23,6 @@ export default class ClientData
     private strCurPassword : string = "";
     private nSelfUID : number = 0 ;
     public jsSelfBaseDataMsg : Object = {} ;
-    public stayInRoomID : number = 0 ;
     public stayInRoomType : eGameType = 0 ;
     
     private _effectVolume : number = 0.5 ;
@@ -31,6 +30,21 @@ export default class ClientData
     private _musicTypeIdx : number = 0 ;
     private _deskBgIdx : number = 0 ;
     private _mjBgIdx : number = 0 ;
+
+    get stayInRoomID () : number
+    {
+        if ( this.jsSelfBaseDataMsg["stayRoomID"] == null )
+        {
+            return 0 ;
+        }
+        
+        return this.jsSelfBaseDataMsg["stayRoomID"];
+    }
+
+    set stayInRoomID( id : number )
+    {
+        this.jsSelfBaseDataMsg["stayRoomID"] = id ;
+    }
 
     set effectVolume( v : number )
     {

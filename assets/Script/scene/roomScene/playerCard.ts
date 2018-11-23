@@ -109,6 +109,10 @@ export default class PlayerCard extends cc.Component {
 
     onTouchStart( touchEvent : cc.Event.EventTouch )
     {
+        if ( this.vHoldCards.length == 0 )
+        {
+            return ;
+        }
         console.log( "onTouchStart" );
         let localPos = this.pRootNode.convertToNodeSpaceAR(touchEvent.getLocation());
         let node = _.find( this.vHoldCards,( node : cc.Node)=>{
@@ -145,6 +149,10 @@ export default class PlayerCard extends cc.Component {
 
     onTouchMoved( touchEvent : cc.Event.EventTouch )
     {
+        if ( this.vHoldCards.length == 0 )
+        {
+            return ;
+        }
         console.log( "onTouchMoved + " + touchEvent.getDeltaY() + "  x " + touchEvent.getDeltaX() );
 
         let pSelNode : cc.Node = this.optNodeProperty["node"] ;
@@ -177,8 +185,18 @@ export default class PlayerCard extends cc.Component {
 
     onTouchEnd( touchEvent : cc.Event.EventTouch )
     {
+        if ( this.vHoldCards.length == 0 )
+        {
+            return ;
+        }
         console.log( "onTouchEnd" );
         let state : eOptNodeState = this.optNodeProperty["state"] ;
+        if ( state == null )
+        {
+            cc.error( "do not have state property " );
+            return ;
+        }
+        
         if ( eOptNodeState.eClick_Sel == state )
         {
             let self = this ;
@@ -353,6 +371,12 @@ export default class PlayerCard extends cc.Component {
         }
 
         this.doRelayoutAllCards();
+    }
+
+    onDistributeCards( vHoldCards : number[] , holdCnt : number,nFetchedCard: number )
+    {
+        // here may be some animation ;
+        this.onRefreshCards(vHoldCards,holdCnt,null,null,nFetchedCard) ;
     }
 
     private doRelayoutAllCards()
@@ -573,7 +597,7 @@ export default class PlayerCard extends cc.Component {
     }
 
     start () {
-        this.testLayoutCards();
+        //this.testLayoutCards();
     }
 
     testLayoutCards()
@@ -714,7 +738,7 @@ export default class PlayerCard extends cc.Component {
         this.onMo(gangNewCard) ;
     }
 
-    onAngGang( cardNum : number , invokerClientIdx : number, gangNewCard : number )
+    onAngGang( cardNum : number , gangNewCard : number )
     {
         this.doRemoveCardFromHold(cardNum,4);
         let pGangNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_AnGang) ;
@@ -779,6 +803,24 @@ export default class PlayerCard extends cc.Component {
         }
         pChuNodePos = v[0].position ;
         this.doChuAnimation(cardNum,pChuNodePos,this.onChuPaiAniFinish.bind(this));
+    }
+
+    onHu( cardNum : number )
+    {
+        if ( this.pFetchedCard )
+        {
+            this.pCardFactory.recycleNode(this.pFetchedCard) ;
+            this.pFetchedCard = null ;
+        }
+
+        // hu card , we regart it as fetched
+        this.pFetchedCard = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_Hu);
+        this.pRootNode.addChild(this.pFetchedCard);
+        this.pFetchedCard.position = this.getFetchedCardPos();
+        if ( this.isRight() )
+        {
+            this.pFetchedCard.zIndex = this.vHoldCards.length ;
+        }
     }
 
     private onChuPaiAniFinish()

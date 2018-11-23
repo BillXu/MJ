@@ -29,18 +29,22 @@ export default class Indicator extends cc.Component {
     private nTimeLeft : number = 0 ;
 
     start () {
-        let self = this ;
-        setTimeout(() => {
-            self.onStartWait(0,20);
-        }, 2000);
+        // let self = this ;
+        // setTimeout(() => {
+        //     self.onStartWait(0,20);
+        // }, 2000);
 
-        setTimeout(() => {
-            self.onStartWait(0,20);
-        }, 6000);
+        // setTimeout(() => {
+        //     self.onStartWait(1,20);
+        // }, 6000);
 
-        setTimeout(() => {
-            self.onStartWait(0,20);
-        }, 8000);
+        // setTimeout(() => {
+        //     self.onStartWait(2,20);
+        // }, 10000);
+
+        // setTimeout(() => {
+        //     self.onStartWait(2,20);
+        // }, 16000);
     }
 
     onStartWait( nClientIdx : number, nTime : number = 15 )

@@ -12,8 +12,10 @@ const {ccclass, property} = cc._decorator;
 import RoomPlayerInfo from "./roomPlayerInfo"
 import { playerBaseData } from "./roomInterface"
 import { eClientRoomState } from "./roomDefine"
+import roomSceneLayerBase from "./roomSceneLayerBase"
+import RoomData from "./roomData"
 @ccclass
-export default class PlayerInfoLayer extends cc.Component {
+export default class PlayerInfoLayer extends roomSceneLayerBase {
 
     @property([RoomPlayerInfo])
     vPlayers : RoomPlayerInfo[] = [] ;
@@ -44,13 +46,12 @@ export default class PlayerInfoLayer extends cc.Component {
                 this.vGameStatePlayerPos[idx] = cc.v2(v.node.position);
             } ) ;
         this.vWaitReadyStatePlayerPos.forEach( ( v: cc.Node)=>{ v.active = false ;});
-
-        self.refresh(eClientRoomState.State_WaitReady,null);
     }
 
-    refresh( clientRoomState : eClientRoomState , vPlayers: playerBaseData[] )
+    refresh( pdata : RoomData )
     {
-        this.roomState = clientRoomState ;
+        this.roomState = pdata.nRoomState ;
+        let vPlayers = pdata.vPlayers ;
 
         this.vPlayers.forEach( ( v : RoomPlayerInfo )=>{
             v.refresh(null);
@@ -69,7 +70,7 @@ export default class PlayerInfoLayer extends cc.Component {
 
         if ( eClientRoomState.State_WaitReady == this.roomState )
         {
-            this.enterWaitReadyState();
+            this.enterWaitReadyState(pdata);
             let self = this ;
             vPlayers.forEach( ( player : playerBaseData )=>{
                 if ( player && player.isReady )
@@ -80,7 +81,7 @@ export default class PlayerInfoLayer extends cc.Component {
         }
         else 
         {
-            this.enterGameState();
+            this.enterGameState(pdata);
         }
     }
 
@@ -88,7 +89,7 @@ export default class PlayerInfoLayer extends cc.Component {
 
     }
 
-    enterWaitReadyState()
+    enterWaitReadyState( pdata : RoomData )
     {
         let self = this ;
         this.vPlayers.forEach( ( p : RoomPlayerInfo, idx : number )=>{
@@ -97,6 +98,7 @@ export default class PlayerInfoLayer extends cc.Component {
             {
                 p.enterWaitReadyState();
             }
+            console.log( "update card to wait ready position" );
         } );
 
         this.pUpTag.active = this.vPlayers[2].isEmpty();
@@ -106,7 +108,7 @@ export default class PlayerInfoLayer extends cc.Component {
         this.vPlayers[0].node.active = false ;
     }
 
-    enterGameState()
+    enterGameState( pdata : RoomData )
     {
         let self = this ;
         this.vPlayers.forEach( ( p : RoomPlayerInfo, idx : number )=>{
@@ -170,6 +172,11 @@ export default class PlayerInfoLayer extends cc.Component {
         {
             this.vPlayers[0].node.active = true ;
         }
+    }
+
+    onRefreshPlayerDetail( player : playerBaseData )
+    {
+        this.vPlayers[player.clientIdx].refresh(player,this.roomState);
     }
     // update (dt) {}
 }

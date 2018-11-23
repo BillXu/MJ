@@ -190,7 +190,7 @@ export default class DlgActOptsCards extends cc.Component {
     {
         let selIdx : number = parseInt(groupIdx);
         //vResultEvenHandle
-        cc.Component.EventHandler.emitEvents(this.vResultEvenHandle,this.isEatState,this.isEatState ? this.nEatTargetCard : this.vGangOpts[selIdx],this.vEatType[selIdx] ) ;
+        cc.Component.EventHandler.emitEvents(this.vResultEvenHandle,selIdx ) ;
         this.closeDlg();
     }
 

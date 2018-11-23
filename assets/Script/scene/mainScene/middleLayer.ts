@@ -87,7 +87,7 @@ export default class MiddleLayer extends cc.Component {
                 Utility.showTip( "error code " + ret );
                 return ;
             }
-            ClientData.getInstance().stayInRoomID = msg["roomID"] ;
+            ClientData.getInstance().stayInRoomID = parseInt(nJoinRoomID) ;
             cc.director.loadScene(SceneName.Scene_Room ) ;
             return true ;
         } );

@@ -13,8 +13,10 @@ import Indicator from "./indicator"
 import { eClientRoomState } from "./roomDefine"
 import RoomData from "./roomData"
 import { playerBaseData } from "./roomInterface"
+import roomSceneLayerBase from "./roomSceneLayerBase"
+import { eMsgPort , eMsgType } from "../../common/MessageIdentifer"
 @ccclass
-export default class RoomInfoLayer extends cc.Component {
+export default class RoomInfoLayer extends roomSceneLayerBase {
 
     // wait ready state node
     @property(cc.Node)
@@ -90,17 +92,17 @@ export default class RoomInfoLayer extends cc.Component {
         this.pLeftMJCnt.string = cnt ;
     }
 
-    enterWaitReadyState( isOpenedRoom : boolean , isSelfOwner : boolean )
+    enterWaitReadyState( pdata : RoomData )
     {
         this.roomState = eClientRoomState.State_WaitReady ;
         this.pWaitReadyStateNode.active = true ;
         this.pGameStateNode.active = false ;
 
-        this.pBtnStartGame.active = isOpenedRoom == false && isSelfOwner ;
+        this.pBtnStartGame.active = pdata.isRoomOpened == false && pdata.isSelfRoomOwner() ;
         this.pBtnReady.active = !this.pBtnStartGame.active ;
     }
 
-    enterGameState()
+    enterGameState( pdata : RoomData )
     {
         this.roomState = eClientRoomState.State_StartGame ;
         this.pWaitReadyStateNode.active = false ;
@@ -127,10 +129,11 @@ export default class RoomInfoLayer extends cc.Component {
 
     protected refreshWaitReadyState( data : RoomData )
     {
+        this.pWaitReadyStateNode.active = true ;
+        this.pGameStateNode.active = false ;
         this.pBtnStartGame.active = data.isRoomOpened == false && data.isSelfRoomOwner() ;
         this.pBtnReady.active = !this.pBtnStartGame.active ;
-        let pd : playerBaseData = data.vPlayers[0] ;
-        let isSelfReady = pd && pd.isReady;
+        let isSelfReady = data.getPlayerDataByClientIdx(0).isReady;
         if ( isSelfReady )
         {
             this.pBtnStartGame.active = false ;
@@ -141,9 +144,13 @@ export default class RoomInfoLayer extends cc.Component {
 
     protected refreshGameState( data : RoomData )
     {
+        this.pWaitReadyStateNode.active = false ;
+        this.pGameStateNode.active = true ;
         this.leftMJCnt = data.letfMJCnt.toString();
         this.circleCnt = data.playedCircle + "/" + data.totalCircleCnt ;
         this.pRoomRuleDesc.string = "房间号: " + data.roomID ;
+        console.log( "this.doIndicatorToPlayer = " + data.curActClientIdx );
+        this.doIndicatorToPlayer(data.curActClientIdx ) ;
     }
 
     onBtnBack()
@@ -153,12 +160,21 @@ export default class RoomInfoLayer extends cc.Component {
 
     onBtnStartGame()
     {
+        let msg = { } ;
+        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_SET_READY) ;
 
+        if ( this.roomScene.pRoomData.isSelfRoomOwner )
+        {
+            let msgdoOpen = {} ;
+            this.sendRoomMsg(msgdoOpen,eMsgType.MSG_PLAYER_OPEN_ROOM);
+        }
     }
 
     onBtnReady()
     {
-
+        let msg = { } ;
+        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_SET_READY) ;
+        this.pBtnReady.active = false ;
     }
 
     onBtnWechatInviate()
@@ -183,7 +199,7 @@ export default class RoomInfoLayer extends cc.Component {
 
     onBtnChat()
     {
-        
+
     }
     // update (dt) {}
 }
