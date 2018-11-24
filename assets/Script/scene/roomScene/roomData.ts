@@ -22,7 +22,7 @@ export default class RoomData extends cc.Component {
     jsRoomInfoMsg : Object = {} ;
     vPlayers : playerBaseData[] = [] ;
      
-    lastChuCard : number = 0 ;
+    //lastChuCard : number = 0 ;
     _lastChuPlayerClientIdx : number = -1 ;
 
     getMaxTableSeat() : number
@@ -59,6 +59,28 @@ export default class RoomData extends cc.Component {
         this.jsRoomInfoMsg["curActIdex"] = idx ;
     }
     
+    getPrivousPlayerIdx( nCurIdx : number ) : number 
+    {
+        let preIdx = nCurIdx - 1 ;
+        if ( this.seatCnt == 2 )
+        {
+            preIdx = nCurIdx - 2 ;
+        }
+
+        return ( preIdx + this.getMaxTableSeat() ) % this.getMaxTableSeat();
+    }
+
+    getNextPlayerIdx( nCurIdx : number ) : number
+    {
+        let preIdx = nCurIdx + 1 ;
+        if ( this.seatCnt == 2 )
+        {
+            preIdx = nCurIdx + 2 ;
+        }
+
+        return preIdx % this.getMaxTableSeat();
+    }
+
     get seatCnt() : number 
     {
          return this.jsRoomInfoMsg["opts"]["seatCnt"] ;

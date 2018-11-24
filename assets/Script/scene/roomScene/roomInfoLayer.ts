@@ -107,6 +107,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         this.roomState = eClientRoomState.State_StartGame ;
         this.pWaitReadyStateNode.active = false ;
         this.pGameStateNode.active = true ;
+        this.doIndicatorToPlayer(pdata.curActClientIdx) ;
     }
 
     doIndicatorToPlayer( clientIdx : number , time : number = 15 )

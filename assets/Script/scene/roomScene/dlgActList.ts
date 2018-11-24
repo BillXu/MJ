@@ -54,41 +54,52 @@ export default class DlgActList extends cc.Component {
         }
         this.ptDisplayPos = cc.v2(this.pRootNode.position);
         this.pRootNode.active = false ;
+        console.log( "invoker onload" );
     }
 
     start () {
 
     }
 
-    onClickBtn( btn : cc.Button )
+    onClickBtn( btn : cc.Event.EventTouch )
     {
         let mjAct = eMJActType.eMJAct_Chi ;
-        if ( btn.node == this.pBtnEat )
+        if ( btn.target == this.pBtnEat )
         {
             mjAct = eMJActType.eMJAct_Chi ;
         }
-        else if ( this.pBtnGang == btn.node )
+        else if ( this.pBtnGang == btn.target )
         {
             mjAct = this.mjGangType ;
         }
-        else if ( this.pBtnPeng == btn.node )
+        else if ( this.pBtnPeng == btn.target )
         {
             mjAct = eMJActType.eMJAct_Peng;
         }
-        else if ( this.pBtnHu == btn.node )
+        else if ( this.pBtnHu == btn.target )
         {
             mjAct = eMJActType.eMJAct_Hu ;
         }
 
-        cc.Component.EventHandler.emitEvents(this.vResultEvenHandle,mjAct);
+        cc.Component.EventHandler.emitEvents(this.vResultEvenHandle,this,mjAct);
         this.closeDlg();
     }
 
     onClickPass()
     {
+        cc.Component.EventHandler.emitEvents(this.vResultEvenHandle,this,eMJActType.eMJAct_Pass);
         this.closeDlg();
     }
 
+    hide()
+    {
+        this.pRootNode.active = false ;
+    }
+
+    show()
+    {
+        this.pRootNode.active = true ;
+    }
 
     showDlg( actList : eMJActType[] , ncard : number = -1, canGangCards? : number[] )
     {
@@ -122,6 +133,7 @@ export default class DlgActList extends cc.Component {
         this.pRootNode.position = cc.v2( outPos, this.pRootNode.position.y) ;
         this.pRootNode.stopAllActions();
         this.pRootNode.runAction(cc.moveTo(0.2,this.ptDisplayPos));
+        console.log( "this node is show " + this.node.active + "pos = " + this.ptDisplayPos.toString() + " cur out =" +  outPos.toString()  );
     }
 
     closeDlg()
@@ -129,6 +141,7 @@ export default class DlgActList extends cc.Component {
         this.pRootNode.stopAllActions();
         let outPos = this.pRootNode.getParent().getContentSize().width * 0.5 + this.pRootNode.getContentSize().width ;
         this.pRootNode.runAction(cc.moveTo( 0.2,cc.v2( outPos, this.pRootNode.position.y) ));
+        console.log( "close is invoker ----" );
     }
     // update (dt) {}
 }

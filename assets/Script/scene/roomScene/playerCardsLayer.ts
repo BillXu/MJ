@@ -13,8 +13,9 @@ import RoomData from "./roomData"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import { eMsgType } from "../../common/MessageIdentifer"
 import PlayerCard from "./playerCard"
-import { eClientRoomState } from "./roomDefine";
+import { eClientRoomState, eMJActType } from "./roomDefine";
 import { playerBaseData } from "./roomInterface";
+import { eRoomState } from "../../common/clientDefine"
 @ccclass
 export default class PlayerCardsLayer extends roomSceneLayerBase {
 
@@ -49,6 +50,11 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
             let cardsData = p.cards ;
             pcards.onRefreshCards(cardsData.vHoldCard,cardsData.nHoldCardCnt,cardsData.vMingCards,cardsData.vChuCards,cardsData.nNewFeatchedCard) ;
         } ); 
+
+        if (  pdata.jsRoomInfoMsg["state"] != eRoomState.eRoomState_AskForHuAndPeng )
+        {
+            this.vPlayerCards[pdata.curActClientIdx].onWaitChu();
+        }
     }
 
     //----state-----
@@ -76,6 +82,7 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
             let cardsData = p.cards ;
             pcards.onDistributeCards(cardsData.vHoldCard,cardsData.nHoldCardCnt,cardsData.nNewFeatchedCard) ;
         } ); 
+        this.vPlayerCards[pdata.curActClientIdx].onWaitChu();
     }
 
     onPlayerMo( playerClientIdx : number , newCard : number )
@@ -124,5 +131,13 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
     clearAllCards()
     {
         this.vPlayerCards.forEach( ( v : PlayerCard )=>{ v.onRefreshCards(null,0,null,null,0) ;} ) ; 
+    }
+
+    onSelfUserChu( cardNum : number )
+    {
+        let msg = {} ;
+        msg["card"] = cardNum ;
+        msg["actType"] = eMJActType.eMJAct_Chu ;
+        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
     }
 }

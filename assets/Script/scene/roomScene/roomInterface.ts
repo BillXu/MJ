@@ -30,12 +30,30 @@ export class IPlayerCards
 
     nNewFeatchedCard : number = 0 ;
     nHuCard : number = 0 ;
+
+    isSelf(){ return this.vHoldCard.length > 0 ;}
     parseFromMsg( info : Object )
     {
+        if ( info["holdCnt"] != null )
+        {
+            this.nHoldCardCnt = info["holdCnt"] ;
+        }
+
         if ( info["holdCards"] != null )
         {
             this.vHoldCard = this.vHoldCard.concat(info["holdCards"]);
+            if ( this.vHoldCard.length > 0 )
+            {
+                this.nHoldCardCnt = this.vHoldCard.length ;
+            }
         }
+
+        if ( this.nHoldCardCnt % 3 == 2 )
+        {
+            this.nNewFeatchedCard = this.vHoldCard.length > 0 ? this.vHoldCard.pop() : 1 ;
+            --this.nHoldCardCnt ;
+        }
+
         if ( info["chued"] != null )
         {
             this.vChuCards = this.vChuCards.concat(info["chued"]);
@@ -47,9 +65,9 @@ export class IPlayerCards
             let self = this ;
             vMing.forEach( ( ming : Object )=>{
                 let clientMing = { nInvokerClientIdx : undefined , nInvokerSvrIdx : undefined , nCard : 0 , mjStateType : eCardSate.eCard_AnGang,} ;
-                clientMing.nInvokerSvrIdx = vMing["invokerIdx"] ;
-                clientMing.nCard = vMing["card"][0] ;
-                let act : eMJActType = vMing["act"] ;
+                clientMing.nInvokerSvrIdx = ming["invokerIdx"] ;
+                clientMing.nCard = ming["card"][0] ;
+                let act : eMJActType = ming["act"] ;
                 if ( eMJActType.eMJAct_AnGang == act )
                 {
                     clientMing.mjStateType = eCardSate.eCard_AnGang;
@@ -66,7 +84,7 @@ export class IPlayerCards
                 {
                     clientMing.mjStateType = eCardSate.eCard_Eat;
                     let tmp : number[] = [] ;
-                    let t = tmp.concat(vMing["card"]);
+                    let t = tmp.concat(ming["card"]);
                     clientMing["vEatWithCards"] = t ;
                     t.sort( (a : number, b : number )=>{ return a - b ;} ) ;
                 }
@@ -86,6 +104,12 @@ export class IPlayerCards
 
     onMo( nNewCard : number )
     {
+        if ( !this.isSelf() )
+        {
+            ++this.nHoldCardCnt ;
+            return ;
+        }
+
         if ( this.nNewFeatchedCard )
         {
             this.vHoldCard.push(this.nNewFeatchedCard);
@@ -101,8 +125,15 @@ export class IPlayerCards
         this.vChuCards.push(nChu);
         if ( this.nNewFeatchedCard )
         {
-            this.vHoldCard.push(this.nNewFeatchedCard);
-            this.nNewFeatchedCard = 0 ;
+            if ( this.isSelf() )
+            {
+                this.vHoldCard.push(this.nNewFeatchedCard);
+                this.nNewFeatchedCard = 0 ;
+            }
+            else
+            {
+                ++this.nHoldCardCnt ;
+            }
         }
     }
 
@@ -142,6 +173,12 @@ export class IPlayerCards
             cnt = 1 ;
         }
 
+        if ( this.vHoldCard.length == 0 ) // other player 
+        {
+            this.nHoldCardCnt -= cnt ;
+            return  true ;
+        }
+
         if ( cnt > 0 )
         {
             if ( card == this.nNewFeatchedCard )
@@ -152,7 +189,7 @@ export class IPlayerCards
 
         }
 
-        while ( cnt-- <= 0 )
+        while ( cnt-- > 0 )
         {
             let v = _.findIndex(this.vHoldCard,( c : number )=>{ return card == c ;} ) ;
             if ( -1 == v )
@@ -270,7 +307,7 @@ export class playerBaseData
         this.isReady = ( info["state"] & eRoomPeerState.eRoomPeer_Ready) == eRoomPeerState.eRoomPeer_Ready; 
         this.chip = info["chips"] ;
 
-        if ( info["holdCnt"] == null )
+        if ( info["holdCnt"] == null && info["holdCards"] == null )
         {
             // no card info ;
             return ;

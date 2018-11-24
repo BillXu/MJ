@@ -182,7 +182,7 @@ export default class DlgActOptsCards extends cc.Component {
 
     onClickPass()
     {
-        cc.Component.EventHandler.emitEvents(this.vResultEvenHandle,null,null,null) ;
+        cc.Component.EventHandler.emitEvents(this.vResultEvenHandle,this,null) ;
         this.closeDlg();
     }
 
@@ -190,7 +190,7 @@ export default class DlgActOptsCards extends cc.Component {
     {
         let selIdx : number = parseInt(groupIdx);
         //vResultEvenHandle
-        cc.Component.EventHandler.emitEvents(this.vResultEvenHandle,selIdx ) ;
+        cc.Component.EventHandler.emitEvents(this.vResultEvenHandle,this,selIdx ) ;
         this.closeDlg();
     }
 

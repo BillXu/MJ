@@ -115,11 +115,25 @@ export default class PlayerCard extends cc.Component {
         }
         console.log( "onTouchStart" );
         let localPos = this.pRootNode.convertToNodeSpaceAR(touchEvent.getLocation());
-        let node = _.find( this.vHoldCards,( node : cc.Node)=>{
-            let pBox = node.getBoundingBox();
-            return pBox.contains(localPos);
-        } ) ;
-        
+        let node = undefined ;
+        if ( this.pFetchedCard )
+        {
+            let pBox = this.pFetchedCard.getBoundingBox();
+            if ( pBox.contains(localPos) )
+            {
+                node = this.pFetchedCard ;
+            }
+
+        }
+
+        if ( node == undefined )
+        {
+            node = _.find( this.vHoldCards,( node : cc.Node)=>{
+                let pBox = node.getBoundingBox();
+                return pBox.contains(localPos);
+            } ) ;
+        }
+
         if ( node == undefined )
         {
             return ;
@@ -153,9 +167,13 @@ export default class PlayerCard extends cc.Component {
         {
             return ;
         }
-        console.log( "onTouchMoved + " + touchEvent.getDeltaY() + "  x " + touchEvent.getDeltaX() );
 
         let pSelNode : cc.Node = this.optNodeProperty["node"] ;
+        if ( pSelNode == null )
+        {
+            return ;
+        }
+        
         let localPos = this.pRootNode.convertToNodeSpaceAR(touchEvent.getLocation());
         if ( this.optNodeProperty["state"] == eOptNodeState.eDrag_Sel )
         {
@@ -193,10 +211,10 @@ export default class PlayerCard extends cc.Component {
         let state : eOptNodeState = this.optNodeProperty["state"] ;
         if ( state == null )
         {
-            cc.error( "do not have state property " );
+            //cc.error( "do not have state property " );
             return ;
         }
-        
+
         if ( eOptNodeState.eClick_Sel == state )
         {
             let self = this ;
@@ -694,8 +712,8 @@ export default class PlayerCard extends cc.Component {
         this.doRemoveCardFromHold(cardNum,2);
         let pPengNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_Peng,this.getDirectByInvokerClientIdx(invokerClientIdx)) ;
         this.pRootNode.addChild(pPengNode);
-        pPengNode.position = this.getMingCardPosByIdx(this.vMingCards.length);
         this.vMingCards.push(pPengNode);
+        pPengNode.position = this.getMingCardPosByIdx(this.vMingCards.length - 1 );
          // layout holdCards ;
          this.relayoutHoldCards();
          this.onWaitChu();
@@ -706,8 +724,8 @@ export default class PlayerCard extends cc.Component {
         this.doRemoveCardFromHold(cardNum,3);
         let pMingGangNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_MingGang,this.getDirectByInvokerClientIdx(invokerClientIdx)) ;
         this.pRootNode.addChild(pMingGangNode);
-        pMingGangNode.position = this.getMingCardPosByIdx(this.vMingCards.length);
         this.vMingCards.push(pMingGangNode);
+        pMingGangNode.position = this.getMingCardPosByIdx(this.vMingCards.length - 1 );
 
         // layout holdCards ;
         this.onMo(gangNewCard) ;
@@ -732,8 +750,8 @@ export default class PlayerCard extends cc.Component {
         this.doRemoveCardFromHold(cardNum,1);
         let pMingGangNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_MingGang,this.getDirectByInvokerClientIdx(invokerClientIdx)) ;
         this.pRootNode.addChild(pMingGangNode);
-        pMingGangNode.position = this.getMingCardPosByIdx(idx);
         this.vMingCards[idx] = pMingGangNode ;
+        pMingGangNode.position = this.getMingCardPosByIdx(idx);
         this.relayoutHoldCards();
         this.onMo(gangNewCard) ;
     }
@@ -743,8 +761,8 @@ export default class PlayerCard extends cc.Component {
         this.doRemoveCardFromHold(cardNum,4);
         let pGangNode = this.pCardFactory.createCard(cardNum,this.nPosIdx,eCardSate.eCard_AnGang) ;
         this.pRootNode.addChild(pGangNode);
-        pGangNode.position = this.getMingCardPosByIdx(this.vMingCards.length);
         this.vMingCards.push(pGangNode);
+        pGangNode.position = this.getMingCardPosByIdx(this.vMingCards.length - 1 );
         // layout holdCards ;
         this.relayoutHoldCards();
         this.onMo(gangNewCard) ;
@@ -757,8 +775,9 @@ export default class PlayerCard extends cc.Component {
         let v = [targetCardNum,selfCardA,selfCardB];
         let pNode = this.pCardFactory.createCard(v,this.nPosIdx,eCardSate.eCard_Eat,eArrowDirect.eDirect_Left) ;
         this.pRootNode.addChild(pNode);
-        pNode.position = this.getMingCardPosByIdx(this.vMingCards.length);
         this.vMingCards.push(pNode);
+        pNode.position = this.getMingCardPosByIdx(this.vMingCards.length - 1 );
+        
         this.relayoutHoldCards();
         this.onWaitChu();
     }

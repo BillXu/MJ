@@ -15,7 +15,7 @@ import PlayerInfoLayer from "./playerInfoLayer"
 import PlayerCardsLayer from "./playerCardsLayer"
 import { eMsgPort , eMsgType } from "../../common/MessageIdentifer"
 import Network from "../../common/Network"
-import { clientDefine , SceneName } from "../../common/clientDefine"
+import { clientDefine , SceneName, eRoomState } from "../../common/clientDefine"
 import ClientData from "../../globalModule/ClientData"
 import { IOneMsgCallback } from "../../common/NetworkInterface"
 import { eMJActType,eEatType } from "./roomDefine";
@@ -66,14 +66,26 @@ export default class RoomScene extends cc.Component {
         {
             case eMsgType.MSG_ROOM_INFO:
             {
-    
+
             }
             break ;
             case eMsgType.MSG_ROOM_PLAYER_INFO:
             {
+                if ( eRoomState.eRoomState_AskForHuAndPeng == msg["state"] )
+                {
+                    this.pRoomData.lastChuClientIdx = this.pRoomData.curActClientIdx;
+                }
+                else
+                {
+                    this.pRoomData.lastChuClientIdx = ( this.pRoomData.curActClientIdx - 1 + this.pRoomData.getMaxTableSeat() ) % this.pRoomData.getMaxTableSeat() ;
+                }
+
                 this.pLayerRoomInfo.refresh(this.pRoomData);
                 this.pLayerPlayerInfo.refresh(this.pRoomData);
                 this.pLayerPlayerCards.refresh(this.pRoomData);
+
+                let msgReqAct = {} ;
+                this.sendRoomMsg(msgReqAct,eMsgType.MSG_REQ_ACT_LIST) ;
             }
             break ;
             case eMsgType.MSG_REQUEST_PLAYER_DATA:
@@ -124,7 +136,7 @@ export default class RoomScene extends cc.Component {
                     case eMJActType.eMJAct_Chu:
                     {
                         this.pRoomData.lastChuClientIdx = clientIdx ;
-                        this.pRoomData.lastChuCard = targetCard ;
+                        //this.pRoomData.lastChuCard = targetCard ;
                         playerCardData.onChu(targetCard) ;
                         if ( 0 != clientIdx )
                         {
@@ -188,6 +200,12 @@ export default class RoomScene extends cc.Component {
             break ;
             case eMsgType.MSG_PLAYER_WAIT_ACT_ABOUT_OTHER_CARD:
             {
+                console.log( "do pop act dlg" );
+                let self = this ;
+                setTimeout(() => {
+                    console.log( "----do pop act dlg ishow = " + self.pdlgAct.pRootNode.active + " pos " + self.pdlgAct.node.position.toString() );
+                    //self.pdlgAct.showDlg(msg["acts"],msg["cardNum"]) ;
+                }, 1500);
                 this.pdlgAct.showDlg(msg["acts"],msg["cardNum"]) ;
             }
             break;
@@ -195,6 +213,11 @@ export default class RoomScene extends cc.Component {
             {
                 let vActList : eMJActType[] = [] ;
                 let vAct : Object[] = msg["acts"] ;
+                if ( vAct.length == 1 && vAct[0]["act"] == eMJActType.eMJAct_Chu )
+                {
+                    return ;
+                }
+
                 let vCanGang : number[] = [] ;
                 vAct.forEach( ( act : Object)=>{
                     let actT : eMJActType = act["act"] ; 
@@ -204,9 +227,14 @@ export default class RoomScene extends cc.Component {
                         vCanGang.push(act["cardNum"] );
                     }
                 } );
-                this.pdlgAct.showDlg(msg["acts"],-1,vCanGang) ;
+                this.pdlgAct.showDlg(vActList,-1,vCanGang) ;
             }
             break ;
+            case eMsgType.MSG_ROOM_MQMJ_PLAYER_HU:
+            {
+
+            }
+            break;
             case eMsgType.MSG_ROOM_MQMJ_GAME_START:
             {
                 let vRace : Object[] = msg["races"] ;
@@ -225,6 +253,7 @@ export default class RoomScene extends cc.Component {
                     if ( p.uid == selfUID )
                     {
                         p.cards.vHoldCard = p.cards.vHoldCard.concat(msg["cards"]) ;
+                        p.cards.nHoldCardCnt = p.cards.vHoldCard.length ;
                     }
                     else
                     {
@@ -244,7 +273,7 @@ export default class RoomScene extends cc.Component {
     {
         if ( pdlgAct.isSelfRecievedCardAct() )
         {
-            if ( eMJActType.eMJAct_Hu == mjAct )
+            if ( eMJActType.eMJAct_Hu == mjAct || eMJActType.eMJAct_Pass == mjAct )
             {
                 let playerCard : IPlayerCards = this.pRoomData.vPlayers[this.pRoomData.clientIdxToSvrIdx(0)].cards ;
                 let msg = {} ;
@@ -267,6 +296,7 @@ export default class RoomScene extends cc.Component {
                 return ;
             }
             this.pdlgActOptsCards.showDlgOptsForGang(vCanGangCards) ;
+            pdlgAct.hide();
             return ;
         }
         else
@@ -321,12 +351,19 @@ export default class RoomScene extends cc.Component {
             let vEatOpts : eEatType[] = [] ;
             vEatType.forEach( ( o : Object)=>{ vEatOpts.push( o["type"] );} );
             this.pdlgActOptsCards.showDlgOptsForEat(card,vEatOpts) ;
+            pdlgAct.hide();
         }
 
     }
 
     onActDlgOptsResult(  dlgOpts : dlgActOptsCards ,nselIdx : number )
     {
+        if ( nselIdx == null ) // pass
+        {
+            this.pdlgAct.show();
+            return ;
+        }
+
         if ( dlgOpts.isEatState == false ) // gang opts ;
         {
             let playerCard : IPlayerCards = this.pRoomData.vPlayers[this.pRoomData.clientIdxToSvrIdx(0)].cards ;
@@ -394,6 +431,7 @@ export default class RoomScene extends cc.Component {
         this.pLayerPlayerCards.enterGameState(this.pRoomData);
         this.pLayerPlayerInfo.enterGameState(this.pRoomData);
         this.pLayerRoomInfo.enterGameState(this.pRoomData);
+        this.pLayerPlayerCards.onDistributedCards(this.pRoomData) ;
     }
     // update (dt) {}
 }
