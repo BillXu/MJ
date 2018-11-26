@@ -86,6 +86,8 @@ export default class PlayerCard extends cc.Component {
     isUp() : boolean { return 2 == this.nPosIdx ; }
     isSelf() : boolean { return 0 == this.nPosIdx ; }
 
+    pfunChuAniFinishCallBack : ( pNodeChuCard : cc.Node )=>void = null ;
+
     onWaitChu()
     {
         this.isWaitChu = true ;
@@ -842,7 +844,7 @@ export default class PlayerCard extends cc.Component {
         }
     }
 
-    private onChuPaiAniFinish()
+    private onChuPaiAniFinish( pnode : cc.Node )
     {
         if ( this.pFetchedCard )
         {
@@ -855,6 +857,20 @@ export default class PlayerCard extends cc.Component {
         {
             this.relayoutHoldCards();
         }
+        
+        if ( this.pfunChuAniFinishCallBack )
+        {
+            this.pfunChuAniFinishCallBack(pnode) ;
+        }
+    }
+
+    getLastChuCardNode() : cc.Node
+    {
+        if ( this.vOutCards.length == 0 )
+        {
+            return null ;
+        }
+        return this.vOutCards[this.vOutCards.length-1] ;
     }
 
     private doChuAnimation( cardNum : number , holdCardPos : cc.Vec2 , callBackFinishAni? : ()=>void )
@@ -883,7 +899,7 @@ export default class PlayerCard extends cc.Component {
         let spawn = cc.spawn(actMove,actScale) ;
         if ( callBackFinishAni )
         {
-            pNode.runAction(cc.sequence(spawn,cc.callFunc(callBackFinishAni)));
+            pNode.runAction(cc.sequence(spawn,cc.callFunc(callBackFinishAni,this,pNode)));
         }  
         else
         {
@@ -930,5 +946,30 @@ export default class PlayerCard extends cc.Component {
         this.isWaitChu = false ;
         this.doChuAnimation(cardNum,pos,this.onChuPaiAniFinish.bind(this));
         cc.Component.EventHandler.emitEvents(this.vDoChuPaiHandle,cardNum) ;
+    }
+
+    onChuPaiFailed( nCardNum )
+    {
+        let piter = ( node : cc.Node)=>{
+            let card : Card = node.getComponent(Card) ;
+            return card.cardNumber == nCardNum ;
+        };
+        let pNode = _.findLast( this.vOutCards,piter) ;
+        
+        if ( null == pNode )
+        {
+            cc.error( "why can not find just out card = " + nCardNum );
+            return ;
+        }
+
+        let idx = _.findLastIndex(this.vOutCards,piter);
+        this.pCardFactory.recycleNode(pNode);
+        this.vOutCards.splice(idx,1) ;
+
+        // add back to hold ;
+        let pHold = this.pCardFactory.createCard(nCardNum,this.nPosIdx,eCardSate.eCard_Hold) ;
+        this.vHoldCards.push(pHold) ;
+        this.pRootNode.addChild(pHold);
+        this.relayoutHoldCards();
     }
 }

@@ -82,4 +82,43 @@ let RoomEvent =
     Event_changeMJ : "event_changeMJ" ,
 } ;
 
+export enum eFanxingType
+{
+	eFanxing_PingHu, // 平胡
+
+	eFanxing_DuiDuiHu, //  对对胡
+
+	eFanxing_QingYiSe, // 清一色
+	eFanxing_QiDui, //  七对
+	eFanxing_QuanQiuDuDiao, // 全球独钓
+	eFanxing_TianHu, //天胡
+	eFanxing_ShuangQiDui, // 双七对
+
+	eFanxing_MengQing, // 门清
+
+	eFanxing_YaJue, // 压绝 
+	eFanxing_HunYiSe, // 混一色
+	eFanxing_WuHuaGuo, // 无花果
+	eFanxing_DiHu,//地胡
+
+	eFanxing_HaiDiLaoYue, // 海底捞月
+	eFanxing_DaMenQing, // 大门清
+	eFanxing_XiaoMenQing, // 小门清
+
+	eFanxing_GangKai, //杠开
+	eFanxing_QiangGang, //抢杠
+	eFanxing_GangHouPao, //杠后炮
+	
+	eFanxing_SC_ZhongZhang, //四川麻将中张
+	eFanxing_SC_19JiangDui, //四川麻将19将对
+	eFanxing_SC_Gen, //四川麻将根(4张相同的牌)
+
+	eFanxing_BianHu, //边张
+	eFanxing_JiaHu, //夹胡
+
+	eFanxing_13Yao, //13幺
+
+	eFanxing_Max, // 没有胡
+};
+
 export { RoomEvent }  ;

@@ -34,6 +34,10 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
     @property(cc.Node)
     pUpTag : cc.Node = null ;
 
+    @property(cc.Node)
+    pBankIconForMoveAni : cc.Node = null ;
+
+    ptBankIconAniStartPos : cc.Vec2 = cc.Vec2.ZERO ;
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -46,6 +50,8 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
                 this.vGameStatePlayerPos[idx] = cc.v2(v.node.position);
             } ) ;
         this.vWaitReadyStatePlayerPos.forEach( ( v: cc.Node)=>{ v.active = false ;});
+        this.ptBankIconAniStartPos = this.pBankIconForMoveAni.position ;
+        this.pBankIconForMoveAni.active = false ;
     }
 
     refresh( pdata : RoomData )
@@ -86,7 +92,16 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
     }
 
     start () {
+        // let self = this ;
+        // setTimeout(() => {
+        //     self.vPlayers[0].showBankerIcon();
+        //     self.playBankIconMoveAni(0);
+        // }, 1000);
 
+        // setTimeout(() => {
+        //     self.vPlayers[0].showBankerIcon();
+        //     self.playBankIconMoveAni(0);
+        // }, 5000);
     }
 
     enterWaitReadyState( pdata : RoomData )
@@ -116,6 +131,10 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
             if ( p.isEmpty() == false )
             {
                 p.enterGameState();
+                if ( pdata.svrIdxToClientIdx(pdata.bankerIdx) == idx )
+                {
+                    p.showBankerIcon();
+                }
             }
         } );
 
@@ -124,6 +143,11 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         this.pRightTag.active = false;
 
         this.vPlayers[0].node.active = true ;
+
+        // delay player banker icon move ani
+        setTimeout(() => {
+            self.playBankIconMoveAni( pdata.svrIdxToClientIdx(pdata.bankerIdx)) ;
+        }, 500);
     }
 
     onPlayerJoin( player : playerBaseData  )
@@ -177,6 +201,27 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
     onRefreshPlayerDetail( player : playerBaseData )
     {
         this.vPlayers[player.clientIdx].refresh(player,this.roomState);
+    }
+
+    playBankIconMoveAni( nBakerClientIdx : number )
+    {
+        this.pBankIconForMoveAni.active = true ;
+        this.pBankIconForMoveAni.position = this.ptBankIconAniStartPos ;
+        this.pBankIconForMoveAni.scale = 2;
+        let actShow = cc.show() ;
+        let actScaleSmall = cc.scaleTo(0.3,1);
+        let delay = cc.delayTime(0.1) ;
+        let actScaleBig = cc.scaleTo(0.2,2);
+        let targetPos = this.vPlayers[nBakerClientIdx].pBankIcon.position ;
+        targetPos = this.vPlayers[nBakerClientIdx].pBankIcon.getParent().convertToWorldSpaceAR(targetPos);
+        targetPos = this.pBankIconForMoveAni.getParent().convertToNodeSpaceAR(targetPos);
+        let actMove = cc.moveTo(0.9,targetPos);
+        let scaleNormal = cc.scaleTo(actMove.getDuration(),1);
+        let spawMove = cc.spawn(actMove,scaleNormal);
+        let acthide = cc.hide();
+        let playerInfo = this.vPlayers[nBakerClientIdx] ;
+        let actFunc = cc.callFunc(()=>{ playerInfo.flipBankerIcon();});
+        this.pBankIconForMoveAni.runAction(cc.sequence(actShow,actScaleSmall,delay,actScaleBig,spawMove,acthide,actFunc));
     }
     // update (dt) {}
 }

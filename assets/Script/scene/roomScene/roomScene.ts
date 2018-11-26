@@ -77,7 +77,7 @@ export default class RoomScene extends cc.Component {
                 }
                 else
                 {
-                    this.pRoomData.lastChuClientIdx = ( this.pRoomData.curActClientIdx - 1 + this.pRoomData.getMaxTableSeat() ) % this.pRoomData.getMaxTableSeat() ;
+                    this.pRoomData.lastChuClientIdx = this.pRoomData.getPrivousPlayerIdx(this.pRoomData.curActClientIdx); 
                 }
 
                 this.pLayerRoomInfo.refresh(this.pRoomData);
@@ -112,6 +112,15 @@ export default class RoomScene extends cc.Component {
             {
                 let idx = msg["idx"] ;
                 this.pLayerPlayerInfo.onPlayerReady(this.pRoomData.svrIdxToClientIdx(idx));
+            }
+            break ;
+            case eMsgType.MSG_PLAYER_ACT:
+            {
+                let nret = msg["ret"];
+                if ( nret )
+                {
+                    console.error( "act error nret = " + nret );
+                }
             }
             break ;
             case eMsgType.MSG_ROOM_ACT:
@@ -252,12 +261,20 @@ export default class RoomScene extends cc.Component {
                 this.pRoomData.vPlayers.forEach( (p : playerBaseData)=>{
                     if ( p.uid == selfUID )
                     {
+                        p.cards.vHoldCard.length = 0 ;
                         p.cards.vHoldCard = p.cards.vHoldCard.concat(msg["cards"]) ;
+                        p.cards.nNewFeatchedCard = p.cards.vHoldCard.pop() ;
                         p.cards.nHoldCardCnt = p.cards.vHoldCard.length ;
+
                     }
                     else
                     {
                         p.cards.nHoldCardCnt = p.svrIdx == msg["bankerIdx"] ? 13 : 12 ;
+                        if ( p.cards.nHoldCardCnt == 13 )
+                        {
+                            p.cards.nNewFeatchedCard = 1 ;
+                            p.cards.nHoldCardCnt = 12 ;
+                        }
                     }
                 } ) ;
  
@@ -291,7 +308,7 @@ export default class RoomScene extends cc.Component {
                 let card : number = vCanGangCards[0] ;
                 let msg = {} ;
                 msg["actType"] = playerCard.getMingCardInvokerIdx(card) == -1 ? eMJActType.eMJAct_AnGang : eMJActType.eMJAct_BuGang  ;
-                msg["card"] = pdlgAct.taregetCard ;
+                msg["card"] = card ;
                 this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
                 return ;
             }
@@ -396,6 +413,11 @@ export default class RoomScene extends cc.Component {
         let nRoomID = ClientData.getInstance().stayInRoomID ;
         if ( nRoomID == -1 || 0 == nRoomID )
         {
+            if ( CC_DEBUG )
+            {
+                console.warn( "debug , not in any room but not jump main" );
+                return ;
+            }
             cc.director.loadScene(SceneName.Scene_Main);
             return ;
         }

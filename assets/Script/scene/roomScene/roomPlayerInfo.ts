@@ -74,6 +74,16 @@ export default class RoomPlayerInfo extends cc.Component {
         return this._nUserUID ;
     }
 
+    showBankerIcon()
+    {
+        this.pBankIcon.active = true ;
+    }
+
+    flipBankerIcon()
+    {
+       this.pBankIcon.getComponent(cc.Animation).play();
+    }
+
     refresh( data? : playerBaseData , state? : eClientRoomState )
     {
         this._nUserUID = data == null ? 0 : data.uid ;
@@ -124,6 +134,7 @@ export default class RoomPlayerInfo extends cc.Component {
        this.pCoin.node.active = false ;
        this.pWaitReadyNode.active = true ;
        this.pReadyNode.active = false ;
+       this.pBankIcon.active = false ;
     }
 
     enterGameState()

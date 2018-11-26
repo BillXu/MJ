@@ -266,6 +266,15 @@ export default class RoomData extends cc.Component {
             return svrIdx ;
         }
 
+        if ( this.seatCnt == 2 )
+        {
+            if ( self.svrIdx == svrIdx )
+            {
+                return 0 ;
+            }
+            return 2 ;
+        }
+
         console.log( "self idx = " + self.svrIdx + " svridx = " + svrIdx );
         let offset = svrIdx - self.svrIdx ;
         let seat = this.getMaxTableSeat();
@@ -280,6 +289,17 @@ export default class RoomData extends cc.Component {
             cc.warn( "why self don't sitdown ? uid = " + ClientData.getInstance().selfUID );
             return cliendIdx ;
         }
+
+        if ( this.seatCnt == 2 )
+        {
+            if ( 0 == cliendIdx )
+            {
+                return self.svrIdx ;
+            }
+
+            return 1 ;
+        }
+
         return ( self.svrIdx + cliendIdx ) % this.getMaxTableSeat() ;
     }
 
@@ -304,6 +324,11 @@ export default class RoomData extends cc.Component {
     isSelfRoomOwner() : boolean
     {
         return false ;
+    }
+
+    get roomOwnerUID() : number
+    {
+        return 0 ;
     }
 
     enterWaitReadyState()
