@@ -65,8 +65,10 @@ export default class DlgSingleResultItem extends cc.Component {
     pRoomOwnerTag : cc.Node = null ;
 
     vCards : cc.Node[] = [] ;
-    start () {
 
+    nOffset : number = 0 ;
+    start () {
+        this.nOffset = 0 ;
     }
 
     set headUrl ( url : string )
@@ -143,17 +145,48 @@ export default class DlgSingleResultItem extends cc.Component {
     set gangScore ( gangScore : number )
     {
         this.pGangScore.string = gangScore.toString();
+        if ( gangScore == 0 )
+        {
+            this.pGangScore.node.color = cc.Color.GRAY;
+        }
+        else
+        {
+            this.pGangScore.node.color = gangScore > 0 ? cc.color().fromHEX("#D15900") : cc.color().fromHEX("#127EC9");
+        }
     }
 
     set huScore ( score : number )
     {
         this.pHuScore.string = score.toString();
         this.pFanShu.string = Math.abs( score) + "番";
+
+        if ( score == 0 )
+        {
+            this.pHuScore.node.color = cc.Color.GRAY;
+        }
+        else
+        {
+            this.pHuScore.node.color = score > 0 ? cc.color().fromHEX("#D15900") : cc.color().fromHEX("#127EC9");
+        }
     }
 
     set totalScore ( score : number )
     {
+        this.nOffset = score ;
         this.pTotalScore.string = score.toString();
+        if ( score == 0 )
+        {
+            this.pTotalScore.node.color = cc.Color.GRAY;
+        }
+        else
+        {
+            this.pTotalScore.node.color = score > 0 ? cc.color().fromHEX("#D15900") : cc.color().fromHEX("#127EC9");
+        }
+    }
+
+    get totalScore() : number
+    {
+        return this.nOffset ;
     }
 
     set clientIdx ( clientIdx : number )
@@ -195,6 +228,7 @@ export default class DlgSingleResultItem extends cc.Component {
             return ;
         }
 
+        pNode.scale = 1 ;
         let pos = this.vCards[this.vCards.length -1].position ;
         pos.x += this.vCards[this.vCards.length -1].getBoundingBox().width + this.nCardElaps;
         pNode.position = pos ;
@@ -230,6 +264,7 @@ export default class DlgSingleResultItem extends cc.Component {
                 return ;
             }
 
+            pNode.scale = 1 ;
             let pos = self.pCardStartPos.position ;
             if ( idx != 0 )
             {
@@ -251,6 +286,7 @@ export default class DlgSingleResultItem extends cc.Component {
                 continue ;
             }
 
+            pNode.scale = 1 ;
             let pos = self.pCardStartPos.position ;
             if ( nIdx == 0 )
             {
@@ -283,6 +319,7 @@ export default class DlgSingleResultItem extends cc.Component {
         this.isDianPao = false ;
         this.isHu = false ;
         this.huType = null ;
+        this.nOffset = 0 ;
     }
     // update (dt) {}
 }

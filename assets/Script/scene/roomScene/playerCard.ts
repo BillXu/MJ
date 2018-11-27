@@ -328,6 +328,7 @@ export default class PlayerCard extends cc.Component {
         if ( this.pFetchedCard )
         {
             self.pCardFactory.recycleNode(this.pFetchedCard);
+            this.pFetchedCard = null ;
         }
 
         // create cards ;

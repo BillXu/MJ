@@ -22,6 +22,7 @@ import { eMJActType,eEatType } from "./roomDefine";
 import DlgActList from "./dlgActList"
 import dlgActOptsCards from "./dlgActOptsCards"
 import { IPlayerCards, playerBaseData } from "./roomInterface";
+import dlgSingleResult from "./dlgSingleResult"
 @ccclass
 export default class RoomScene extends cc.Component {
 
@@ -42,6 +43,9 @@ export default class RoomScene extends cc.Component {
 
     @property(dlgActOptsCards)
     pdlgActOptsCards : dlgActOptsCards = null ;
+
+    @property(dlgSingleResult)
+    pdlgSingleReuslt : dlgSingleResult = null ;
     // LIFE-CYCLE CALLBACKS:
 
     onLoad ()
@@ -105,7 +109,13 @@ export default class RoomScene extends cc.Component {
             case eMsgType.MSG_ROOM_STAND_UP:
             {
                 let idx = msg["idx"] ;
-                this.pLayerPlayerInfo.onPlayerLeave(this.pRoomData.svrIdxToClientIdx(idx));
+                let data = this.pRoomData.getPlayerDataBySvrIdx(idx);
+                if ( data == null )
+                {
+                    cc.error( "standup player is not in room ? idx = " + idx );
+                    break 
+                }
+                this.pLayerPlayerInfo.onPlayerLeave(data.clientIdx);
             }
             break ;
             case eMsgType.MSG_ROOM_PLAYER_READY:
@@ -283,6 +293,12 @@ export default class RoomScene extends cc.Component {
                 this.enterGameState();
             }
             break ;
+            case eMsgType.MSG_ROOM_SCMJ_GAME_END:
+            {
+                this.pdlgSingleReuslt.showResultDlg(msg,this.pRoomData) ;
+                this.enterWaitReadyState();
+            }
+            break ;
         } 
     }
 
@@ -454,6 +470,18 @@ export default class RoomScene extends cc.Component {
         this.pLayerPlayerInfo.enterGameState(this.pRoomData);
         this.pLayerRoomInfo.enterGameState(this.pRoomData);
         this.pLayerPlayerCards.onDistributedCards(this.pRoomData) ;
+    }
+
+    onSingleResultCallBack( isContinue : boolean )
+    {
+        if ( isContinue )
+        {
+            this.pLayerRoomInfo.onBtnReady();
+        }
+        else
+        {
+            console.log( "share single result" );
+        }
     }
     // update (dt) {}
 }

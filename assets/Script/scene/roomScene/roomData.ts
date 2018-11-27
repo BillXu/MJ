@@ -30,6 +30,11 @@ export default class RoomData extends cc.Component {
         return 4 ;
     }
 
+    get rule() : string
+    {
+        return "this is option rule" ;
+    }
+
     get gameType() : eGameType
     {
         return this.jsRoomInfoMsg["opts"]["gameType"] ;
@@ -305,7 +310,7 @@ export default class RoomData extends cc.Component {
 
     getPlayerDataByUID( uid : number ) : playerBaseData
     {
-        let p = _.find( this.vPlayers,( p : playerBaseData )=>{ return p.uid == uid ;} ) ;
+        let p = _.find( this.vPlayers,( p : playerBaseData )=>{ if (!p)return false ; return p.uid == uid ;} ) ;
         return p ;
     } 
 
@@ -319,6 +324,11 @@ export default class RoomData extends cc.Component {
             }
         }     
         return null ;
+    }
+
+    getPlayerDataBySvrIdx( svrIdx : number ): playerBaseData
+    {
+        return this.vPlayers[svrIdx] ;
     }
 
     isSelfRoomOwner() : boolean

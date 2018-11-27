@@ -15,8 +15,9 @@ import DlgSingleResultItem from "./dlgSingleResultItem"
 import CardFactory from "./cardFactory"
 import { playerBaseData } from "./roomInterface";
 import { eMJActType } from "./roomDefine";
+import DlgBase from "../../common/DlgBase"
 @ccclass
-export default class dlgSingleResult extends cc.Component {
+export default class dlgSingleResult extends DlgBase {
 
     @property(cc.Label)
     pRoomIDAndCirleState: cc.Label = null;
@@ -36,7 +37,25 @@ export default class dlgSingleResult extends cc.Component {
 
     @property(CardFactory)
     pCardFactory : CardFactory = null ;
-    // onLoad () {}
+    
+    @property(cc.Node)
+    pWinTitle : cc.Node = null ;
+
+    @property(cc.Node)
+    pLoseTitile : cc.Node = null ;
+
+    @property(cc.Node)
+    pLiujuTitle : cc.Node = null ;
+
+    nCountDownTimer : number = 15 ;
+
+    @property([cc.Component.EventHandler])
+    vReusltHandle : cc.Component.EventHandler[] = [] ;
+
+    onLoad ()
+    {
+        this.closeDlg();
+    }
 
     start () {
 
@@ -44,6 +63,7 @@ export default class dlgSingleResult extends cc.Component {
 
     showResultDlg( msg : Object , pdata : RoomData )
     {
+        super.showDlg();
         let self = this ;
         // fill player info
         pdata.vPlayers.forEach( ( playerData : playerBaseData )=>{
@@ -69,7 +89,7 @@ export default class dlgSingleResult extends cc.Component {
         let vGangOffset : number[] = [] ; // array idx = svrIdx ;
         let vHuOffset : number[] = [] ; // array idx = svrIdx ;
         let jsHuDetail : Object = null ;
-        let vRealTimeCal : Object[] = msg["realTimeCal"] ;
+        let vRealTimeCal : Object[] = msg["realTimeCal"] || [];
         vRealTimeCal.forEach( ( objCal : Object )=>{
             let actType : eMJActType = objCal["actType"] ;
             let vOffseDetail : Object[] = objCal["detial"] ;
@@ -110,48 +130,86 @@ export default class dlgSingleResult extends cc.Component {
         } ) ;
 
         // parse huinfo ;
-        let isZiMo : boolean = jsHuDetail["isZiMo"] ;
-        let huCard : number = jsHuDetail["huCard"];
-        if ( isZiMo )
+        if ( jsHuDetail != null )
         {
-            let detail = jsHuDetail["detail"] ;
-            let huIdx = detail["idx"] ;
-            let vHuType = detail["vhuTypes"] || [];
-            this.vSingleResultItem[huIdx].isHu = true ;
-            this.vSingleResultItem[huIdx].isZiMo = true ;
-            this.vSingleResultItem[huIdx].huType = vHuType ;
-            //this.vSingleResultItem[huIdx].huCard = huCard ; // aready in hold card
+            let isZiMo : boolean = jsHuDetail["isZiMo"] ;
+            let huCard : number = jsHuDetail["huCard"];
+            if ( isZiMo )
+            {
+                let detail = jsHuDetail["detail"] ;
+                let huIdx = detail["huIdx"] ;
+                let vHuType = detail["vhuTypes"] || [];
+                this.vSingleResultItem[huIdx].isHu = true ;
+                this.vSingleResultItem[huIdx].isZiMo = true ;
+                this.vSingleResultItem[huIdx].huType = vHuType ;
+                //this.vSingleResultItem[huIdx].huCard = huCard ; // aready in hold card
+            }
+            else
+            {
+                let detail = jsHuDetail["detail"] ;
+                let dianPaoIdx : number = detail["dianPaoIdx"] ;
+                let vHuPlayers : Object[] = detail["huPlayers"] ;
+    
+                // sign dian pao player 
+                this.vSingleResultItem.forEach( ( item : DlgSingleResultItem, idx : number )=>{
+                    item.isDianPao = idx == dianPaoIdx ;
+                } )
+    
+                // huplayers ;
+                vHuPlayers.forEach( ( huPlayerItem : Object )=>{
+                    let huIdx = huPlayerItem["idx"] ;
+                    let vHuType = huPlayerItem["vhuTypes"] || [] ;
+                    self.vSingleResultItem[huIdx].isHu = true ;
+                    self.vSingleResultItem[huIdx].isZiMo = false ;
+                    self.vSingleResultItem[huIdx].huType = vHuType ;
+                    self.vSingleResultItem[huIdx].setHuCard(self.pCardFactory,huCard) ;
+                } );
+            }
         }
-        else
-        {
-            let detail = jsHuDetail["detail"] ;
-            let dianPaoIdx : number = detail["dianPaoIdx"] ;
-            let vHuPlayers : Object[] = detail["huPlayers"] ;
 
-            // sign dian pao player 
-            this.vSingleResultItem.forEach( ( item : DlgSingleResultItem, idx : number )=>{
-                item.isDianPao = idx == dianPaoIdx ;
-            } )
+        // total title
+        let s = this.vSingleResultItem[pdata.clientIdxToSvrIdx(0)].totalScore ;
+        this.pWinTitle.active = s > 0 ;
+        this.pLiujuTitle.active = s == 0 ;
+        this.pLoseTitile.active = s < 0 ;
 
-            // huplayers ;
-            vHuPlayers.forEach( ( huPlayerItem : Object )=>{
-                let huIdx = huPlayerItem["idx"] ;
-                let vHuType = huPlayerItem["vhuTypes"] || [] ;
-                self.vSingleResultItem[huIdx].isHu = true ;
-                self.vSingleResultItem[huIdx].isZiMo = false ;
-                self.vSingleResultItem[huIdx].huType = vHuType ;
-                self.vSingleResultItem[huIdx].setHuCard(self.pCardFactory,huCard) ;
-            } );
-        }
+        // room id and circle state ;
+        this.pRoomIDAndCirleState.string = "房间号:" + pdata.roomID + "  " + pdata.playedCircle + "/" + pdata.totalCircleOrRoundCnt ;
+
+        // cur time 
+        this.pCurTime.string = (new Date()).toLocaleString();
+
+        // start count down time 
+        this.nCountDownTimer = 15 ;
+        this.unschedule(this.onCountDownTimer) ;
+        this.schedule(this.onClickGoOn,1,50) ;
+        this.pCountDownTime.string = this.nCountDownTimer.toString();
+
+        // rule
+        this.pRule.string = pdata.rule;
     }
 
     onClickShare()
     {
-
+        this.unschedule(this.onCountDownTimer) ;
+        cc.Component.EventHandler.emitEvents(this.vReusltHandle,false) ;
     }
 
     onClickGoOn()
     {
+        this.unschedule(this.onCountDownTimer) ;
+        this.closeDlg();
+        cc.Component.EventHandler.emitEvents(this.vReusltHandle,true) ;
+    }
 
+    onCountDownTimer()
+    {
+        if ( 0 == this.nCountDownTimer )
+        {
+            this.onClickGoOn();
+            return ;
+        }
+        --this.nCountDownTimer;
+        this.pCountDownTime.string = this.nCountDownTimer.toString();
     }
 }
