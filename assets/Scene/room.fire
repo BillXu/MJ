@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.60155029296875,
-      "y": 0.60155029296875,
+      "x": 0.3651996442144983,
+      "y": 0.3651996442144983,
       "z": 1
     },
     "_quat": {
@@ -19507,7 +19507,6 @@
     "pCardStartPos": {
       "__id__": 431
     },
-    "nCardElaps": 20,
     "pHuScore": {
       "__id__": 436
     },
@@ -21474,7 +21473,6 @@
     "pCardStartPos": {
       "__id__": 477
     },
-    "nCardElaps": 20,
     "pHuScore": {
       "__id__": 482
     },
@@ -23441,7 +23439,6 @@
     "pCardStartPos": {
       "__id__": 523
     },
-    "nCardElaps": 20,
     "pHuScore": {
       "__id__": 528
     },
@@ -25408,7 +25405,6 @@
     "pCardStartPos": {
       "__id__": 569
     },
-    "nCardElaps": 20,
     "pHuScore": {
       "__id__": 574
     },

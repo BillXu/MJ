@@ -65,9 +65,10 @@ export default class dlgSingleResult extends DlgBase {
     {
         super.showDlg();
         let self = this ;
+        this.vSingleResultItem.forEach( ( item : DlgSingleResultItem )=>{ item.reset(self.pCardFactory); item.node.active = false ;} );
         // fill player info
         pdata.vPlayers.forEach( ( playerData : playerBaseData )=>{
-            self.vSingleResultItem[playerData.svrIdx].reset(self.pCardFactory);
+            self.vSingleResultItem[playerData.svrIdx].node.active = true ;
             self.vSingleResultItem[playerData.svrIdx].name = playerData.name ;
             self.vSingleResultItem[playerData.svrIdx].clientIdx = playerData.clientIdx ;
             self.vSingleResultItem[playerData.svrIdx].headUrl = playerData.headIconUrl ;
@@ -129,6 +130,18 @@ export default class dlgSingleResult extends DlgBase {
             singleItem.huScore = huOffset ;
         } ) ;
 
+        // caculte total offset 
+        this.vSingleResultItem.forEach( ( obj : DlgSingleResultItem , idx : number )=>{
+            if ( obj.node.active == false )
+            {
+                return ;
+            }
+
+            let offset = vGangOffset[idx] || 0 ;
+            offset += vHuOffset[idx] || 0 ;
+            obj.totalScore = offset ;
+        } );
+
         // parse huinfo ;
         if ( jsHuDetail != null )
         {
@@ -182,7 +195,7 @@ export default class dlgSingleResult extends DlgBase {
         // start count down time 
         this.nCountDownTimer = 15 ;
         this.unschedule(this.onCountDownTimer) ;
-        this.schedule(this.onClickGoOn,1,50) ;
+        this.schedule(this.onCountDownTimer,1,50) ;
         this.pCountDownTime.string = this.nCountDownTimer.toString();
 
         // rule

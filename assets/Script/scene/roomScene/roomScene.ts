@@ -273,7 +273,10 @@ export default class RoomScene extends cc.Component {
                     {
                         p.cards.vHoldCard.length = 0 ;
                         p.cards.vHoldCard = p.cards.vHoldCard.concat(msg["cards"]) ;
-                        p.cards.nNewFeatchedCard = p.cards.vHoldCard.pop() ;
+                        if ( p.cards.vHoldCard.length == 13 )
+                        {
+                            p.cards.nNewFeatchedCard = p.cards.vHoldCard.pop() ;
+                        }
                         p.cards.nHoldCardCnt = p.cards.vHoldCard.length ;
 
                     }

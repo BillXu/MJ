@@ -32,8 +32,8 @@ export default class DlgSingleResultItem extends cc.Component {
     @property(cc.Node)
     pCardStartPos  : cc.Node = null ;
 
-    @property
-    nCardElaps : number = 20 ;
+    //@property
+    nCardElaps : number = 10 ;
 
     @property(cc.Label)
     pHuScore : cc.Label = null ;
@@ -68,6 +68,7 @@ export default class DlgSingleResultItem extends cc.Component {
 
     nOffset : number = 0 ;
     start () {
+        this.pCardStartPos.active = false ;
         this.nOffset = 0 ;
     }
 
@@ -228,7 +229,7 @@ export default class DlgSingleResultItem extends cc.Component {
             return ;
         }
 
-        pNode.scale = 1 ;
+        //pNode.scale = 1 ;
         let pos = this.vCards[this.vCards.length -1].position ;
         pos.x += this.vCards[this.vCards.length -1].getBoundingBox().width + this.nCardElaps;
         pNode.position = pos ;
@@ -264,12 +265,16 @@ export default class DlgSingleResultItem extends cc.Component {
                 return ;
             }
 
-            pNode.scale = 1 ;
+            pNode.scale = 0.7 ;
             let pos = self.pCardStartPos.position ;
             if ( idx != 0 )
             {
                 pos = self.vCards[idx-1].position ;
                 pos.x += self.vCards[idx-1].getBoundingBox().width + self.nCardElaps ;
+            }
+            else
+            {
+                pos.x += pNode.getBoundingBox().width * 0.5 ;
             }
             pNode.position = pos ;
             self.node.addChild(pNode);
@@ -286,7 +291,7 @@ export default class DlgSingleResultItem extends cc.Component {
                 continue ;
             }
 
-            pNode.scale = 1 ;
+            //pNode.scale = 1 ;
             let pos = self.pCardStartPos.position ;
             if ( nIdx == 0 )
             {
@@ -294,7 +299,7 @@ export default class DlgSingleResultItem extends cc.Component {
                 {
                     pos = self.vCards[self.vCards.length -1 ].position ;
                     pos.x += self.vCards[self.vCards.length -1 ].getBoundingBox().width * 0.5 ;
-                    pos.x + self.nCardElaps ;
+                    pos.x += self.nCardElaps + pNode.getBoundingBox().width * 0.5 ;
                 }
             }
             else
@@ -320,6 +325,9 @@ export default class DlgSingleResultItem extends cc.Component {
         this.isHu = false ;
         this.huType = null ;
         this.nOffset = 0 ;
+        this.gangScore = 0 ;
+        this.huScore = 0 ;
+        this.totalScore = 0 ;
     }
     // update (dt) {}
 }
