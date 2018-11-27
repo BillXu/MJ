@@ -14,6 +14,7 @@ import { playerBaseData } from "./roomInterface"
 import { eClientRoomState } from "./roomDefine"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import RoomData from "./roomData"
+import { eMsgType } from "../../common/MessageIdentifer"
 @ccclass
 export default class PlayerInfoLayer extends roomSceneLayerBase {
 
@@ -222,6 +223,22 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         let playerInfo = this.vPlayers[nBakerClientIdx] ;
         let actFunc = cc.callFunc(()=>{ playerInfo.flipBankerIcon();});
         this.pBankIconForMoveAni.runAction(cc.sequence(actShow,actScaleSmall,delay,actScaleBig,spawMove,acthide,actFunc));
+    }
+
+    onMsg( nMsgID : eMsgType , msg : Object ) : boolean 
+    {
+        if ( eMsgType.MSG_ROOM_SCMJ_GAME_END == nMsgID )
+        {
+            let vPlayer : Object[] = msg["players" ] ;
+            let self = this ;
+            vPlayer.forEach( ( p : Object )=>{
+                let svrIdx = p["idx"] ;
+                let coin = p["chips"] ;
+                let clientIdx = self.roomScene.pRoomData.svrIdxToClientIdx(svrIdx);
+                this.vPlayers[clientIdx].coin = coin ;
+            } );
+        }
+        return false ;
     }
     // update (dt) {}
 }
