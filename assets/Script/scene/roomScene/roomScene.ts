@@ -23,6 +23,7 @@ import DlgActList from "./dlgActList"
 import dlgActOptsCards from "./dlgActOptsCards"
 import { IPlayerCards, playerBaseData } from "./roomInterface";
 import dlgSingleResult from "./dlgSingleResult"
+import DlgRoomOverResult from "./dlgRoomOverResult"
 @ccclass
 export default class RoomScene extends cc.Component {
 
@@ -46,6 +47,9 @@ export default class RoomScene extends cc.Component {
 
     @property(dlgSingleResult)
     pdlgSingleReuslt : dlgSingleResult = null ;
+
+    @property(DlgRoomOverResult)
+    pdlgRoomOver : DlgRoomOverResult = null ;
     // LIFE-CYCLE CALLBACKS:
 
     onLoad ()
@@ -189,6 +193,7 @@ export default class RoomScene extends cc.Component {
                         this.pLayerPlayerCards.onPlayerAnGang(clientIdx,targetCard,msg["gangCard"]) ;
                     }
                     break;
+                    case eMJActType.eMJAct_BuGang_Done:
                     case eMJActType.eMJAct_BuGang:
                     {
                         this.pRoomData.curActSvrIdx = svrIdx ;
@@ -273,7 +278,7 @@ export default class RoomScene extends cc.Component {
                     {
                         p.cards.vHoldCard.length = 0 ;
                         p.cards.vHoldCard = p.cards.vHoldCard.concat(msg["cards"]) ;
-                        if ( p.cards.vHoldCard.length == 13 )
+                        if ( p.cards.vHoldCard.length == 14 )
                         {
                             p.cards.nNewFeatchedCard = p.cards.vHoldCard.pop() ;
                         }
@@ -282,11 +287,11 @@ export default class RoomScene extends cc.Component {
                     }
                     else
                     {
-                        p.cards.nHoldCardCnt = p.svrIdx == msg["bankerIdx"] ? 13 : 12 ;
-                        if ( p.cards.nHoldCardCnt == 13 )
+                        p.cards.nHoldCardCnt = p.svrIdx == msg["bankerIdx"] ? 14 : 13 ;
+                        if ( p.cards.nHoldCardCnt == 14 )
                         {
                             p.cards.nNewFeatchedCard = 1 ;
-                            p.cards.nHoldCardCnt = 12 ;
+                            p.cards.nHoldCardCnt = 13 ;
                         }
                     }
                 } ) ;
@@ -300,6 +305,11 @@ export default class RoomScene extends cc.Component {
             {
                 this.pdlgSingleReuslt.showResultDlg(msg,this.pRoomData) ;
                 this.enterWaitReadyState();
+            }
+            break ;
+            case eMsgType.MSG_ROOM_GAME_OVER:
+            {
+                this.pdlgRoomOver.showDlg(msg,this.pRoomData) ;
             }
             break ;
         } 

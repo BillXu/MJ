@@ -54,6 +54,7 @@ export default class dlgSingleResult extends DlgBase {
 
     onLoad ()
     {
+        super.onLoad();
         this.closeDlg();
     }
 

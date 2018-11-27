@@ -100,6 +100,7 @@ export class IPlayerCards
         this.vMingCards.length = 0 ;
         this.vChuCards.length = 0 ;
         this.nHuCard = 0 ;
+        this.nNewFeatchedCard = 0 ;
     }
 
     onMo( nNewCard : number )
