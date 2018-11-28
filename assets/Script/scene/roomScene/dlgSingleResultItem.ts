@@ -90,7 +90,7 @@ export default class DlgSingleResultItem extends cc.Component {
     set huType( vhuType : eFanxingType[] )
     {
         this.pHuBg.active = vhuType != null ;
-        let huStr : string = "平胡" ;
+        let huStr : string = vhuType.length > 0 ? "" : "平胡" ;
         if ( vhuType && vhuType.length > 0 )
         {
             vhuType.forEach( ( hutype : eFanxingType )=>{

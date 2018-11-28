@@ -114,7 +114,7 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
             {
                 p.enterWaitReadyState();
             }
-            console.log( "update card to wait ready position" );
+            console.log( "update card to wait ready position = " + p.node.position.toString() + " idx = " + idx );
         } );
 
         this.pUpTag.active = this.vPlayers[2].isEmpty();
@@ -197,6 +197,11 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         {
             this.vPlayers[0].node.active = true ;
         }
+    }
+
+    onPlayerRefreshSate( clientIdx : number , isOnlien : boolean )
+    {
+        this.vPlayers[clientIdx].isOnline = isOnlien ;
     }
 
     onRefreshPlayerDetail( player : playerBaseData )

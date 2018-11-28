@@ -31,6 +31,11 @@ export default class RoomData extends cc.Component {
         return 4 ;
     }
 
+    get initCardCnt() : number
+    {
+        return this.jsRoomInfoMsg["initCards"] ;
+    }
+
     get isRoomOver() : boolean
     {
         return this._isRoomOver ;
@@ -114,7 +119,7 @@ export default class RoomData extends cc.Component {
 
     get isCircleType() : boolean
     {
-        return this.jsRoomInfoMsg["opts"]["opts"]["circle"] == 1;
+        return this.jsRoomInfoMsg["opts"]["circle"] == 1;
     }
 
     get totalCircleOrRoundCnt() : number
@@ -133,12 +138,22 @@ export default class RoomData extends cc.Component {
         return vCircle[level] ;
     }
 
-    get playedCircle() : number
+    get leftCircle() : number
     {
-        return this.totalCircleCnt - this.jsRoomInfoMsg["leftCircle"] ;
+        return this.jsRoomInfoMsg["leftCircle"] ;
     }
 
-    get letfMJCnt() : number
+    set leftCircle( left : number )
+    {
+        this.jsRoomInfoMsg["leftCircle"] = left ;
+    }
+
+    get playedCircle()
+    {
+        return this.totalCircleOrRoundCnt - this.leftCircle + 1 ;
+    }
+
+    get leftMJCnt() : number
     {
         return this.jsRoomInfoMsg["leftCards"] ;
     }
@@ -153,10 +168,6 @@ export default class RoomData extends cc.Component {
         return this.jsRoomInfoMsg["state"] == eRoomState.eRoomSate_WaitReady ? eClientRoomState.State_WaitReady : eClientRoomState.State_StartGame ; 
     }
 
-    get totalCircleCnt() : number
-    {
-        return 0 ;
-    }
     
     get roomID() : number 
     {
@@ -361,6 +372,7 @@ export default class RoomData extends cc.Component {
     enterGameState()
     {
         this.jsRoomInfoMsg["state"] = eRoomState.eRoomState_StartGame ; 
+        this.leftMJCnt = this.initCardCnt - this.seatCnt * 13 - 1 ;
     }
 
     enterGameOverState()

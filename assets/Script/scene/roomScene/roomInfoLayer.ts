@@ -70,10 +70,25 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         // update time ;
         let self = this ;
         let dt = new Date();
-        self.pTime.string = dt.getHours() + ":" + dt.getMinutes();
+        if ( dt.getMinutes() < 10 )
+        {
+            self.pTime.string = dt.getHours() + ":0" + dt.getMinutes();
+        }
+        else
+        {
+            self.pTime.string = dt.getHours() + ":" + dt.getMinutes();
+        }
         this.schedule( ()=>{
             let dt = new Date();
-            self.pTime.string = dt.getHours() + ":" + dt.getMinutes();
+            if ( dt.getMinutes() < 10 )
+            {
+                self.pTime.string = dt.getHours() + ":0" + dt.getMinutes();
+            }
+            else
+            {
+                self.pTime.string = dt.getHours() + ":" + dt.getMinutes();
+            }
+            
         },60,cc.macro.REPEAT_FOREVER) ;
 
         // update battery
@@ -114,6 +129,9 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         this.pWaitReadyStateNode.active = false ;
         this.pGameStateNode.active = true ;
         this.doIndicatorToPlayer(pdata.curActClientIdx) ;
+        this.leftMJCnt = pdata.leftMJCnt.toString() ;
+        this.pCircleTitle.string = pdata.isCircleType ? "圈数":"局数" ;
+        this.circleCnt = pdata.playedCircle + "/" + pdata.totalCircleOrRoundCnt ;
     }
 
     doIndicatorToPlayer( clientIdx : number , time : number = 15 )
@@ -153,9 +171,10 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
     {
         this.pWaitReadyStateNode.active = false ;
         this.pGameStateNode.active = true ;
-        this.leftMJCnt = data.letfMJCnt.toString();
-        this.circleCnt = data.playedCircle + "/" + data.totalCircleCnt ;
+        this.leftMJCnt = data.leftMJCnt.toString();
+        this.circleCnt = data.playedCircle + "/" + data.totalCircleOrRoundCnt ;
         this.pRoomRuleDesc.string = "房间号: " + data.roomID ;
+        this.pCircleTitle.string = data.isCircleType ? "圈数":"局数" ;
         console.log( "this.doIndicatorToPlayer = " + data.curActClientIdx );
         this.doIndicatorToPlayer(data.curActClientIdx ) ;
     }

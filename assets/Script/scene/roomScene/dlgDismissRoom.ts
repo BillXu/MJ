@@ -32,6 +32,9 @@ export default class DlgDismiss extends DlgBase {
 
     @property(cc.Label)
     pDesc : cc.Label = null ;
+
+    @property(cc.Node)
+    pSelfChoseBtn : cc.Node = null ;
     // onLoad () {}
 
     refresh( invokerSvrIdx : number , pData : RoomData , time : number , vArgeeSvrIdx? : number[] )
@@ -57,10 +60,18 @@ export default class DlgDismiss extends DlgBase {
 
         this.pDesc.string = "玩家【 " + invoker.name + " 】请求解散房间，是否同意?(超过300秒则默认同意)。";
 
-        this.unschedule(this.onTimeCountDown) ;
-        this.schedule(this.onTimeCountDown,1,time + 1 ) ;
-        this.nTimeCountDown = time ;
-        this.pTimeCountDown.string = this.nTimeCountDown.toString();
+        if ( this.vAgreeIcon[pData.clientIdxToSvrIdx(0)].active == false )
+        {
+            this.unschedule(this.onTimeCountDown) ;
+            this.schedule(this.onTimeCountDown,1,time + 1 ) ;
+            this.nTimeCountDown = time ;
+            this.pTimeCountDown.string = this.nTimeCountDown.toString();
+            this.pSelfChoseBtn.active = true ;
+        }
+        else
+        {
+            this.onSelfRespone();
+        }
     }
 
     onTimeCountDown()
@@ -97,12 +108,20 @@ export default class DlgDismiss extends DlgBase {
 
     }
 
+    onSelfRespone()
+    {
+        this.unschedule(this.onTimeCountDown) ;
+        this.pTimeCountDown.node.getParent().active = false ;
+        this.pSelfChoseBtn.active = false ;
+    }
+
     onBtnAgree()
     {
         if ( this.pFuncResult )
         {
             this.pFuncResult({ isAgree : true }) ;
         }
+        this.onSelfRespone();
     }
 
     onBtnDisagree()
@@ -111,6 +130,7 @@ export default class DlgDismiss extends DlgBase {
         {
             this.pFuncResult({ isAgree : false }) ;
         }
+        this.onSelfRespone();
         this.closeDlg();
     }
 

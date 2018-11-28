@@ -90,7 +90,7 @@ export default class DlgRoomOverResult extends DlgBase {
         this.pRule.string = pdata.rule;
 
         // room id and circle state ;
-        this.pRoomIDandCircleState.string = pdata.roomID + "  " + pdata.totalCircleOrRoundCnt + "/" + pdata.totalCircleOrRoundCnt ;
+        this.pRoomIDandCircleState.string = pdata.roomID + "  " + pdata.playedCircle + "/" + pdata.totalCircleOrRoundCnt ;
     }
 
     onBtnShare()

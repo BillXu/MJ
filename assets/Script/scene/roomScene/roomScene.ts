@@ -178,6 +178,7 @@ export default class RoomScene extends cc.Component {
                         this.pRoomData.curActSvrIdx = svrIdx ;
                         this.pLayerRoomInfo.doIndicatorToPlayer(clientIdx) ;
                         playerCardData.onMo(targetCard);
+                        this.pRoomData.leftMJCnt -= 1 ;
                         this.pLayerPlayerCards.onPlayerMo(clientIdx,targetCard) ;
                     }
                     break ;
@@ -216,11 +217,13 @@ export default class RoomScene extends cc.Component {
                         this.pRoomData.curActSvrIdx = svrIdx ;
                         playerCardData.onAnGang(targetCard,msg["gangCard"],clientIdx ) ;
                         this.pLayerPlayerCards.onPlayerAnGang(clientIdx,targetCard,msg["gangCard"]) ;
+                        this.pRoomData.leftMJCnt -= 1 ;
                     }
                     break;
                     case eMJActType.eMJAct_BuGang_Done:
                     case eMJActType.eMJAct_BuGang:
                     {
+                        this.pRoomData.leftMJCnt -= 1 ;
                         this.pRoomData.curActSvrIdx = svrIdx ;
                         playerCardData.onBuGang(targetCard,msg["gangCard"]) ;
                         this.pLayerPlayerCards.onPlayerBuGang(clientIdx,targetCard,playerCardData.getMingCardInvokerIdx(targetCard),msg["gangCard"]) ;
@@ -228,6 +231,7 @@ export default class RoomScene extends cc.Component {
                     break;
                     case eMJActType.eMJAct_MingGang:
                     {
+                        this.pRoomData.leftMJCnt -= 1 ;
                         this.pLayerRoomInfo.doIndicatorToPlayer(clientIdx) ;
                         this.pRoomData.curActSvrIdx = svrIdx ;
                         playerCardData.onMingGang(targetCard,msg["gangCard"],invokerClientIdx) ;
@@ -245,6 +249,7 @@ export default class RoomScene extends cc.Component {
                     cc.error( "unknown act type = " + actType );
                     break ;
                 }
+                this.pLayerRoomInfo.leftMJCnt = this.pRoomData.leftMJCnt.toString();
             } 
             break ;
             case eMsgType.MSG_PLAYER_WAIT_ACT_ABOUT_OTHER_CARD:
@@ -322,7 +327,7 @@ export default class RoomScene extends cc.Component {
                 } ) ;
  
                 this.pRoomData.curActSvrIdx = this.pRoomData.bankerIdx ;
-                this.pLayerRoomInfo.doIndicatorToPlayer(this.pRoomData.svrIdxToClientIdx(this.pRoomData.bankerIdx)) ;
+                this.pRoomData.leftCircle = msg["leftCircle"] ;
                 this.enterGameState();
             }
             break ;
@@ -379,6 +384,11 @@ export default class RoomScene extends cc.Component {
                 }
             }
             break ;
+            case eMsgType.MSG_ROOM_REFRESH_NET_STATE:
+            {
+                this.pLayerPlayerInfo.onPlayerRefreshSate(this.pRoomData.svrIdxToClientIdx( msg["idx"] ),msg["state"] == 0 );
+            }
+            break;
         } 
     }
 
@@ -540,12 +550,12 @@ export default class RoomScene extends cc.Component {
         this.pRoomData.enterWaitReadyState();
         this.pLayerPlayerCards.enterWaitReadyState(this.pRoomData);
         this.pLayerRoomInfo.enterWaitReadyState(this.pRoomData);
-        this.pLayerPlayerInfo.enterGameState(this.pRoomData);
+        this.pLayerPlayerInfo.enterWaitReadyState(this.pRoomData);
     }
 
     enterGameState()
     {
-        this.pRoomData.enterGameOverState();
+        this.pRoomData.enterGameState();
         this.pLayerPlayerCards.enterGameState(this.pRoomData);
         this.pLayerPlayerInfo.enterGameState(this.pRoomData);
         this.pLayerRoomInfo.enterGameState(this.pRoomData);
