@@ -48,7 +48,35 @@ export default class RoomData extends cc.Component {
 
     get rule() : string
     {
-        return "this is option rule" ;
+        let strRule = "" ;
+        if ( eGameType.eGame_AHMJ == this.gameType )
+        {
+            strRule = "敖汉麻将";
+        }
+        else if ( eGameType.eGame_CFMJ == this.gameType )
+        {
+            strRule = "赤峰麻将";
+        }
+        else if ( eGameType.eGame_NCMJ == this.gameType )
+        {
+            strRule = "宁城麻将";
+        }
+        else
+        {
+            strRule = "unknown: " + this.gameType;
+        }
+
+        strRule += " " ;
+        if ( this.isDuipu )
+        {
+            strRule += "对铺" ;
+        }
+        return strRule ;
+    }
+
+    get isDuipu() : boolean 
+    {
+        return this.jsRoomInfoMsg["opts"]["guapu"] == 1 ;
     }
 
     get gameType() : eGameType

@@ -25,6 +25,9 @@ export default class LoginScene extends cc.Component {
     strAccount : string = ""
     strPassword : string = "" ;
     strWechatName : string = "";
+    strWechatHeadUrl : string = "" ;
+    nWechatSex : number = 1 ;
+    
 
     onLoad () {
         cc.systemEvent.on(clientDefine.netEventRecievedBaseData,this.onRecievedBaseData,this);
@@ -55,6 +58,14 @@ export default class LoginScene extends cc.Component {
     // clientData will recieved base data , and invoke loading scene ;
     onRecievedBaseData()
     {
+        let msgupdateinfo = {} ;
+        msgupdateinfo["name"] = this.strWechatName ;
+        msgupdateinfo["headIcon"] = this.strWechatHeadUrl;
+        msgupdateinfo["sex"] = this.nWechatSex;
+        clientData.getInstance().jsSelfBaseDataMsg["name"] = this.strWechatName ;
+        clientData.getInstance().jsSelfBaseDataMsg["headIcon"] = this.strWechatHeadUrl ;
+        clientData.getInstance().jsSelfBaseDataMsg["sex"] = this.nWechatSex ;
+        Network.getInstance().sendMsg(msgupdateinfo,eMsgType.MSG_PLAYER_UPDATE_INFO,eMsgPort.ID_MSG_PORT_DATA,clientData.getInstance().selfUID);
         if ( clientData.getInstance().stayInRoomID && clientData.getInstance().stayInRoomID > 0 )
         {
             cc.director.loadScene(SceneName.Scene_Room) ;
@@ -144,6 +155,10 @@ export default class LoginScene extends cc.Component {
         let nIdx : number = parseInt(customEventData) ;
         let vAcc : string[] = [ "new1","new2","new3","new4"] ;
         let vName : string[] =  [ "new1","new2","new3","new4"] ;
+        let vHeadIcon : string[] = [ "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTL2VH53lyG0F6mKtichN8XU0iacH4T9laIrRicYlMicILK9h78kChjsosmgibD0xD8Q8Toy1wv01JT3MaQ/132"
+                                    ,"http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLMAlomibJicN6EfMlerKd5EBn9H6okbqprTp4FZE95yib4QVQ1w3dlqoiahbGmDCe6AspjI7gIxBlmlg/132"
+                                ,"http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKOlSlTvqKlqvwzLTdl0kXbF4FwDmxkTkQguvqfia5PNMEs0qPnMg0HTMa96GdmZ2wRUNOUdOoJEicw/132"
+                            ,"http://thirdwx.qlogo.cn/mmopen/vi_32/DYAIOgq83erP6lwtTwOXhKkdeib79icib573XbBJRibISc8CPNibAaEISWkyI3WVGKJASKML9zgb9rYibuicdicTepHStA/132"] ;
         if ( nIdx >= vAcc.length )
         {
             console.log( "invalid visitor idx = " + nIdx );
@@ -152,6 +167,7 @@ export default class LoginScene extends cc.Component {
 
         this.strWechatName = vName[nIdx] ;
         this.strAccount = vAcc[nIdx] ;
+        this.strWechatHeadUrl = vHeadIcon[nIdx] ;
         this.strPassword = "v1";
         console.log( "visitor " + nIdx + " click login" );
         this.doLogin();

@@ -130,7 +130,6 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         this.pGameStateNode.active = true ;
         this.doIndicatorToPlayer(pdata.curActClientIdx) ;
         this.leftMJCnt = pdata.leftMJCnt.toString() ;
-        this.pCircleTitle.string = pdata.isCircleType ? "圈数":"局数" ;
         this.circleCnt = pdata.playedCircle + "/" + pdata.totalCircleOrRoundCnt ;
     }
 
@@ -142,6 +141,9 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
     refresh( data : RoomData )
     {
         this.roomState = data.nRoomState ;
+        this.pLabelRoomID.string = data.roomID + "号" ;
+        this.pRoomRuleDesc.string = "房间号: " + data.roomID + "    " + data.rule ;
+        this.pCircleTitle.string = data.isCircleType ? "圈数":"局数" ;
         if ( eClientRoomState.State_WaitReady == data.nRoomState  )
         {
             this.refreshWaitReadyState(data)
@@ -164,7 +166,6 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
             this.pBtnStartGame.active = false ;
             this.pBtnReady.active = false ;
         }
-        this.pLabelRoomID.string = data.roomID + "号" ;
     }
 
     protected refreshGameState( data : RoomData )
@@ -173,8 +174,6 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         this.pGameStateNode.active = true ;
         this.leftMJCnt = data.leftMJCnt.toString();
         this.circleCnt = data.playedCircle + "/" + data.totalCircleOrRoundCnt ;
-        this.pRoomRuleDesc.string = "房间号: " + data.roomID ;
-        this.pCircleTitle.string = data.isCircleType ? "圈数":"局数" ;
         console.log( "this.doIndicatorToPlayer = " + data.curActClientIdx );
         this.doIndicatorToPlayer(data.curActClientIdx ) ;
     }
