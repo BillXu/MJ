@@ -24,6 +24,7 @@ import dlgActOptsCards from "./dlgActOptsCards"
 import { IPlayerCards, playerBaseData } from "./roomInterface";
 import dlgSingleResult from "./dlgSingleResult"
 import DlgRoomOverResult from "./dlgRoomOverResult"
+import DlgDismiss from "./dlgDismissRoom"
 @ccclass
 export default class RoomScene extends cc.Component {
 
@@ -51,6 +52,8 @@ export default class RoomScene extends cc.Component {
     @property(DlgRoomOverResult)
     pdlgRoomOver : DlgRoomOverResult = null ;
     // LIFE-CYCLE CALLBACKS:
+    @property(DlgDismiss)
+    pdlgDismiss : DlgDismiss = null ;
 
     onLoad ()
     {
@@ -94,6 +97,28 @@ export default class RoomScene extends cc.Component {
 
                 let msgReqAct = {} ;
                 this.sendRoomMsg(msgReqAct,eMsgType.MSG_REQ_ACT_LIST) ;
+
+                if ( this.pRoomData.jsRoomInfoMsg["isWaitingDismiss"] == 1 )
+                {
+                    let applydiss = this.pRoomData.jsRoomInfoMsg;
+                    let applyUID = applydiss["applyDismissUID"] ;
+                    let p = this.pRoomData.getPlayerDataByUID(applyUID);
+                    if ( p == null )
+                    {
+                        cc.error( "apply dissmiss player is null id = " + applyUID );
+                        break ;
+                    }
+                    this.pdlgDismiss.refresh( p.svrIdx,this.pRoomData,applydiss["leftWaitTime"],applydiss["agreeIdxs"]);
+                    let self = this ;
+                    this.pdlgDismiss.showDlg(( ret : Object )=>{
+                        let isAgree = ret["isAgree"] ;
+                        let msgback = {} ;
+                        msgback["reply"] = isAgree ? 1 : 0 ;
+                        self.sendRoomMsg(msgback,eMsgType.MSG_REPLY_DISSMISS_VIP_ROOM_APPLY) ;
+                    }) ;
+
+                    this.pRoomData.jsRoomInfoMsg["isWaitingDismiss"] = 0 ;
+                }
             }
             break ;
             case eMsgType.MSG_REQUEST_PLAYER_DATA:
@@ -303,6 +328,7 @@ export default class RoomScene extends cc.Component {
             break ;
             case eMsgType.MSG_ROOM_SCMJ_GAME_END:
             {
+                this.pdlgDismiss.closeDlg();
                 this.pdlgSingleReuslt.refresh(msg,this.pRoomData) ;
                 this.pdlgSingleReuslt.showDlg();
                 this.enterWaitReadyState();
@@ -310,8 +336,47 @@ export default class RoomScene extends cc.Component {
             break ;
             case eMsgType.MSG_ROOM_GAME_OVER:
             {
+                this.pdlgDismiss.closeDlg();
                 this.pRoomData.isRoomOver = true ;
                 this.pdlgRoomOver.refresh(msg,this.pRoomData) ;
+                if ( false == this.pdlgSingleReuslt.node.active )
+                {
+                    this.pdlgRoomOver.showDlg();
+                }
+            }
+            break ;
+            case eMsgType.MSG_ROOM_APPLY_DISMISS_VIP_ROOM:
+            {
+                this.pdlgDismiss.refresh(msg["applyerIdx"],this.pRoomData,300);
+                let self = this ;
+                this.pdlgDismiss.showDlg(( ret : Object )=>{
+                    let isAgree = ret["isAgree"] ;
+                    let msgback = {} ;
+                    msgback["reply"] = isAgree ? 1 : 0 ;
+                    self.sendRoomMsg(msgback,eMsgType.MSG_REPLY_DISSMISS_VIP_ROOM_APPLY) ;
+                }) ;
+            }
+            break ;
+            case eMsgType.MSG_ROOM_REPLY_DISSMISS_VIP_ROOM_APPLY:
+            {
+                this.pdlgDismiss.onPlayerReply(msg["idx"],msg["reply"] == 1 ) ;
+                if ( msg["reply"] != 1 )
+                {
+                    this.pdlgDismiss.closeDlg();
+                }
+            }
+            break;
+            case eMsgType.MSG_VIP_ROOM_DO_CLOSED:
+            {
+                this.pdlgDismiss.closeDlg();
+                if ( this.pdlgRoomOver.node.active || this.pdlgSingleReuslt.node.active )
+                {
+
+                }
+                else
+                {
+                    cc.director.loadScene(SceneName.Scene_Main) ;
+                }
             }
             break ;
         } 

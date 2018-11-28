@@ -95,8 +95,8 @@ export default class DlgRoomOverResultItem extends cc.Component {
 
     set isBigWiner( isWiner : boolean )
     {
-        this.pBigWinerFlag.active = isWiner ;
-        this.pWinerBg.active = isWiner ;
+        this.pBigWinerFlag.active = isWiner && this.nfinalScore > 0 ;
+        this.pWinerBg.active = isWiner && this.nfinalScore > 0 ;
     }
 
     set bankerCnt( cnt : number )
@@ -117,7 +117,7 @@ export default class DlgRoomOverResultItem extends cc.Component {
 
     set isBestDianPao( isBest : boolean )
     {
-        this.pBestDianPaoFlag.active = isBest ;
+        this.pBestDianPaoFlag.active = isBest && this.nDianPaoCnt > 0 ;
     }
 
     get dianPaoCnt() : number

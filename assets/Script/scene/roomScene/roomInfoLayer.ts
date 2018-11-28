@@ -14,6 +14,7 @@ import { eClientRoomState } from "./roomDefine"
 import RoomData from "./roomData"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import { eMsgType } from "../../common/MessageIdentifer"
+import DlgSetting from "../mainScene/dlgSetting"
 @ccclass
 export default class RoomInfoLayer extends roomSceneLayerBase {
 
@@ -59,6 +60,9 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
     
     @property(cc.Node)
     pDlgWantedOneCard : cc.Node = null ;
+
+    @property(DlgSetting)
+    pDlgSettting : DlgSetting = null ;
 
     roomState : eClientRoomState = eClientRoomState.State_WaitReady ;
     onLoad ()
@@ -187,7 +191,8 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
 
     onBtnDismissRoom()
     {
-
+        let msg = {} ;
+        this.roomScene.sendRoomMsg(msg,eMsgType.MSG_APPLY_DISMISS_VIP_ROOM) ;
     }
 
     onBtnRecorderVoice()
@@ -197,7 +202,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
 
     onBtnSetting()
     {
-
+        this.pDlgSettting.showDlg();
     }
 
     onBtnChat()
