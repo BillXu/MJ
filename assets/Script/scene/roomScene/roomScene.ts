@@ -303,13 +303,15 @@ export default class RoomScene extends cc.Component {
             break ;
             case eMsgType.MSG_ROOM_SCMJ_GAME_END:
             {
-                this.pdlgSingleReuslt.showResultDlg(msg,this.pRoomData) ;
+                this.pdlgSingleReuslt.refresh(msg,this.pRoomData) ;
+                this.pdlgSingleReuslt.showDlg();
                 this.enterWaitReadyState();
             }
             break ;
             case eMsgType.MSG_ROOM_GAME_OVER:
             {
-                this.pdlgRoomOver.showDlg(msg,this.pRoomData) ;
+                this.pRoomData.isRoomOver = true ;
+                this.pdlgRoomOver.refresh(msg,this.pRoomData) ;
             }
             break ;
         } 
@@ -489,7 +491,14 @@ export default class RoomScene extends cc.Component {
     {
         if ( isContinue )
         {
-            this.pLayerRoomInfo.onBtnReady();
+            if ( this.pRoomData.isRoomOver )
+            {
+                this.pdlgRoomOver.showDlg();
+            }
+            else
+            {
+                this.pLayerRoomInfo.onBtnReady();
+            }
         }
         else
         {

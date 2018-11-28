@@ -24,10 +24,21 @@ export default class RoomData extends cc.Component {
      
     //lastChuCard : number = 0 ;
     _lastChuPlayerClientIdx : number = -1 ;
+    _isRoomOver : boolean = false ;
 
     getMaxTableSeat() : number
     {
         return 4 ;
+    }
+
+    get isRoomOver() : boolean
+    {
+        return this._isRoomOver ;
+    }
+
+    set isRoomOver( isOver : boolean )
+    {
+        this._isRoomOver = isOver ;
     }
 
     get rule() : string
@@ -164,7 +175,7 @@ export default class RoomData extends cc.Component {
 
     isAllPlayerInfoRecieved() : boolean 
     {
-        return _.findIndex( this.vPlayers,( p : playerBaseData )=>{ return p.isReceivedDetail() == false ;}) == -1;
+        return _.findIndex( this.vPlayers,( p : playerBaseData )=>{ if ( p == null ) return false ; return p.isReceivedDetail() == false ;}) == -1;
     }
 
     onLoad () 

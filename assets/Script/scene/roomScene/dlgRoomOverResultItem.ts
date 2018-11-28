@@ -52,7 +52,9 @@ export default class DlgRoomOverResultItem extends cc.Component {
     @property(cc.Node)
     pWinerBg : cc.Node = null ;
 
-    finalScore : number = 0 ;
+    nfinalScore : number = 0 ;
+    nDianPaoCnt : number = 0 ;
+
     onLoad ()
     {
         this.reset();
@@ -110,14 +112,30 @@ export default class DlgRoomOverResultItem extends cc.Component {
     set dianPaoCnt( cnt : number )
     {
         this.pDianPaoCnt.string = cnt.toString();
+        this.nDianPaoCnt = cnt ;
+    }
+
+    set isBestDianPao( isBest : boolean )
+    {
+        this.pBestDianPaoFlag.active = isBest ;
+    }
+
+    get dianPaoCnt() : number
+    {
+        return this.nDianPaoCnt;
     }
 
     set finalOffset ( cnt : number )
     {
-        this.finalScore = cnt ;
+        this.nfinalScore = cnt ;
         this.pFinalScoreLose.node.active = cnt < 0 ;
         this.pFinalScoreWin.node.active = !this.pFinalScoreLose.node.active;
         ( cnt < 0 ? this.pFinalScoreLose : this.pFinalScoreWin ).string = cnt.toString();
+    }
+
+    get finalOffset () : number
+    {
+        return this.nfinalScore ;
     }
 
     set clientIdx ( clientIdx : number )

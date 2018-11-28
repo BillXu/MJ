@@ -38,13 +38,13 @@ export default class DlgRoomOverResult extends DlgBase {
 
     }
 
-    showDlg( msg : Object, pdata : RoomData )
+    refresh( msg : Object, pdata : RoomData )
     {
-        super.showDlg();
         this.vResultItem.forEach( ( item : DlgRoomOverResultItem)=>{ item.node.active = false ; item.reset();} );
         let vResult : Object[] = msg["result"] ;
         let self = this ;
         let maxScore = 0 ;
+        let maxDianPao = 0 ;
         vResult.forEach( ( ret : Object )=>{
             let p = pdata.getPlayerDataByUID(ret["uid"]);
             if ( p == null )
@@ -64,9 +64,14 @@ export default class DlgRoomOverResult extends DlgBase {
             item.dianPaoCnt = ret["dianPaoCnt"] ;
             item.finalOffset = ret["final"] ;
             item.bankerCnt = ret["bankerCnt"] ;
-            if ( maxScore < ret["final"] )
+            if ( maxScore < item.finalOffset )
             {
-                maxScore = ret["final"];
+                maxScore = item.finalOffset;
+            }
+
+            if ( maxDianPao < item.dianPaoCnt )
+            {
+                maxDianPao = item.dianPaoCnt ;
             }
         } );
 
@@ -74,6 +79,7 @@ export default class DlgRoomOverResult extends DlgBase {
              if ( item.node.active )
              {
                  item.isBigWiner = item.finalOffset == maxScore ;
+                 item.isBestDianPao = item.dianPaoCnt == maxDianPao ;
              }
         } );
 
@@ -84,7 +90,7 @@ export default class DlgRoomOverResult extends DlgBase {
         this.pRule.string = pdata.rule;
 
         // room id and circle state ;
-        this.pRoomIDandCircleState.string = "房间号:" + pdata.roomID + "  " + pdata.totalCircleOrRoundCnt + "/" + pdata.totalCircleOrRoundCnt ;
+        this.pRoomIDandCircleState.string = pdata.roomID + "  " + pdata.totalCircleOrRoundCnt + "/" + pdata.totalCircleOrRoundCnt ;
     }
 
     onBtnShare()

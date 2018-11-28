@@ -62,9 +62,8 @@ export default class dlgSingleResult extends DlgBase {
 
     }
 
-    showResultDlg( msg : Object , pdata : RoomData )
+    refresh( msg : Object , pdata : RoomData )
     {
-        super.showDlg();
         let self = this ;
         this.vSingleResultItem.forEach( ( item : DlgSingleResultItem )=>{ item.reset(self.pCardFactory); item.node.active = false ;} );
         // fill player info
