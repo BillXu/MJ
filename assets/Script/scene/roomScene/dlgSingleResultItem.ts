@@ -209,7 +209,7 @@ export default class DlgSingleResultItem extends cc.Component {
         this.pDianPaoTag.active = isDianPao ;
         if ( isDianPao )
         {
-            this.isHu = true ;
+            this.isHu = false ;
         }
     }
 

@@ -12,9 +12,8 @@ const {ccclass, property} = cc._decorator;
 import Indicator from "./indicator"
 import { eClientRoomState } from "./roomDefine"
 import RoomData from "./roomData"
-import { playerBaseData } from "./roomInterface"
 import roomSceneLayerBase from "./roomSceneLayerBase"
-import { eMsgPort , eMsgType } from "../../common/MessageIdentifer"
+import { eMsgType } from "../../common/MessageIdentifer"
 @ccclass
 export default class RoomInfoLayer extends roomSceneLayerBase {
 
@@ -58,6 +57,9 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
     @property(Indicator)
     pIndicator : Indicator = null ;
     
+    @property(cc.Node)
+    pDlgWantedOneCard : cc.Node = null ;
+
     roomState : eClientRoomState = eClientRoomState.State_WaitReady ;
     onLoad ()
     {
@@ -200,7 +202,10 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
 
     onBtnChat()
     {
-
+        if ( CC_DEBUG )
+        {
+            this.pDlgWantedOneCard.active = true ;
+        }
     }
     // update (dt) {}
 }

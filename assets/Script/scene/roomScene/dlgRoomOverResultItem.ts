@@ -57,7 +57,7 @@ export default class DlgRoomOverResultItem extends cc.Component {
 
     onLoad ()
     {
-        this.reset();
+        //this.reset();
     }
 
     reset()
