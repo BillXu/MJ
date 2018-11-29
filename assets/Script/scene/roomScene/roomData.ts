@@ -254,6 +254,23 @@ export default class RoomData extends cc.Component {
                         pM.nInvokerClientIdx = self.svrIdxToClientIdx(pM.nInvokerSvrIdx );
                     } );
                 } );
+
+                // update race ;
+                let vRaces : Object[] = this.jsRoomInfoMsg["races"] ;
+                if ( vRaces )
+                {
+                    vRaces.forEach( ( race : Object )=>{
+                        let svrIdx = race["idx"] ;
+                        let rvalue = race["race"] ;
+                        let p = self.getPlayerDataBySvrIdx(svrIdx);
+                        if ( p == null )
+                        {
+                            cc.error( " player is null race info svridx = " + svrIdx );
+                            return ;
+                        }
+                        p.race = rvalue ;
+                    } );
+                }
             }
             break ;
             case eMsgType.MSG_REQUEST_PLAYER_DATA:

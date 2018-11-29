@@ -76,10 +76,7 @@ export default class DlgBase extends cc.Component {
         return true ;
     }
 
-    start () 
-    {
-
-    }
+ 
 
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void  )
     {

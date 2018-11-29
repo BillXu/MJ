@@ -52,12 +52,6 @@ export default class dlgSingleResult extends DlgBase {
     @property([cc.Component.EventHandler])
     vReusltHandle : cc.Component.EventHandler[] = [] ;
 
-    onLoad ()
-    {
-        super.onLoad();
-        this.closeDlg();
-    }
-
     start () {
 
     }

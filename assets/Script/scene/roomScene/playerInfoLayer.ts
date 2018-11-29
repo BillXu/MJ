@@ -204,6 +204,11 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         this.vPlayers[clientIdx].isOnline = isOnlien ;
     }
 
+    onPlayerDuiPu( clientIdx : number , score : number  )
+    {
+        this.vPlayers[clientIdx].duiPuScore = score ;
+    }
+
     onRefreshPlayerDetail( player : playerBaseData )
     {
         this.vPlayers[player.clientIdx].refresh(player,this.roomState);

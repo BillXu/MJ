@@ -10,6 +10,7 @@
 
 const {ccclass, property} = cc._decorator;
 import DlgSetting from "./dlgSetting"
+import utility from "../../globalModule/Utility"
 @ccclass
 export default class BottomLayer extends cc.Component {
 
@@ -29,5 +30,21 @@ export default class BottomLayer extends cc.Component {
         this.pDlgSetting.showDlg();
     }
 
+    onBtnShop()
+    {
+        //utility.showTip("zhege shi yige weniz发掘的发生的噶") ;
+        utility.showPromptText( "zhege shi yige weniz发掘的发生的噶" );
+        setTimeout(() => {
+            utility.showPromptText( "zhege shi yige weniz发掘的发生的噶" );
+        }, 4000);
+
+        setTimeout(() => {
+            utility.showPromptText( "zhege shi yige weniz发掘的发生的噶" );
+        }, 6000);
+
+        setTimeout(() => {
+            utility.showPromptText( "zhege shi yige weniz发掘的发生的噶" );
+        }, 8000);
+    }
     // update (dt) {}
 }

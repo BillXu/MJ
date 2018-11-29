@@ -694,7 +694,8 @@ export enum eMsgType
 	MSG_ROOM_CHIFENG_MAJIANG_BEGIN = 2300, //����齫����ſ�ʼ��ʶ
 
 	MSG_ROOM_CF_GUA_PU, //����齫������Ϣ
-
+	MSG_PLAYER_DO_GUA_PU,
+	MSG_ROOM_CFMJ_GAME_WILL_START,
 
 
 

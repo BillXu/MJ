@@ -28,11 +28,6 @@ export default class DlgRoomOverResult extends DlgBase {
     pRule : cc.Label = null ;
 
     // LIFE-CYCLE CALLBACKS:
-    onLoad ()
-    {
-        super.onLoad();
-        this.closeDlg();
-    }
 
     start () {
 

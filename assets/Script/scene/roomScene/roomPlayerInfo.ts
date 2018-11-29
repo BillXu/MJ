@@ -56,6 +56,9 @@ export default class RoomPlayerInfo extends cc.Component {
     @property
     nPosIdx : number = 0 ;
 
+    @property([cc.Node])
+    vDuiPuScore : cc.Node[] = [] ;
+
     isShowingTextMsg : boolean = false ;
     isPlayingVoice : boolean = false ;
 
@@ -63,6 +66,11 @@ export default class RoomPlayerInfo extends cc.Component {
 
     isEmpty(){ return 0 == this._nUserUID ;}
     isRight(){ return this.nPosIdx == 1 ;}
+
+    set duiPuScore( score : number )
+    {
+        this.vDuiPuScore.forEach( ( node : cc.Node, idx : number  )=>{ node.active = score == (idx + 2) ;} );
+    }
 
     set userID( nID : number )
     {
@@ -94,6 +102,7 @@ export default class RoomPlayerInfo extends cc.Component {
         this.pReadyNode.active = false ;
         this.pWaitReadyNode.active = false ;
         this.pOfflineMask.active = false ;
+        this.duiPuScore = 0 ;
         if ( this.isEmpty() )
         {
             return ;
@@ -103,6 +112,7 @@ export default class RoomPlayerInfo extends cc.Component {
         this.pName.string = data.name ;
         this.pCoin.string = data.chip.toString();
         this.isOnline = data.isOnline ;
+        this.duiPuScore = data.race ;
         if ( state == eClientRoomState.State_WaitReady )
         {
             this.enterWaitReadyState();
@@ -135,6 +145,7 @@ export default class RoomPlayerInfo extends cc.Component {
        this.pWaitReadyNode.active = true ;
        this.pReadyNode.active = false ;
        this.pBankIcon.active = false ;
+       this.duiPuScore = 0 ;
     }
 
     enterGameState()
