@@ -84,9 +84,10 @@ export default class MiddleLayer extends cc.Component {
             let ret = msg["ret"] ;
             if ( ret )
             {
-                Utility.showTip( "error code " + ret );
-                return ;
+                Utility.showTip( "房间不存在或已经解散 code" + ret );
+                return true;
             }
+            console.log( "set join room id = " + nJoinRoomID );
             ClientData.getInstance().stayInRoomID = parseInt(nJoinRoomID) ;
             cc.director.loadScene(SceneName.Scene_Room ) ;
             return true ;

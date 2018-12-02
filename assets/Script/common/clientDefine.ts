@@ -9,7 +9,14 @@ let clientDefine =
     netEventReconnectdFailed : "reconnectFailed",
     netEventRecievedBaseData : "recievedBaseData",
     msgKey : "msgID",
-    msg : "msg"
+	msg : "msg"
+} ;
+
+let clientEvent = 
+{
+	setting_upate_Music :  "setting_upate_Music" ,
+	setting_update_deskBg : "setting_update_deskBg",
+	setting_update_mjBg : "setting_update_mjBg",
 } ;
 
 let SceneName =
@@ -19,6 +26,31 @@ let SceneName =
     Scene_Main : "main",
     Scene_Room : "room",
     Scene_Replay : "replay",
+}
+
+export enum eMusicType
+{
+	eMusic_Relax,
+	eMusic_Idle,
+	eMusic_Classic,
+	eMusic_Max,
+};
+
+export enum eDeskBg
+{
+	eDesk_Classic,
+	eDesk_Blue,
+	eDesk_Wood,
+	eDesk_Green,
+	eDesk_Max,
+};
+
+export enum eMJBg
+{
+	eMJ_Blue,
+	eMJ_Golden,
+	eMJ_Green,
+	eMJ_Max,
 }
 
 export enum eGameType
@@ -109,4 +141,4 @@ export enum eRoomState
 	eRoomState_Max,
 };
 
-export { clientDefine , SceneName }  ;
+export { clientDefine , SceneName,clientEvent }  ;

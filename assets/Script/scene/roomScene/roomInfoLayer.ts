@@ -15,6 +15,8 @@ import RoomData from "./roomData"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import { eMsgType } from "../../common/MessageIdentifer"
 import DlgSetting from "../mainScene/dlgSetting"
+import { eDeskBg, clientEvent, eMJBg } from "../../common/clientDefine"
+import ClientData from "../../globalModule/ClientData";
 @ccclass
 export default class RoomInfoLayer extends roomSceneLayerBase {
 
@@ -51,6 +53,9 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
     pCircle : cc.Label = null ;
     @property(cc.Label)
     pTime : cc.Label = null ;
+
+    @property(cc.Sprite)
+    pRoomRuleBg : cc.Sprite = null ;
     @property(cc.Label)
     pRoomRuleDesc : cc.Label = null ;
     // LIFE-CYCLE CALLBACKS:
@@ -64,9 +69,14 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
     @property(DlgSetting)
     pDlgSettting : DlgSetting = null ;
 
+    @property(cc.Sprite)
+    pDeskBg : cc.Sprite = null ;
+
     roomState : eClientRoomState = eClientRoomState.State_WaitReady ;
     onLoad ()
     {
+        this.refreshDeskBg();
+        this.onMjBgChanged();
         // update time ;
         let self = this ;
         let dt = new Date();
@@ -96,8 +106,17 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         this.schedule( ()=>{
             self.pBatteryLevel.progress = cc.sys.getBatteryLevel();
         },60*5,cc.macro.REPEAT_FOREVER) ;
+
+        // reg event ;
+        cc.systemEvent.on(clientEvent.setting_update_deskBg,this.refreshDeskBg,this) ;
+        cc.systemEvent.on(clientEvent.setting_update_mjBg,this.onMjBgChanged,this);
     }
    
+    onDestroy()
+    {
+        cc.systemEvent.targetOff(this) ;
+    }
+
     start () {
          
  
@@ -229,6 +248,99 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         {
             this.pDlgWantedOneCard.active = true ;
         }
+    }
+
+    refreshDeskBg()
+    {
+        let bg : eDeskBg = ClientData.getInstance().deskBgIdx;
+        if ( bg == null )
+        {
+            bg = eDeskBg.eDesk_Green ;
+        }
+
+        let bgname = "desk/" ;
+        switch ( bg )
+        {
+            case eDeskBg.eDesk_Blue:
+            {
+                bgname += "cardtable_bg_color1/";
+            }
+            break ;
+            case eDeskBg.eDesk_Classic:
+            {
+                bgname += "cardtable_bg_color0/";
+            }
+            break ;
+            case eDeskBg.eDesk_Green:
+            {
+                bgname += "cardtable_bg_color3/";
+            }
+            break ;
+            case eDeskBg.eDesk_Wood:
+            {
+                bgname += "cardtable_bg_color2/";
+            }
+            break;
+            default:
+            {
+                cc.error( "unknown unkown bg type = " + bg );
+            }
+            break;
+        }
+
+        let self = this ;
+        cc.loader.loadRes(bgname + "cardtable_bg_ditu" ,cc.SpriteFrame,( err : Error, spriteFrame : cc.SpriteFrame )=>{
+            if ( err )
+            {
+                console.error( "loading bg sprite error " +  bgname );
+                return ;
+            }
+            self.pDeskBg.spriteFrame = spriteFrame ;
+        });
+
+        let rulebg = this.pRoomRuleBg ;
+        cc.loader.loadRes(bgname + "waitplayer_bg_tiao" ,cc.SpriteFrame,( err : Error, spriteFrame : cc.SpriteFrame )=>{
+            if ( err )
+            {
+                console.error( "loading bg sprite error " +  bgname );
+                return ;
+            }
+            rulebg.spriteFrame = spriteFrame ;
+        });
+    }
+
+    onMjBgChanged()
+    {
+        let idx : eMJBg = ClientData.getInstance().mjBgIdx ;
+        let vMJ = [] ;
+        vMJ[eMJBg.eMJ_Blue] = "cards/pai_lanse" ;
+        vMJ[eMJBg.eMJ_Golden] = "cards/pai_huangse" ;
+        vMJ[eMJBg.eMJ_Green] = "cards/pai_lvse" ;
+        let mjIcon = this.pLeftUpSmallMJ ;
+        cc.loader.loadRes( vMJ[idx] ,cc.SpriteFrame,( err : Error, spriteFrame : cc.SpriteFrame )=>{
+            if ( err )
+            {
+                console.error( "loading smallIcon ");
+                return ;
+            }
+            mjIcon.spriteFrame = spriteFrame ;
+        });
+
+
+        // mj wall
+        let vMJWall = [] ;
+        vMJWall[eMJBg.eMJ_Blue] = "cards/waitplayer_bg_mahjiong" ;
+        vMJWall[eMJBg.eMJ_Golden] = "cards/waitplayer_bg_mahjiong_gold" ;
+        vMJWall[eMJBg.eMJ_Green] = "cards/waitplayer_bg_mahjiong_green" ;
+        let mjWall = this.pMJWall ;
+        cc.loader.loadRes( vMJWall[idx] ,cc.SpriteFrame,( err : Error, spriteFrame : cc.SpriteFrame )=>{
+            if ( err )
+            {
+                console.error( "loading mj wall ");
+                return ;
+            }
+            mjWall.spriteFrame = spriteFrame ;
+        });
     }
     // update (dt) {}
 }

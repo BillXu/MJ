@@ -15,6 +15,8 @@ import { eClientRoomState } from "./roomDefine"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import RoomData from "./roomData"
 import { eMsgType } from "../../common/MessageIdentifer"
+import ClientData from "../../globalModule/ClientData";
+import { eDeskBg, clientEvent } from "../../common/clientDefine"
 @ccclass
 export default class PlayerInfoLayer extends roomSceneLayerBase {
 
@@ -46,6 +48,7 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
     isSelfRoomOwner : boolean = false ;
     onLoad () 
     {
+        this.refreshDeskBg();
         let self = this ;
         this.vPlayers.forEach( ( v : RoomPlayerInfo , idx : number )=>{
                 this.vGameStatePlayerPos[idx] = cc.v2(v.node.position);
@@ -53,6 +56,13 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         this.vWaitReadyStatePlayerPos.forEach( ( v: cc.Node)=>{ v.active = false ;});
         this.ptBankIconAniStartPos = this.pBankIconForMoveAni.position ;
         this.pBankIconForMoveAni.active = false ;
+        // reg event ;
+        cc.systemEvent.on(clientEvent.setting_update_deskBg,this.refreshDeskBg,this) ;
+    }
+
+    onDestroy()
+    {
+        cc.systemEvent.targetOff(this);
     }
 
     refresh( pdata : RoomData )
@@ -93,6 +103,7 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
     }
 
     start () {
+        
         // let self = this ;
         // setTimeout(() => {
         //     self.vPlayers[0].showBankerIcon();
@@ -249,6 +260,46 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
             } );
         }
         return false ;
+    }
+
+    refreshDeskBg()
+    {
+        let bg : eDeskBg = ClientData.getInstance().deskBgIdx ;
+
+        if ( bg == null )
+        {
+            bg = eDeskBg.eDesk_Green ;
+        }
+
+        let bgname = "desk/cardtable_bg_color" + bg.toString() + "/" ;
+
+        // load targe pos 
+        let vPosTag = ["","waitplayer_bg_xiajia","waitplayer_bg_duijia","waitplayer_shangjia"] ;
+        let pPosTag = [null , this.pRightTag,this.pUpTag,this.pLeftTag] ;
+        for ( let idx = 1 ; idx < 4 ; ++idx )
+        {
+            let posTag = pPosTag[idx] ;
+            cc.loader.loadRes(bgname + vPosTag[idx] ,cc.SpriteFrame,( err : Error, spriteFrame : cc.SpriteFrame )=>{
+                if ( err )
+                {
+                    console.error( "loading bg sprite error " +  vPosTag[idx] );
+                    return ;
+                }
+                posTag.getComponent(cc.Sprite).spriteFrame = spriteFrame ;
+            });
+        }
+
+
+        let self = this ;
+        // player empty cover
+        cc.loader.loadRes(bgname + "information_box" ,cc.SpriteFrame,( err : Error, spriteFrame : cc.SpriteFrame )=>{
+            if ( err )
+            {
+                console.error( "information_box " );
+                return ;
+            }
+            self.vPlayers.forEach( ( pp : RoomPlayerInfo)=>{ pp.pSeatEmptyPhoto.spriteFrame = spriteFrame ;} ) ;
+        });
     }
     // update (dt) {}
 }

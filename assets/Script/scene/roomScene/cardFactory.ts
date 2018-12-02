@@ -11,6 +11,8 @@
 const {ccclass, property} = cc._decorator;
 import {eCardSate, eArrowDirect, RoomEvent } from "./roomDefine"
 import Card from "./card" 
+import ClientData from "../../globalModule/ClientData";
+import { eMJBg, clientEvent } from "../../common/clientDefine"
 @ccclass
 export default class CardFactory extends cc.Component {
 
@@ -35,7 +37,20 @@ export default class CardFactory extends cc.Component {
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
+    onLoad () 
+    {
+        this.refreshMJ();
+        cc.systemEvent.on(clientEvent.setting_update_mjBg,this.refreshMJ,this);
+    }
+
+    onDestroy()
+    {
+        this.pLeftRightEatPengGangPool.clear();
+        this.pUpEatPengGangPool.clear();
+        this.pSelfEatPengGangPool.clear();
+        this.pSingleCardPool.clear();
+        cc.systemEvent.targetOff(this);
+    }
 
     start () {
         // let nPosIdx = 2 ;
@@ -157,32 +172,60 @@ export default class CardFactory extends cc.Component {
         let pool : cc.NodePool = pCard.pRecyclePool ;
         pool.put(pNode);
 
-        console.log(" pool size = " + pool.size() );
+        //console.log(" pool size = " + pool.size() );
     }
 
-    onDestroy()
+    loadNewCardAtals( strCardName : string )
     {
-        this.pLeftRightEatPengGangPool.clear();
-        this.pUpEatPengGangPool.clear();
-        this.pSelfEatPengGangPool.clear();
-        this.pSingleCardPool.clear();
-    }
-
-    loadNewCardAtals( idx : number )
-    {
-        let vAtas : string[] = [ "" ] ;
         let self = this ;
-        cc.loader.loadRes(vAtas[idx], cc.SpriteAtlas, function (err, atlas) {
+        cc.loader.loadRes(strCardName, cc.SpriteAtlas, function (err, atlas) {
             if ( err )
             {
-                cc.error( "load new mj error idx = " + idx + " error = " + err  );
+                cc.error( "load new mj error idx = " + strCardName + " error = " + err  );
                 return ;
             }
             self.pCurCardAtlas = atlas ;
 
             let pEvent = new cc.Event.EventCustom(RoomEvent.Event_changeMJ,true) ;
+            pEvent.detail = atlas ;
             cc.systemEvent.dispatchEvent(pEvent) ;
         });
+    }
+
+    refreshMJ()
+    {
+        let idx : eMJBg = ClientData.getInstance().mjBgIdx ;
+        let vMJ = [] ;
+        vMJ[eMJBg.eMJ_Blue] = "cards/CFBlueMJ" ;
+        vMJ[eMJBg.eMJ_Golden] = "cards/CFGoldMJ" ;
+        vMJ[eMJBg.eMJ_Green] = "cards/CFGreenMJ" ;
+        if ( idx >= vMJ.length )
+        {
+            cc.error( "invalid mj bg = " + idx );
+            return ;
+        }
+
+        if ( this.pCurCardAtlas == null )
+        {
+            this.loadNewCardAtals(vMJ[idx]) ;
+            return ;
+        }
+
+        let curAtalsName = "cards/" + this.pCurCardAtlas.name;
+        let at = this.pCurCardAtlas ;
+        if ( curAtalsName == vMJ[idx] + ".plist" )
+        {
+            cc.warn( "cur and set is the same = " + vMJ[idx] );
+            return ;
+        }
+        this.loadNewCardAtals(vMJ[idx]) ;
+        
+        // setTimeout(() => {
+        //     let nPos = curAtalsName.indexOf(".") ;
+        //     let rs = curAtalsName.slice(0,nPos);
+        //     cc.loader.release(at);
+        // }, 600);
+
     }
     // update (dt) {}
 }

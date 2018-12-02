@@ -59,9 +59,6 @@ export default class DlgActOptsCards extends cc.Component {
 
     start () {
         this.clear();
-        let n = Card.makeCardNum(2,4) ;
-        //this.showDlgOptsForGang([n,n + 1 , n + 3 , n+4]) ;
-        this.showDlgOptsForEat(n + 3,[0 , 1 , 2]) ;
     }
 
     showDlgOptsForGang( vGangNum : number[]  )

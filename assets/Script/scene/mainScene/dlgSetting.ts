@@ -15,7 +15,7 @@ import ClientData from "../../globalModule/ClientData"
 import Network from "../../common/Network"
 import { eMsgPort, eMsgType } from "../../common/MessageIdentifer"
 import Utility from "../../globalModule/Utility"
-import {clientDefine,SceneName} from "../../common/clientDefine"
+import {clientDefine,SceneName,clientEvent,eMusicType,eDeskBg,eMJBg} from "../../common/clientDefine"
 @ccclass
 export default class DlgSetting extends DlgBase {
     @property
@@ -99,17 +99,33 @@ export default class DlgSetting extends DlgBase {
 
     onToggleMusicType( toggle : cc.Toggle, selIdx : string )
     {
-        ClientData.getInstance().musicTypeIdx = parseInt(selIdx);
+        let type : eMusicType = parseInt(selIdx) ;
+        ClientData.getInstance().musicTypeIdx = type;
+        /// dispatch event ;
+        let pEvent = new cc.Event.EventCustom(clientEvent.setting_upate_Music,true) ;
+        pEvent.detail = type ;
+        cc.systemEvent.dispatchEvent(pEvent);
     }
 
     onToggleBackgroundType( toggle : cc.Toggle, selIdx : string )
     {
-        ClientData.getInstance().deskBgIdx = parseInt(selIdx);
+        let type : eDeskBg = parseInt(selIdx) ;
+        ClientData.getInstance().deskBgIdx = type;
+        /// dispatch event ;
+        let pEvent = new cc.Event.EventCustom(clientEvent.setting_update_deskBg,true) ;
+        pEvent.detail = type ;
+        cc.systemEvent.dispatchEvent(pEvent);
     }
 
     onToggleMJType( toggle : cc.Toggle, selIdx : string )
     {
-        ClientData.getInstance().mjBgIdx = parseInt(selIdx);
+        let type : eMJBg = parseInt(selIdx);
+        ClientData.getInstance().mjBgIdx = type;
+
+        /// dispatch event ;
+        let pEvent = new cc.Event.EventCustom(clientEvent.setting_update_mjBg,true) ;
+        pEvent.detail = type ;
+        cc.systemEvent.dispatchEvent(pEvent);
     }
 
     protected refreshSetingDisplay()

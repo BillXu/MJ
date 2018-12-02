@@ -9,7 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import {clientDefine,eGameType} from "../common/clientDefine"
+import {clientDefine,eGameType,eMusicType,eDeskBg,eMJBg} from "../common/clientDefine"
 import { eMsgType, eMsgPort } from "../common/MessageIdentifer"
 import Network from "../common/Network"
 import * as _ from "lodash"
@@ -27,9 +27,9 @@ export default class ClientData
     
     private _effectVolume : number = 0.5 ;
     private _musicVolume : number = 0.5 ;
-    private _musicTypeIdx : number = 0 ;
-    private _deskBgIdx : number = 0 ;
-    private _mjBgIdx : number = 0 ;
+    private _musicTypeIdx : eMusicType = 0 ;
+    private _deskBgIdx : eDeskBg = 0 ;
+    private _mjBgIdx : eMJBg = 0 ;
 
     get stayInRoomID () : number
     {
@@ -176,28 +176,28 @@ export default class ClientData
         cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this);
 
         // load settings
-        this._deskBgIdx = cc.sys.localStorage.getItem("_deskBgIdx");
+        this._deskBgIdx = parseInt(cc.sys.localStorage.getItem("_deskBgIdx"));
         if ( null == this._deskBgIdx )
         {
             this._deskBgIdx = 0 ;
         }
 
-        this._effectVolume = cc.sys.localStorage.getItem("_effectVolume");
+        this._effectVolume = parseFloat(cc.sys.localStorage.getItem("_effectVolume"));
         if ( this._effectVolume == null )
         {
             this._effectVolume = 0.5 ;
         }
-        this._mjBgIdx = cc.sys.localStorage.getItem("_mjBgIdx");
+        this._mjBgIdx = parseInt(cc.sys.localStorage.getItem("_mjBgIdx"));
         if ( null == this._mjBgIdx )
         {
             this._mjBgIdx = 0 ;
         }
-        this._musicTypeIdx = cc.sys.localStorage.getItem("_musicTypeIdx");
+        this._musicTypeIdx = parseInt(cc.sys.localStorage.getItem("_musicTypeIdx"));
         if ( null == this._musicTypeIdx )
         {
             this._musicTypeIdx = 0 ;
         }
-        this._musicVolume = cc.sys.localStorage.getItem("_musicVolume");
+        this._musicVolume = parseFloat(cc.sys.localStorage.getItem("_musicVolume"));
         if ( null == this._musicVolume )
         {
             this._musicVolume = 0.5 ;

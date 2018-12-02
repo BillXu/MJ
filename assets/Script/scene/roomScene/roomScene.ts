@@ -337,7 +337,7 @@ export default class RoomScene extends cc.Component {
                     }
                     else
                     {
-                        p.cards.nHoldCardCnt = p.svrIdx == msg["bankerIdx"] ? 14 : 13 ;
+                        p.cards.nHoldCardCnt = p.svrIdx == this.pRoomData.bankerIdx ? 14 : 13 ;
                         if ( p.cards.nHoldCardCnt == 14 )
                         {
                             p.cards.nNewFeatchedCard = 1 ;

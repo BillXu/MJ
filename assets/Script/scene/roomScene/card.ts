@@ -9,7 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import { eMJCardType,eCardSate } from "./roomDefine"
+import { eMJCardType,eCardSate,RoomEvent } from "./roomDefine"
 @ccclass
 export default class Card extends cc.Component {
 
@@ -32,7 +32,22 @@ export default class Card extends cc.Component {
 
     pRecyclePool : cc.NodePool = null ;
     // LIFE-CYCLE CALLBACKS:
-    // onLoad () {}
+    onLoad ()
+    {
+        cc.systemEvent.on(RoomEvent.Event_changeMJ,this.onMJChanged,this);
+    }
+
+    onDestroy()
+    {
+        cc.systemEvent.targetOff(this);
+    }
+
+    onMJChanged( evet : cc.Event.EventCustom )
+    {
+        let atls : cc.SpriteAtlas = evet.detail ;
+        this.refreshCard(atls) ;
+        //console.log("onMJChanged") ;
+    }
 
     set eState ( state : eCardSate )
     {
@@ -126,6 +141,11 @@ export default class Card extends cc.Component {
 
     refreshCard( cardsAtlas : cc.SpriteAtlas )
     {
+        if ( cardsAtlas == null )
+        {
+            return ;
+        }
+
         let self = this ;
         this.vCard.forEach( ( sp : cc.Sprite, index : number )=>{ 
             
