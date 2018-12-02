@@ -259,11 +259,13 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         }
 
         let bgname = "desk/" ;
+        let indicator = "indicator/xymjdh_vipindicator0" ;
         switch ( bg )
         {
             case eDeskBg.eDesk_Blue:
             {
                 bgname += "cardtable_bg_color1/";
+                indicator = "indicator/xymjdh_vipindicatorblue0" ;
             }
             break ;
             case eDeskBg.eDesk_Classic:
@@ -279,6 +281,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
             case eDeskBg.eDesk_Wood:
             {
                 bgname += "cardtable_bg_color2/";
+                indicator = "indicator/xymjdh_vipindicatoryellow0" ;
             }
             break;
             default:
@@ -288,6 +291,8 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
             break;
         }
 
+        this.pIndicator.onDeskChanged(indicator);
+        
         let self = this ;
         cc.loader.loadRes(bgname + "cardtable_bg_ditu" ,cc.SpriteFrame,( err : Error, spriteFrame : cc.SpriteFrame )=>{
             if ( err )

@@ -72,5 +72,30 @@ export default class Indicator extends cc.Component {
         this.pIndicatorAni.play("indicator_hide");
     }
 
+    onDeskChanged( strAtalsPath : string )
+    {
+        let self = this ;
+        cc.loader.loadRes(strAtalsPath, cc.SpriteAtlas, function (err, atlas : cc.SpriteAtlas ) {
+            if ( err )
+            {
+                cc.error( "load new mj error idx = " + strAtalsPath + " error = " + err  );
+                return ;
+            }
+            self.refreshByAtals(self.node,atlas);
+        });
+    }
+
+    refreshByAtals( node : cc.Node , atlas : cc.SpriteAtlas )
+    {
+        let sprite = node.getComponent(cc.Sprite);
+        if ( sprite )
+        {
+            sprite.spriteFrame = atlas.getSpriteFrame(sprite.spriteFrame.name);
+        }
+
+        let self = this ;
+        node.children.forEach( ( child : cc.Node )=>{ self.refreshByAtals(child,atlas); } );
+    }
+
     // update (dt) {}
 }
