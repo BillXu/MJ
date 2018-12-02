@@ -28,6 +28,7 @@ import DlgDismiss from "./dlgDismissRoom"
 import DlgDuiPu from "./dlgDuiPu"
 import Utility from "../../globalModule/Utility";
 import DlgBase from "../../common/DlgBase";
+import EffectLayer from "./effectLayer"
 @ccclass
 export default class RoomScene extends cc.Component {
 
@@ -42,6 +43,9 @@ export default class RoomScene extends cc.Component {
 
     @property(PlayerCardsLayer)
     pLayerPlayerCards : PlayerCardsLayer = null ;
+
+    @property(EffectLayer)
+    pLayerEffect : EffectLayer = null ;
 
     @property(DlgActList)
     pdlgAct : DlgActList = null ;
@@ -256,6 +260,10 @@ export default class RoomScene extends cc.Component {
                     break ;
                 }
                 this.pLayerRoomInfo.leftMJCnt = this.pRoomData.leftMJCnt.toString();
+                if ( actType != eMJActType.eMJAct_Mo && eMJActType.eMJAct_Chu != actType )
+                {
+                    this.pLayerEffect.playPlayerEffect(clientIdx,actType) ;
+                }
             } 
             break ;
             case eMsgType.MSG_PLAYER_WAIT_ACT_ABOUT_OTHER_CARD:

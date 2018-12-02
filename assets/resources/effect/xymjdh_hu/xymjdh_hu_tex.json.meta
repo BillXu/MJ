@@ -1,0 +1,7 @@
+{
+  "ver": "1.0.0",
+  "uuid": "9f66b6a7-7a09-4848-99c0-596fadab494b",
+  "atlasJson": "{\"width\":512,\"imagePath\":\"xymjdh_hu_tex.png\",\"height\":512,\"name\":\"xymjdh_hu\",\"SubTexture\":[{\"frameHeight\":132,\"y\":286,\"frameX\":-3,\"width\":119,\"frameY\":-4,\"height\":125,\"name\":\"peng_m3\",\"frameWidth\":125,\"x\":337},{\"frameHeight\":132,\"y\":306,\"frameX\":-4,\"width\":115,\"frameY\":-4,\"height\":120,\"name\":\"peng_m1\",\"frameWidth\":125,\"x\":1},{\"frameHeight\":132,\"y\":159,\"frameX\":-2,\"width\":120,\"frameY\":-4,\"height\":125,\"name\":\"peng_m2\",\"frameWidth\":125,\"x\":337},{\"width\":334,\"y\":1,\"height\":303,\"name\":\"hu_jug\",\"x\":1},{\"width\":116,\"y\":306,\"height\":108,\"name\":\"hu_gz\",\"x\":118},{\"width\":156,\"y\":1,\"height\":156,\"name\":\"hu_huangg\",\"x\":337}]}",
+  "texture": "87ed452e-ce82-431d-9047-4d7567e6b32d",
+  "subMetas": {}
+}
