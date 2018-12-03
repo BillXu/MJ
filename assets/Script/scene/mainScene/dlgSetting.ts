@@ -62,22 +62,26 @@ export default class DlgSetting extends DlgBase {
     {
         let msg = {} ;
         let self = this ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_PLAYER_LOGOUT,eMsgPort.ID_MSG_PORT_DATA,ClientData.getInstance().selfUID,
-        ( jmsg : Object )=>{ 
-            let ret : number = jmsg["ret"] ;
-            if ( 0 == ret )
-            {
-                ClientData.getInstance().clearWhenLogout();
-                cc.director.loadScene(SceneName.Scene_login) ;
-                self.closeDlg();
-            }
-            else
-            {
-                Utility.showTip("logout error code " + ret ) ;
-            }
-            return true ;
-        }) ;
-        
+        // Network.getInstance().sendMsg(msg,eMsgType.MSG_PLAYER_LOGOUT,eMsgPort.ID_MSG_PORT_DATA,ClientData.getInstance().selfUID,
+        // ( jmsg : Object )=>{ 
+        //     let ret : number = jmsg["ret"] ;
+        //     if ( 0 == ret )
+        //     {
+        //         ClientData.getInstance().clearWhenLogout();
+        //         cc.director.loadScene(SceneName.Scene_login) ;
+        //         self.closeDlg();
+        //     }
+        //     else
+        //     {
+        //         Utility.showTip("logout error code " + ret ) ;
+        //     }
+        //     return true ;
+        // }) ;
+
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_PLAYER_LOGOUT,eMsgPort.ID_MSG_PORT_DATA,ClientData.getInstance().selfUID);
+        ClientData.getInstance().clearWhenLogout();
+        self.closeDlg();
+        cc.director.loadScene(SceneName.Scene_login) ;
     }
 
     onClickApplyDismiss()

@@ -14,7 +14,7 @@ import DlgJoinRoomOrClub from "./dlgJoinRoomOrClub"
 import Bacground from "./background"
 import ClientData from "../../globalModule/ClientData";
 import Network from "../../common/Network";
-import { eMsgType } from "../../common/MessageIdentifer";
+import { eMsgType, eMsgPort } from "../../common/MessageIdentifer";
 import Utility from "../../globalModule/Utility";
 import { SceneName } from "../../common/clientDefine"
 @ccclass
@@ -79,6 +79,12 @@ export default class MiddleLayer extends cc.Component {
         msg["roomID"] = parseInt(nJoinRoomID);
         msg["uid"] = ClientData.getInstance().selfUID;
         let port = ClientData.getInstance().getMsgPortByRoomID(parseInt(nJoinRoomID));
+        if ( eMsgPort.ID_MSG_PORT_ALL_SERVER <= port || port < eMsgPort.ID_MSG_PORT_LUOMJ  )
+        {
+            Utility.showTip( "房间不存在或已经解散 code" + 0 );
+            return ;
+        }
+
         Network.getInstance().sendMsg(msg,eMsgType.MSG_ENTER_ROOM,port,parseInt(nJoinRoomID),( msg : Object)=>
         {
             let ret = msg["ret"] ;

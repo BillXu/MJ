@@ -277,6 +277,7 @@ export default class RoomScene extends cc.Component {
                 this.pdlgAct.showDlg(msg["acts"],msg["cardNum"]) ;
             }
             break;
+            case eMsgType.MSG_ROOM_MQMJ_WAIT_ACT_AFTER_CP:
             case eMsgType.MSG_PLAYER_WAIT_ACT_AFTER_RECEIVED_CARD:
             {
                 let vActList : eMJActType[] = [] ;

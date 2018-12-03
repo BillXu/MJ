@@ -65,6 +65,10 @@ export default class Prompt extends cc.Component {
         }
 
         this.vDisplayingPromptText.forEach( ( pNode : cc.Node , idx : number )=>{
+            if ( null == pNode )
+            {
+                return ;
+            }
             pNode.position = cc.v2(0,-1 * (pNode.getContentSize().height * idx + 10) );
         } );
 
