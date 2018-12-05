@@ -17,6 +17,7 @@ let clientEvent =
 	setting_upate_Music :  "setting_upate_Music" ,
 	setting_update_deskBg : "setting_update_deskBg",
 	setting_update_mjBg : "setting_update_mjBg",
+	event_recieved_brifData : "event_recieved_brifData",
 } ;
 
 let SceneName =

@@ -11,12 +11,20 @@
 const {ccclass, property} = cc._decorator;
 import DlgSetting from "./dlgSetting"
 import utility from "../../globalModule/Utility"
+import dlgRecord from "./record/dlgRecord";
+import Bacground from "./background"
+import DlgBase from "../../common/DlgBase";
 @ccclass
 export default class BottomLayer extends cc.Component {
+
+    @property(Bacground)
+    pBackground : Bacground = null ;
 
     @property(DlgSetting)
     pDlgSetting: DlgSetting = null;
 
+    @property(dlgRecord)
+    pDlgRecord : dlgRecord = null ;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -32,19 +40,14 @@ export default class BottomLayer extends cc.Component {
 
     onBtnShop()
     {
-        //utility.showTip("zhege shi yige weniz发掘的发生的噶") ;
-        utility.showPromptText( "zhege shi yige weniz发掘的发生的噶" );
-        setTimeout(() => {
-            utility.showPromptText( "zhege shi yige weniz发掘的发生的噶" );
-        }, 4000);
+        //utility.showTip("zhege shi yige weniz发掘的发生的噶") 
+    }
 
-        setTimeout(() => {
-            utility.showPromptText( "zhege shi yige weniz发掘的发生的噶" );
-        }, 6000);
-
-        setTimeout(() => {
-            utility.showPromptText( "zhege shi yige weniz发掘的发生的噶" );
-        }, 8000);
+    onBtnShowRecord()
+    {
+        this.pBackground.hide();
+        let self = this ;
+        this.pDlgRecord.showDlg( null ,null,(dlg : DlgBase)=>{ self.pBackground.show();});
     }
     // update (dt) {}
 }
