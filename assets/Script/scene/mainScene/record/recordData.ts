@@ -38,6 +38,7 @@ export default class RecordData extends cc.Component {
 
     vRecorder : RecordItem[] = [] ;
 
+    isDataEmpty(){ return this.vRecorder.length == 0 ;}
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}

@@ -27,12 +27,12 @@ export default class dlgRecord extends DlgBase {
     @property(DlgSingleRoomRecord)
     pDlgSingleRoomRecord : DlgSingleRoomRecord = null ;
  
+    @property(RecordData)
     pRecordData : RecordData = null ;
     // LIFE-CYCLE CALLBACKS:
     onLoad()
     {
         super.onLoad();
-        this.pRecordData = new RecordData();
         cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
     }
 
@@ -58,7 +58,7 @@ export default class dlgRecord extends DlgBase {
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void  )
     {
         super.showDlg(pfResult,jsUserData,pfOnClose);
-        this.pEmptyBg.active = true ;
+        this.pEmptyBg.active = this.pRecordData.isDataEmpty() ;
         // do request data ;
         this.pRecordData.fetchData() ;
     }
