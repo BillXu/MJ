@@ -73,6 +73,4 @@ export default class RecordData extends cc.Component {
             } );
         } );
     }
-
-
 }

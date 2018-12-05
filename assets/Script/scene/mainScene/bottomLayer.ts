@@ -25,6 +25,9 @@ export default class BottomLayer extends cc.Component {
 
     @property(dlgRecord)
     pDlgRecord : dlgRecord = null ;
+
+    @property(DlgBase)
+    pDlgHelp : DlgBase = null ;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -48,6 +51,21 @@ export default class BottomLayer extends cc.Component {
         this.pBackground.hide();
         let self = this ;
         this.pDlgRecord.showDlg( null ,null,(dlg : DlgBase)=>{ self.pBackground.show();});
+    }
+
+    onBtnHelp()
+    {
+        this.pDlgHelp.showDlg();
+    }
+
+    onBtnShare()
+    {
+
+    }
+
+    onBtnActivty()
+    {
+        
     }
     // update (dt) {}
 }
