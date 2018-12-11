@@ -21,7 +21,7 @@ export default class RecordView extends cc.Component {
     pListView: listView = null;
     
     @property([cc.Component.EventHandler])
-    private vlpClickCell : cc.Component.EventHandler[] = [] ;
+    vlpClickCell : cc.Component.EventHandler[] = [] ;
 
     private vRecorder : RecordItem[] = [] ;
     private pListAdpter : listviewAdpter = null ;

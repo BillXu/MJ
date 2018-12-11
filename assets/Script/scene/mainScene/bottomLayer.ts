@@ -65,7 +65,7 @@ export default class BottomLayer extends cc.Component {
 
     onBtnActivty()
     {
-        
+
     }
     // update (dt) {}
 }
