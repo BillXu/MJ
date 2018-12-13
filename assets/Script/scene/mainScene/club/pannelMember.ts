@@ -38,6 +38,12 @@ export default class PannelMember extends ClubPannel {
     show( data : ClubData )
     {
         super.show(data);
+        if ( data == null )
+        {
+            this.pAdapter.setDataSet([]);
+            this.pMembersView.notifyUpdate();
+            return ;
+        }
         data.pClubMemberData.lpfCallBack = this.onUpdateMember.bind(this);
         this.pAdapter.setDataSet(data.pClubMemberData.vMembers) ;
         this.pMembersView.notifyUpdate();
@@ -63,7 +69,6 @@ export default class PannelMember extends ClubPannel {
 class listMemViewAdpter extends AbsAdapter
 {
     lpfCallBack : ( mem : ClubMember, opt : clubMemAct  )=>void = null ; 
-    isShowReplayBtn : boolean = false ;
 
     updateView( item: cc.Node, posIndex: number )
     {

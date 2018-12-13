@@ -11,6 +11,26 @@
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../../common/DlgBase"
 @ccclass
-export default class OptsJoinOrCreate extends DlgBase {
+export default class DlgCreateClubTip extends DlgBase {
 
+
+
+    // LIFE-CYCLE CALLBACKS:
+
+    // onLoad () {}
+
+    start () {
+
+    }
+
+    onClickAgreeAndCreate()
+    {
+        if ( this.pFuncResult )
+        {
+            this.pFuncResult(null);
+        }
+        this.closeDlg();
+    }
+
+    // update (dt) {}
 }

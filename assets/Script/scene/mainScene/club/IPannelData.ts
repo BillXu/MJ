@@ -9,7 +9,6 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 import PlayerBrifdata from "../record/playerBrifedata"
 import { Define } from "./clubDefine"
-import { playerBaseData } from "../../roomScene/roomInterface";
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Network from "../../../common/Network"
 export default abstract class IPannelData
@@ -17,12 +16,12 @@ export default abstract class IPannelData
     private nClubID : number = 0 ;
     private nLastRecivedDataTime : number = 0 ;
     lpfCallBack : ( nRoomID : number )=>void = null ;  // -1 means all ;
-    private playerDatas : PlayerBrifdata = null ;
+    protected playerDatas : PlayerBrifdata = null ;
 
-    init( clubID : number , playersData : playerBaseData )
+    init( clubID : number , playersData : PlayerBrifdata )
     {
         this.nClubID = clubID ;
-        this.playerDatas = this.playerDatas ;
+        this.playerDatas = playersData ;
     }
 
     get clubID() : number 

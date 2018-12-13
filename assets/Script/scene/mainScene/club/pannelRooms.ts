@@ -39,23 +39,42 @@ export default class PannelRoom extends ClubPannel {
     show( data : ClubData )
     {
         super.show(data);
+        if ( this.pClubRoomData )
+        {
+            this.pClubRoomData.onLoseFocus();
+        }
+        
+        if ( data == null )
+        {
+            this.refresh();
+            return ;
+        }
+
         this.pShowDismissBtn.node.active = data.canSelfDismissClubRoom();
         this.pClubRoomData = data.pClubRoomData ;
         data.pClubRoomData.lpfCallBack = this.onRoomDataUpdate.bind(this);
-        this.pClubRoomData.featchData(data.clubID) ;
+        if ( this.pClubRoomData.isNeedRefreshData() )
+        {
+            this.pClubRoomData.featchData() ;
+        }
         this.refresh();
     }
 
     refresh()
     {
-        if ( this.pClubRoomData.vRoomDataItems.length <= 0 )
+        // recycle node ;
+        this.vReserveNode = this.pLayout.node.children.concat(this.vReserveNode) ;
+        this.pLayout.node.removeAllChildren();
+
+        if ( this.pClubRoomData == null )
         {
             return ;
         }
 
-        // recycle node ;
-        this.vReserveNode = this.pLayout.node.children.concat(this.vReserveNode) ;
-        this.pLayout.node.removeAllChildren();
+        if ( this.pClubRoomData.vRoomDataItems.length <= 0 )
+        {
+            return ;
+        }
 
         let vRooms : RoomDataItem[] = this.pClubRoomData.vRoomDataItems ;
         let self = this ;

@@ -153,6 +153,38 @@ export default class ClientData
         return this.s_Data ;
     }
 
+    public getJoinedClubsID() : number[]
+    {
+        if ( this.jsSelfBaseDataMsg["clubs"] == null )
+        {
+            this.jsSelfBaseDataMsg["clubs"] = [] ;
+        }
+        return this.jsSelfBaseDataMsg["clubs"] ;
+    }
+
+    public onJoinedNewClubID( clubID : number )
+    {
+        if ( this.jsSelfBaseDataMsg["clubs"] == null )
+        {
+            this.jsSelfBaseDataMsg["clubs"] = [] ;
+        }
+        this.jsSelfBaseDataMsg["clubs"].push(clubID);
+    }
+
+    public onDoLevedClub( clubID : number )
+    {
+         let vClubs : number[] = this.jsSelfBaseDataMsg["clubs"] || [] ;
+         for ( let idx in vClubs )
+         {
+             if ( vClubs[idx] == clubID )
+             {
+                 vClubs.splice(parseInt(idx),1);
+                 return
+             }
+         }
+         console.error( "client data do not have club id = " + clubID );
+    }
+
     public init()
     {
         let acc : string = cc.sys.localStorage.getItem("acc");

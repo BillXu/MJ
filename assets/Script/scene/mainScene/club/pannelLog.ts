@@ -44,6 +44,13 @@ export default class PannelLog extends ClubPannel {
         {
             this.pData.onLoseFocus();
         }
+
+        if ( data == null )
+        {
+            this.pAdapter.setDataSet([]);
+            this.pLogList.notifyUpdate();
+            return ;
+        }
         this.pData = data.pClubLogData ;
         data.pClubLogData.lpfCallBack = this.doRefreshView.bind(this);
         if ( this.pData.isNeedRefreshData() )

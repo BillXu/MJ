@@ -10,9 +10,9 @@
 import * as _ from "lodash"
 import Network from "../../../common/Network"
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
-import { Define } from "./clubDefine"
 import PlayerBrifdata from "../record/playerBrifedata"
 import ClientData from "../../../globalModule/ClientData"
+import IPannelData from "./IPannelData"
 export class RoomDataItem
 {
     roomID : number = 0 ;
@@ -71,16 +71,12 @@ export class RoomDataItem
     }
 }
 
-export default class ClubRoomData  {
+export default class ClubRoomData extends IPannelData  {
     vRoomDataItems : RoomDataItem[] = [] ;
-    private nClubID : number = 0 ;
-    private nLastRecivedDataTime : number = 0 ;
-    private playerDatas : PlayerBrifdata = null ;
     // LIFE-CYCLE CALLBACKS:
-    lpfCallBack : ( nRoomID : number )=>void = null ;  // -1 means all ;
     // onLoad () {}
 
-    onRecivedPlayerBrifData( msg : Object )
+    onRecivedPlayerBrifData( msg : Object ) : boolean
     {
         let updateIdx = -1 ;
         this.vRoomDataItems.every( ( m : RoomDataItem , idx : number )=>{
@@ -96,29 +92,26 @@ export default class ClubRoomData  {
         {
             this.lpfCallBack(this.vRoomDataItems[updateIdx].roomID); 
         }
+
+        return updateIdx != -1 ;
     }
 
-    featchData( clubID : number )
+    featchData()
     {
-        this.nClubID = clubID ;
-
-        let escape = Date.now() ; 
-        if ( escape - this.nLastRecivedDataTime < Define.TIME_ROOM_DATA_REFRESH && this.vRoomDataItems.length > 0 )
+        if ( this.isNeedRefreshData() == false )
         {
-            cc.log( "too few wait refresh data" );
             return ;
         }
-        this.nLastRecivedDataTime = escape ;
 
         let net = Network.getInstance() ;
         let msg = {} ;
-        net.sendMsg(msg,eMsgType.MSG_CLUB_REQ_ROOMS,eMsgPort.ID_MSG_PORT_CLUB,this.nClubID, this.onRecievedRoomData.bind(this) ) ;
+        net.sendMsg(msg,eMsgType.MSG_CLUB_REQ_ROOMS,eMsgPort.ID_MSG_PORT_CLUB,this.clubID ) ;
     }
 
     onRecievedRoomData( msg : Object )
     {
         let clubID : number = msg["clubID"] ;
-        if ( clubID != this.nClubID )
+        if ( clubID != this.clubID )
         {
             return  false ;
         }
@@ -137,7 +130,7 @@ export default class ClubRoomData  {
             let msg = {} ;
             msg["roomID"] = id ;
             let port = ClientData.getInstance().getMsgPortByRoomID(id);
-            Network.getInstance().sendMsg(msg,eMsgType.MSG_REQ_ROOM_ITEM_INFO,port,id,self.onRecievedRoomItemInfo.bind(self)) ;
+            Network.getInstance().sendMsg(msg,eMsgType.MSG_REQ_ROOM_ITEM_INFO,port,id) ;
         } );
 
         return true ;
@@ -167,6 +160,23 @@ export default class ClubRoomData  {
         return data ;
     }
 
+    onMsg( msgID : eMsgType , msg : Object ) : boolean
+    {
+        if ( msgID == eMsgType.MSG_CLUB_REQ_ROOMS )
+        {
+            this.onRecievedRoomData(msg) ;
+            this.onDoRecievdData();
+            return true;
+        }
+
+        if ( msgID == eMsgType.MSG_REQ_ROOM_ITEM_INFO )
+        {
+            this.onRecievedRoomItemInfo(msg);
+            return true ;
+        }
+        return false ;
+    }
+
     isAllRoomDataItemRecievedInfo()
     {
         return _.findIndex( this.vRoomDataItems, ( d : RoomDataItem )=>{ return d.isRecievedInfo() == false;} ) == -1 ;
@@ -174,6 +184,11 @@ export default class ClubRoomData  {
 
     start () {
 
+    }
+
+    getDataCnt(): number
+    {
+        return this.vRoomDataItems.length ;
     }
 
     // update (dt) {}

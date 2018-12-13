@@ -171,7 +171,7 @@ export default class ClubLogData extends IPannelData  {
         return -1 == idx ;
     }
 
-    protected onRecivedPlayerBrifData( msg : Object ) : boolean 
+    onRecivedPlayerBrifData( msg : Object ) : boolean 
     {
          let isInvokded : boolean = false ;
          this.vLogs.forEach( ( log : LogDataItem )=>{ 

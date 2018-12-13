@@ -9,8 +9,35 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import DlgBase from "../../../common/DlgBase"
-@ccclass
-export default class OptsJoinOrCreate extends DlgBase {
 
+@ccclass
+export default class ClubListItem extends cc.Component {
+
+    @property(cc.Label)
+    unCheckName: cc.Label = null;
+
+    @property(cc.Label)
+    checkName: cc.Label = null;
+
+    @property(cc.Label)
+    checkID: cc.Label = null;
+
+    id : number = 0 ;
+    // LIFE-CYCLE CALLBACKS:
+
+    // onLoad () {}
+
+    start () {
+
+    }
+
+    refresh( id : number , name : string )
+    {
+        this.id = id ;
+        this.checkID.string = id.toString();
+        this.unCheckName.string = name ;
+        this.checkName.string = name ;
+    }
+
+    // update (dt) {}
 }

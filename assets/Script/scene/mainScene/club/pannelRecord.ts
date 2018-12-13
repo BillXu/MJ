@@ -36,6 +36,11 @@ export default class PannelRecord extends ClubPannel {
     show( data : ClubData )
     {
         super.show(data);
+        if ( null == data )
+        {
+            this.pRecordView.setRecorderData([],false);
+            return ;
+        }
         this.pRecordData = data.pRecordData ;
         this.pEmptyBg.active = this.pRecordData.isDataEmpty() ;
         if ( this.pRecordData.isDataEmpty() == false )

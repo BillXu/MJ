@@ -7,7 +7,8 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-
+import IPannelData from "./IPannelData"
+import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 export class  ClubMember
 {
     uid : number = 0 ;
@@ -16,11 +17,9 @@ export class  ClubMember
     isOnline : boolean = false ;
 }
 
-export default class ClubMemberData {
+export default class ClubMemberData extends IPannelData {
 
     vMembers : ClubMember[] = [] ;
-
-    lpfCallBack : ( idx : number )=>void = null ;  // -1 means all ;
 
     onRecivedPlayerBrifData( msg : Object )
     {
@@ -31,6 +30,7 @@ export default class ClubMemberData {
             {
                 updateIdx = idx ;
                 m.msgBrefData = msg ;
+                m.isOnline = m.msgBrefData["isOnline"] == 1 ;
                 return false ;
             }
             return true ;
@@ -40,11 +40,62 @@ export default class ClubMemberData {
         {
             this.lpfCallBack(updateIdx); 
         }
+
+        return false ;
     }
 
-    parseMemberData( msg : Object )
+    featchData()
     {
+        if ( false == this.isNeedRefreshData() )
+        {
+            return false ;
+        }
 
+        let msg = {} ;
+        msg["clubID"] = this.clubID ;
+        this.sendClubMsg(eMsgType.MSG_CLUB_REQ_PLAYERS,msg) ;
+    }
+
+    onMsg( msgID : eMsgType , msg : Object ) : boolean
+    {
+        if ( eMsgType.MSG_CLUB_REQ_PLAYERS != msgID )
+        {
+            let vM : Object[] = msg["players"] ;
+            let pageIdx = msg["pageIdx"] ;
+            if ( 0 == pageIdx )
+            {
+                this.vMembers.length = 0 ;
+            }
+
+            let self = this ;
+            vM.forEach( ( p : Object )=>{
+                let mem = new ClubMember();
+                mem.uid = p["uid"] ;
+                mem.privliage = p["privilige"] ;
+                mem.msgBrefData = self.getPlayerBrifData(mem.uid);
+                self.vMembers.push(mem);
+                mem.isOnline = false ;
+                if ( mem.msgBrefData != null )
+                {
+                    mem.isOnline = mem.msgBrefData["isOnline"] == 1 ;
+                }
+            } );
+
+            if ( vM.length < 10 )
+            {
+                this.onDoRecievdData();
+                if ( this.lpfCallBack )
+                {
+                    this.lpfCallBack(-1);
+                }
+            }
+        }
+        return false ;
+    }
+
+    getDataCnt(): number 
+    {
+        return this.vMembers.length ;
     }
     // update (dt) {}
 }

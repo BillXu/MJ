@@ -10,14 +10,15 @@
 
 const {ccclass, property} = cc._decorator;
 import Prompt from "./Prompt"
+import DlgBase from "../common/DlgBase"
 @ccclass
 export default class Utility  {
 
-    public static showTip( strDesc : string )
+    public static showTip( strDesc : string, isOneBtn? : boolean, pfResult? : ( jsResult : Object ) => void , pfOnClose? : ( pTargetDlg : DlgBase ) => void )
     {
         let node = cc.find("persisteNode");
         let pompt = node.getComponent(Prompt);
-        pompt.showDlg(strDesc) ;
+        pompt.showDlg(strDesc,isOneBtn,pfResult,pfOnClose ) ;
     }
 
     public static showPromptText( strDesc : string , nDisplayTime : number = 3 )
@@ -25,6 +26,16 @@ export default class Utility  {
         let node = cc.find("persisteNode");
         let pompt = node.getComponent(Prompt);
         pompt.showPromptText(strDesc,nDisplayTime) ;
+    }
+
+    public static doWait()
+    {
+
+    }
+
+    public static onWaitArrived()
+    {
+
     }
     // LIFE-CYCLE CALLBACKS:
 

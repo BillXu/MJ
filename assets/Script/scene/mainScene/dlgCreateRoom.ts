@@ -173,6 +173,7 @@ export default class DlgCreateRoom extends DlgBase {
         createMsg["seatCnt"] = vSeat[nPlayerCntIdx] ;
         createMsg["circle"] = nRoundIdx == -1 ? 1 : 0 ;
         createMsg["guapu"] = this.isEnableDuipu.isChecked ? 1 : 0 ;
+        createMsg["enableAvoidCheat"] = this.isEnableAvoidCheat.isChecked ? 1 : 0 ;
         this.pFuncResult(createMsg);
     }
 
