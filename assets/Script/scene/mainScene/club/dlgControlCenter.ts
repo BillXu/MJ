@@ -35,6 +35,9 @@ export default class DlgControlCenter extends DlgBase {
     pRoundOrCircle : cc.Label = null ;
 
     @property(cc.Label)
+    pRoundOrCircleCnt : cc.Label = null ;
+
+    @property(cc.Label)
     pPayType : cc.Label = null ;
 
     @property(cc.Label)
@@ -123,7 +126,8 @@ export default class DlgControlCenter extends DlgBase {
         }
 
         this.pPayType.string = payType == 0 ? "房主扣卡" : "AA扣卡";
-        this.pRoundOrCircle.string = isCirle ? "圈数：" : "局数：" + roundOrCircleCnt ;
+        this.pRoundOrCircle.string = isCirle ? "圈数：" : "局数：" ;
+        this.pRoundOrCircleCnt.string = "" + roundOrCircleCnt;
         this.pOpts.string = isGuapu ? "对铺" : "" + isEnableStopCheat ? "   防作弊" : "";
         this.pSeatCnt.string = seatCnt.toString();
     }
@@ -263,5 +267,10 @@ export default class DlgControlCenter extends DlgBase {
             return true ;
         }) ;
     }    
+
+    onChangeTab( event : cc.Toggle )
+    {
+        this.pMgrTab.forEach( ( p : cc.Toggle )=>{ p.node.zIndex = event == p ? 1 : 0 ; } );
+    }
     // update (dt) {}
 }

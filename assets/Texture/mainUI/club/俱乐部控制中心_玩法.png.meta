@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "5d1b3fed-5edf-47a9-8c80-81c55377ed1c",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "俱乐部控制中心_玩法": {
+      "ver": "1.0.3",
+      "uuid": "15ca5590-abb3-4327-97cd-ad3ec1a4da3f",
+      "rawTextureUuid": "5d1b3fed-5edf-47a9-8c80-81c55377ed1c",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 1280,
+      "height": 720,
+      "rawWidth": 1280,
+      "rawHeight": 720,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

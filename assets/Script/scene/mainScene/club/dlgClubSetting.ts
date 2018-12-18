@@ -54,6 +54,7 @@ export default class DlgClubSetting extends DlgBase {
         {
             this.pFuncResult(eClubSettingBtn.Btn_ControlCenter);
         }
+        this.closeDlg();
     }
 
     onClickClubMessage()
@@ -62,6 +63,7 @@ export default class DlgClubSetting extends DlgBase {
         {
             this.pFuncResult(eClubSettingBtn.Btn_ClubMessage);
         }
+        this.closeDlg();
     }
 
     onClickNotice()
@@ -70,6 +72,7 @@ export default class DlgClubSetting extends DlgBase {
         {
             this.pFuncResult(eClubSettingBtn.Btn_Notice);
         }
+        this.closeDlg();
     }
 
     onClickLeaveClub()
@@ -78,6 +81,7 @@ export default class DlgClubSetting extends DlgBase {
         {
             this.pFuncResult(eClubSettingBtn.Btn_Leave);
         }
+        this.closeDlg();
     }
 
     // update (dt) {}

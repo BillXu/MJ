@@ -21,7 +21,7 @@ export default class RoomItem extends cc.Component {
     pRoundState: cc.Label = null;
 
     @property(cc.Node)
-    pDissmissBtn : cc.Node = null ;
+    pDissmissNode : cc.Node = null ;
 
     @property([cc.Label])
     vNames : cc.Label[] = [] ;
@@ -40,7 +40,7 @@ export default class RoomItem extends cc.Component {
 
     set isShowDissmissBtn ( isShowBtn : boolean )
     {
-        this.pDissmissBtn.active = isShowBtn ;
+        this.pDissmissNode.active = isShowBtn ;
     }
 
     start () {
@@ -68,8 +68,8 @@ export default class RoomItem extends cc.Component {
         pdata.vPlayers.forEach( ( pd : Object,idx : number )=>{
             self.vHeadIcon[idx].photoURL = pd["headIcon"] || "" ;
             self.vNames[idx].string = pd["name"] || "loading" ;
-            self.vHeadIcon[idx].node.active = false ;
-            self.vNames[idx].node.active = false ;
+            self.vHeadIcon[idx].node.active = true ;
+            self.vNames[idx].node.active = true ;
         } );
     }
 

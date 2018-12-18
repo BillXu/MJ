@@ -21,13 +21,12 @@ import DlgCreateRoom from "../dlgCreateRoom";
 import Network from "../../../common/Network";
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Utility from "../../../globalModule/Utility";
-@ccclass
 class clubItemData
 {
     name : string = "" ;
     id : number = 0 ;
 }
-
+@ccclass
 export default class ClubList extends cc.Component {
 
     @property(listView)
@@ -107,6 +106,7 @@ export default class ClubList extends cc.Component {
 
     onShowJoinClubDlg( btn : cc.Button )
     {
+        this.pDlgJoinClub.closeDlg();
         this.pDlgJoinClub.setDlgTitle(false); // must invoke ,before show ;
         this.pDlgJoinClub.showDlg( this.onJoinClubDlgResult.bind(this));
     }
@@ -133,6 +133,7 @@ export default class ClubList extends cc.Component {
 
     showCreateClubDlg()
     {
+        this.pDlgJoinClub.closeDlg();
         this.pDlgCrateClubTip.showDlg(this.onClubTipResult.bind(this)) ;
     }
 

@@ -17,6 +17,7 @@ import Network from "../../common/Network";
 import { eMsgType, eMsgPort } from "../../common/MessageIdentifer";
 import Utility from "../../globalModule/Utility";
 import { SceneName } from "../../common/clientDefine"
+import DlgClub from "./club/dlgClub";
 @ccclass
 export default class MiddleLayer extends cc.Component {
 
@@ -28,6 +29,9 @@ export default class MiddleLayer extends cc.Component {
 
     @property(Bacground)
     pBackground : Bacground = null ;
+
+    @property(DlgClub)
+    pDlgClub : DlgClub = null ;
     // LIFE-CYCLE CALLBACKS:
 
     start () {
@@ -36,7 +40,9 @@ export default class MiddleLayer extends cc.Component {
 
     onClickClubBtn( btn : cc.Button )
     {
-
+        this.pBackground.hide();
+        let self = this ;
+        this.pDlgClub.showDlg( null ,null,(dlg : DlgCreateRoom)=>{ self.pBackground.show();});
     }
 
     onClickCreateRoom( btn : cc.Button )

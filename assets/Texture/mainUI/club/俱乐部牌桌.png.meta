@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "13575010-ee73-463e-8df6-f558a4a193e0",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "俱乐部牌桌": {
+      "ver": "1.0.3",
+      "uuid": "9e107f1f-ee8c-4f90-b2de-70586e7e2271",
+      "rawTextureUuid": "13575010-ee73-463e-8df6-f558a4a193e0",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 1280,
+      "height": 720,
+      "rawWidth": 1280,
+      "rawHeight": 720,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

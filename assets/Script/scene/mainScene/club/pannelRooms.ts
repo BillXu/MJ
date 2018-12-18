@@ -34,6 +34,23 @@ export default class PannelRoom extends ClubPannel {
     vReserveNode : cc.Node[] = [] ;
     start () {
 
+        // // test code 
+        // let self = this ;
+        // setTimeout(() => {
+        //     for ( let idx = 0 ; idx < 10 ; ++idx )
+        //     {
+        //         let pNode = cc.instantiate(self.pPrefabItem);
+        //         self.pLayout.node.addChild(pNode);
+        //     }
+
+        //             // delay update scrollview content size ;
+        // setTimeout(() => {
+        //     let size = self.pLayout.node.getContentSize();
+        //     let scrollViewSize = self.pScrollViewContent.getParent().getContentSize();
+        //     self.pScrollViewContent.setContentSize(cc.size(scrollViewSize.width,scrollViewSize.height > size.height ? scrollViewSize.height : size.height ) );    
+        // }, 80);
+        // }, 1000);
+        // // test code end 
     }
 
     show( data : ClubData )

@@ -34,7 +34,10 @@ export default class PannelLog extends ClubPannel {
     }
 
     start () {
-
+        // test code 
+        this.pAdapter.setDataSet([2,1,1,1,1,1,2,2,2,2,23,2]);
+        this.pLogList.notifyUpdate();
+        // test code 
     }
 
     show( data : ClubData )
@@ -75,8 +78,8 @@ class listLogViewAdpter extends AbsAdapter
     {
         let comp = item.getComponent(LogItem);
         if (comp) {
-            let pInfo : LogDataItem = this.getItem(posIndex) ;
-            comp.refresh(pInfo) ;
+            //let pInfo : LogDataItem = this.getItem(posIndex) ;
+            //comp.refresh(pInfo) ;
         }
     }
 }

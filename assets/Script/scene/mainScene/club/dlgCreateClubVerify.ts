@@ -14,14 +14,14 @@ import Utility from "../../../globalModule/Utility";
 @ccclass
 export default class DlgCreateClubVerify extends DlgBase {
 
-    @property(cc.Label)
-    pName: cc.Label = null;
+    @property(cc.EditBox)
+    pName: cc.EditBox = null;
 
-    @property(cc.Label)
-    pPhoneNumer: cc.Label = null;
+    @property(cc.EditBox)
+    pPhoneNumer: cc.EditBox = null;
 
-    @property(cc.Label)
-    pCode: cc.Label = null;
+    @property(cc.EditBox)
+    pCode: cc.EditBox = null;
 
     @property(cc.Button)
     pFeatchCodeBtn : cc.Button = null ;

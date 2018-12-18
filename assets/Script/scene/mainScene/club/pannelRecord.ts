@@ -54,11 +54,11 @@ export default class PannelRecord extends ClubPannel {
         p.component = "PannelRecord";
         this.pRecordData.vlpfCallBack.push(p);
 
-        let pClick = new cc.Component.EventHandler();
-        pClick.handler = "onClickLookDetail" ;
-        pClick.target = this.node ;
-        pClick.component = "PannelRecord" ;
-        this.pRecordView.vlpClickCell.push(pClick);
+        // let pClick = new cc.Component.EventHandler();
+        // pClick.handler = "onClickLookDetail" ;
+        // pClick.target = this.node ;
+        // pClick.component = "PannelRecord" ;
+        // this.pRecordView.vlpClickCell.push(pClick);
     }
 
     onRecorderDataCallBack( vRecord : RecordItem[], isDetal : boolean )
@@ -93,7 +93,6 @@ export default class PannelRecord extends ClubPannel {
     }
 
     start () {
-
     }
 
     // update (dt) {}

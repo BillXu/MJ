@@ -20,7 +20,7 @@ export default class LogItem extends cc.Component {
     @property(cc.Label)
     pTime : cc.Label = null ;
 
-    nameClr : number = 0xffffff ;
+    nameClr : number = 0xeb6c1f ;
     refresh( data : LogDataItem )
     {
         let strContent : string = "" ;
@@ -29,17 +29,17 @@ export default class LogItem extends cc.Component {
         {
             case eClubEvent.eClubEvent_ApplyJoin:
             {
-                strContent = "【<color=#ff0000>" + data.getNameByID(jsDetail["respUID"]) + ( jsDetail["uid"] == 1 ? "</color>】同意了【<color=#ff0000>" : "</color>】拒绝了【<color=#ff0000>" ) + data.getNameByID(jsDetail[""]) + "</color>】加入俱乐部"; 
+                strContent = "【<color=#eb6c1f>" + data.getNameByID(jsDetail["respUID"]) + ( jsDetail["uid"] == 1 ? "</color>】同意了【<color=#eb6c1f>" : "</color>】拒绝了【<color=#eb6c1f>" ) + data.getNameByID(jsDetail[""]) + "</color>】加入俱乐部"; 
             }
             break;
             case eClubEvent.eClubEvent_Kick:
             {
-                strContent = "【<color=#ff0000>" + data.getNameByID(jsDetail["uid"]) + "</color>】被【<color=#ff0000>" + data.getNameByID(jsDetail["mgrUID"]) + "</color>】请出了俱乐部"; 
+                strContent = "【<color=#eb6c1f>" + data.getNameByID(jsDetail["uid"]) + "</color>】被【<color=#eb6c1f>" + data.getNameByID(jsDetail["mgrUID"]) + "</color>】请出了俱乐部"; 
             }
             break ;
             case eClubEvent.eClubEvent_Leave:
             {
-                strContent = "【<color=#ff0000>" + data.getNameByID(jsDetail["uid"]) + "</color>】离开了俱乐部"; 
+                strContent = "【<color=#eb6c1f>" + data.getNameByID(jsDetail["uid"]) + "</color>】离开了俱乐部"; 
             }
             break;
             case eClubEvent.eClubEvent_UpdatePrivlige:
@@ -55,7 +55,7 @@ export default class LogItem extends cc.Component {
                     cc.error("invalid privilage club = " + prori );
                     break ;
                 }
-                strContent = "【<color=#ff0000>" + data.getNameByID(jsDetail["actUID"]) + "</color>】将玩家【<color=#ff0000>" + data.getNameByID(jsDetail["actUID"]) + "</color>】设置为" + vstr[prori] ; 
+                strContent = "【<color=#eb6c1f>" + data.getNameByID(jsDetail["actUID"]) + "</color>】将玩家【<color=#eb6c1f>" + data.getNameByID(jsDetail["actUID"]) + "</color>】设置为" + vstr[prori] ; 
             }
             break;
             default:
@@ -63,7 +63,7 @@ export default class LogItem extends cc.Component {
              strContent = "default "
         }
 
-        this.pContent.string = strContent ;
+        this.pContent.string = "<color=#835B35>" + strContent + "</c>" ;
         let date = new Date(data.time * 1000 ) ;
         this.pTime.string = date.toLocaleString();
     }
