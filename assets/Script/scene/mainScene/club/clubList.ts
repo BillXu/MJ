@@ -21,11 +21,14 @@ import DlgCreateRoom from "../dlgCreateRoom";
 import Network from "../../../common/Network";
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Utility from "../../../globalModule/Utility";
+import ClientData from "../../../globalModule/ClientData";
 class clubItemData
 {
     name : string = "" ;
     id : number = 0 ;
+    isSelected : boolean = false ;
 }
+
 @ccclass
 export default class ClubList extends cc.Component {
 
@@ -61,41 +64,50 @@ export default class ClubList extends cc.Component {
 
     onLoad () 
     {
-        this.pListAdapter = new listClubAdpter();
-        this.pListAdapter.targetNode = this.node ;
-        this.pList.setAdapter(this.pListAdapter);
-        this.pListAdapter.setDataSet(this.vClubs);
+
     }
 
     start () {
-
+        // this.pListAdapter = new listClubAdpter();
+        // this.pListAdapter.lpCallBack = this.onClubListItemSel.bind(this) ;
+        // this.pListAdapter.setDataSet([1,1,1,1,1,1,1,1]);
+        // this.pList.setAdapter(this.pListAdapter);
     }
 
     refresh( vClubs : ClubData[] )
     {
+        if ( null == this.pListAdapter )
+        {
+            this.pListAdapter = new listClubAdpter();
+            this.pListAdapter.lpCallBack = this.onClubListItemSel.bind(this) ;
+            this.pListAdapter.setDataSet(this.vClubs);
+            this.pList.setAdapter(this.pListAdapter);
+        }
+
         let self = this ;
-        vClubs.forEach( ( d : ClubData)=>{
+        this.vClubs.length = 0 ;
+        vClubs.forEach( ( d : ClubData,idx : number )=>{
             let p = new clubItemData();
             p.id = d.clubID ;
             p.name = d.name ;
+            p.isSelected = idx == 0 ;
             self.vClubs.push(p);
         } );
         this.pListAdapter.setDataSet(this.vClubs);
         this.pList.notifyUpdate();
+        cc.Component.EventHandler.emitEvents(this.vSelClubItemCallBack, this.vClubs.length == 0 ? -1 : this.vClubs[0].id ) ;
     }
 
-    onClubListItemSel( event : cc.Event.EventTouch )
+    onClubListItemSel( toggle : cc.Toggle, clubID : number  )
     {
-        let node = event.target ;
-        let com : cc.Toggle = node.getComponent(cc.Toggle);
-        if ( com.isChecked == false )
-        {
-            return ;
-        }
-
-        let com2 : ClubListItem = node.getComponent(ClubListItem);
-        let selClubID = com2.id  ;
+        let selClubID = clubID  ;
         cc.Component.EventHandler.emitEvents(this.vSelClubItemCallBack,selClubID) ;
+
+        for ( let v of this.vClubs )
+        {
+            v.isSelected = v.id == clubID ;
+        }
+        this.pList.notifyUpdate();
     }
 
     onClickAddClub()
@@ -117,7 +129,8 @@ export default class ClubList extends cc.Component {
         let applyClubID : number = parseInt(nJoinRoomID);
         let msg = { } ;
         msg["clubID"] = applyClubID;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_APPLY_JOIN,eMsgPort.ID_MSG_PORT_CLUB,applyClubID,( msg : Object)=>
+        let selfID = ClientData.getInstance().selfUID ;
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_APPLY_JOIN,eMsgPort.ID_MSG_PORT_CLUB,selfID,( msg : Object)=>
         {
             let ret = msg["ret"] ;
             let vError = [ "加入申请已经提交，请耐心等待管理员审批","您已经在该俱乐部里","您已经申请了，请勿重复申请，耐心等待管理员审批","俱乐部成员数量已达上限","玩家对象为空"] ;
@@ -137,6 +150,21 @@ export default class ClubList extends cc.Component {
         this.pDlgCrateClubTip.showDlg(this.onClubTipResult.bind(this)) ;
     }
 
+    onClubNameUpdated( id : number , NewName : string )
+    {
+        for ( let v of this.vClubs )
+        {
+            if ( v.id == id )
+            {
+                v.name = NewName ;
+                break ;
+            }
+        }
+        
+        this.pList.notifyUpdate();
+        console.log( "onClubNameUpdated" );
+    }
+
     protected onClubTipResult()
     {
         this.pDlgCrateClubVerify.showDlg( this.onDlgVerifyResult.bind(this) );
@@ -154,7 +182,8 @@ export default class ClubList extends cc.Component {
          let msg = { } ;
          msg["name"] = this.strCreateRoomName ;
          msg["opts"] = msgCreateRoom ;
-         Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_CREATE_CLUB,eMsgPort.ID_MSG_PORT_CLUB,Math.random() % 100 ,( msg : Object )=>{
+         let selfUID = ClientData.getInstance().selfUID ;
+         Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_CREATE_CLUB,eMsgPort.ID_MSG_PORT_CLUB,selfUID ,( msg : Object )=>{
             let ret : number = msg["ret"] ;
             let vError = ["ok","条件不满足","名字重复"] ;
             if ( ret == 0 )
@@ -165,10 +194,18 @@ export default class ClubList extends cc.Component {
                 self.vClubs.push(p);
                 self.pList.notifyUpdate();
                 cc.Component.EventHandler.emitEvents(self.vCreateClubSuccess,p.id) ;
+                self.pDlgCreateRoom.closeDlg();
             }
             else
             {
-                Utility.showTip(vError[ret]);
+                if ( vError.length > ret )
+                {
+                    Utility.showTip(vError[ret]);
+                }
+                else
+                {
+                    Utility.showTip("error code = " + ret );
+                }
             }
             return true ;
          }) ;
@@ -178,26 +215,21 @@ export default class ClubList extends cc.Component {
 
 class listClubAdpter extends AbsAdapter
 {
-    targetNode : cc.Node = null  ;
+    lpCallBack : ( toggle : cc.Toggle, clubID : number )=>void = null ;
     updateView( item: cc.Node, posIndex: number )
     {
         let comp = item.getComponent(ClubListItem);
         if (comp) {
             let pInfo = this.getItem(posIndex) ;
             comp.refresh(pInfo.id,pInfo.name) ;
+            comp.lpCallBack = this.lpCallBack ;
         }
 
         let comp2 = item.getComponent(cc.Toggle);
         if ( comp2 )
         {
-            if ( comp2.clickEvents.length == 0 )
-            {
-                let handle = new cc.Component.EventHandler();
-                handle.target = this.targetNode  ;
-                handle.component = "ClubList";
-                handle.handler = "onClubListItemSel" ;
-                comp2.clickEvents.push(handle);
-            }
+            let pInfo = this.getItem(posIndex) ;
+            comp2.isChecked = pInfo.isSelected ;
         }
     }
 }

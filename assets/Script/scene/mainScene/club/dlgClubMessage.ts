@@ -18,6 +18,7 @@ import ClubMessageData from "./clubMessageData"
 import Network from "../../../common/Network"
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Utility from "../../../globalModule/Utility";
+import ClientData from "../../../globalModule/ClientData";
 @ccclass
 export default class dlgClubMessage extends DlgBase {
 
@@ -62,14 +63,15 @@ export default class dlgClubMessage extends DlgBase {
 
     onDataUpdate( idx : number )
     {
-        if ( idx == -1 )
-        {
-            this.pListView.notifyUpdate();
-        }
-        else
-        {
-            this.pListView.notifyUpdate([idx]);
-        }
+        this.pListView.notifyUpdate();
+        // if ( idx == -1 )
+        // {
+        //     this.pListView.notifyUpdate();
+        // }
+        // else
+        // {
+        //     this.pListView.notifyUpdate([idx]);
+        // }
     }
 
     onClickCell( eventID : number , isAgree : boolean )
@@ -78,8 +80,10 @@ export default class dlgClubMessage extends DlgBase {
         msg["eventID"] = eventID;
         msg["detial"] = {} ;
         msg["detial"]["isAgree"] = isAgree ? 1 : 0 ;
+        msg["clubID"] = this.pData.clubID ;
         let self = this ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_PROCESS_EVENT,eMsgPort.ID_MSG_PORT_CLUB,this.pData.clubID,( msg : Object )=>{
+        let selfID = ClientData.getInstance().selfUID ;
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_PROCESS_EVENT,eMsgPort.ID_MSG_PORT_CLUB,selfID,( msg : Object )=>{
             let ret = msg["ret"] ;
             let error = [ "已经处理","事件不存在","已经被其他管理员处理了","权限不足","你没有登录","参数错误" ];
             if ( ret < error.length )

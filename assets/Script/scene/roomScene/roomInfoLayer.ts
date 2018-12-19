@@ -15,8 +15,9 @@ import RoomData from "./roomData"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import { eMsgType } from "../../common/MessageIdentifer"
 import DlgSetting from "../mainScene/dlgSetting"
-import { eDeskBg, clientEvent, eMJBg } from "../../common/clientDefine"
+import { eDeskBg, clientEvent, eMJBg, SceneName } from "../../common/clientDefine"
 import ClientData from "../../globalModule/ClientData";
+import Utility from "../../globalModule/Utility";
 @ccclass
 export default class RoomInfoLayer extends roomSceneLayerBase {
 
@@ -199,7 +200,20 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
 
     onBtnBack()
     {
-
+        let msg = {} ;
+        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_LEAVE_ROOM,( js : Object )=>{
+            let ret = js["ret"] ;
+            if ( ret == 0 || 1 == ret )
+            {
+                console.log( "leave room ret = " + ret );
+                cc.director.loadScene(SceneName.Scene_Main);
+            }
+            else
+            {
+                Utility.showPromptText( "当前不能离开房间code=" + ret );
+            }
+            return true ;
+        }) ;
     }
 
     onBtnStartGame()

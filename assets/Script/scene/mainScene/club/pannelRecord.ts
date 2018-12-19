@@ -42,23 +42,32 @@ export default class PannelRecord extends ClubPannel {
             return ;
         }
         this.pRecordData = data.pRecordData ;
+        this.pRecordData.isClub = true ;
+        this.pRecordData.currentID = data.clubID;
         this.pEmptyBg.active = this.pRecordData.isDataEmpty() ;
         if ( this.pRecordData.isDataEmpty() == false )
         {
             this.pRecordView.setRecorderData(this.pRecordData.vRecorder,false ) ;
         }
 
+        if ( this.pRecordData.isMustFeatchData() )
+        {
+            this.pRecordData.fetchData();
+        }
+        
         let p = new cc.Component.EventHandler();
         p.handler = "onRecorderDataCallBack" ;
         p.target = this.node ;
-        p.component = "PannelRecord";
+        p.component = "pannelRecord";
+        this.pRecordData.vlpfCallBack.length = 0 ;
         this.pRecordData.vlpfCallBack.push(p);
 
-        // let pClick = new cc.Component.EventHandler();
-        // pClick.handler = "onClickLookDetail" ;
-        // pClick.target = this.node ;
-        // pClick.component = "PannelRecord" ;
-        // this.pRecordView.vlpClickCell.push(pClick);
+        let pClick = new cc.Component.EventHandler();
+        pClick.handler = "onClickLookDetail" ;
+        pClick.target = this.node ;
+        pClick.component = "pannelRecord" ;
+        this.pRecordView.vlpClickCell.length = 0 ;
+        this.pRecordView.vlpClickCell.push(pClick);
     }
 
     onRecorderDataCallBack( vRecord : RecordItem[], isDetal : boolean )

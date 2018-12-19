@@ -34,7 +34,7 @@ export default class DlgModifyNotice extends DlgBase {
         super.showDlg(pfResult,jsUserData,pfOnClose);
         this.pName.string = jsUserData["name"] ;
         this.pInputContent.placeholder = jsUserData["notice"] ;
-        this.pInputContent.string = "" ;
+        this.pInputContent.string = jsUserData["notice"] ;
         this.pBtnDoModify.active = false ;
         this.pBtnEnterModifyMode.active = !this.pBtnDoModify.active ;
     }

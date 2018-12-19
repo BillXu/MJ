@@ -95,6 +95,13 @@ export default class DlgCreateClubVerify extends DlgBase {
 
     onClickNext()
     {
+        if ( CC_DEBUG )
+        {
+            this.pFuncResult(this.pName.string) ;
+            this.closeDlg();
+            return ;
+        } 
+
         if ( this.pName.string.length < 1 )
         {
             Utility.showTip( "俱乐部名字不能为空" );

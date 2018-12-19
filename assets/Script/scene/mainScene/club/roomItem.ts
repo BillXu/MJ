@@ -23,6 +23,9 @@ export default class RoomItem extends cc.Component {
     @property(cc.Node)
     pDissmissNode : cc.Node = null ;
 
+    @property(cc.Node)
+    pBtnCover : cc.Node = null ;
+
     @property([cc.Label])
     vNames : cc.Label[] = [] ;
 
@@ -31,8 +34,11 @@ export default class RoomItem extends cc.Component {
 
     @property(cc.Node)
     pWaiting : cc.Node = null ;
+
+    @property([cc.Node])
+    vSeats : cc.Node[] = [] ;
     // LIFE-CYCLE CALLBACKS:
-    lpfCallBack : ( roomID : number )=>void = null ;
+    lpfCallBack : ( isDismiss : boolean,roomID : number )=>void = null ;
 
     private  roomID : number = 0 ;
 
@@ -41,6 +47,7 @@ export default class RoomItem extends cc.Component {
     set isShowDissmissBtn ( isShowBtn : boolean )
     {
         this.pDissmissNode.active = isShowBtn ;
+        this.pBtnCover.active = !isShowBtn ;
     }
 
     start () {
@@ -53,6 +60,11 @@ export default class RoomItem extends cc.Component {
         this.pRoomID.string = pdata.roomID.toString();
         this.pWaiting.active = pdata.isOpen == false ;
         this.pRoundState.node.active = pdata.isOpen ;
+        for ( let idx in this.vSeats )
+        {
+            this.vSeats[idx].active = parseInt(idx) < pdata.seatCnt ;
+        }
+        
         if ( pdata.isOpen )
         {
             this.pRoundState.string = pdata.playedRound + "/" + pdata.totalRound + ( pdata.isCircle ? "圈" : "局" );
@@ -82,7 +94,15 @@ export default class RoomItem extends cc.Component {
     {
         if ( this.lpfCallBack )
         {
-            this.lpfCallBack(this.roomID);
+            this.lpfCallBack(true,this.roomID);
+        }
+    }
+
+    onClickRoomItem()
+    {
+        if ( this.lpfCallBack )
+        {
+            this.lpfCallBack(false,this.roomID);
         }
     }
 

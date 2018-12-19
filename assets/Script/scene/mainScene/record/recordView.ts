@@ -42,6 +42,7 @@ export default class RecordView extends cc.Component {
 
     setRecorderData( vrecorder : RecordItem[], isReplay : boolean = false )
     {
+        console.log( "setRecorderData = " + vrecorder.length );
         this.vRecorder = vrecorder;
         this.pListAdpter.setDataSet(this.vRecorder);
         this.pListAdpter.isShowReplayBtn = isReplay ;
@@ -79,16 +80,26 @@ class listviewAdpter extends AbsAdapter
 
     updateView( item: cc.Node, posIndex: number )
     {
+        console.log( "update item pos item = " + posIndex );
         let comp = item.getComponent(recordCell);
         if (comp) {
             let pRecorder : RecordItem = this.getItem(posIndex) ;
+            comp.isBtnDetail = !this.isShowReplayBtn ; 
             comp.setOffsetData(pRecorder.vOffset);
             comp.lpClickCallfunc = this.lpfCellCallBack ;
             comp.time = pRecorder.time ;
-            comp.roomID = pRecorder.roomID ;
-            comp.rule = pRecorder.rule ;
+            comp.rule = "" ;
+            if ( this.isShowReplayBtn ) // single room detail
+            {
+                comp.roomID = "回放码: " + pRecorder.replayID ;
+                comp.rule = "第" + (posIndex + 1 ) + "局" ;
+            }
+            else
+            {
+                comp.roomID = "房号: " + pRecorder.roomID ;
+            }
+        
             comp.idx = posIndex ;
-            comp.isBtnDetail = !this.isShowReplayBtn ; 
         }
     }
 }

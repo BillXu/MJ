@@ -16,6 +16,7 @@ import PlayerBrifdata from "../record/playerBrifedata"
 import Network from "../../../common/Network";
 import ClubMessageData from "./clubMessageData";
 import ClientData from "../../../globalModule/ClientData";
+import { eClubPrivilige } from "./clubDefine";
 export default class ClubData {
     pRecordData : RecordData = new RecordData();
     pClubMemberData : ClubMemberData = new ClubMemberData();
@@ -81,10 +82,10 @@ export default class ClubData {
     {
         this.clubID = clubID ;
         this.pRecordData.pPlayersData = playersData;    
-        this.pClubMemberData.init(clubID,playersData) ;
-        this.pClubRoomData.init(clubID,playersData) ;
-        this.pClubLogData.init(clubID,playersData) ;
-        this.pClubMessageData.init(clubID,playersData);
+        this.pClubMemberData.init(this,playersData) ;
+        this.pClubRoomData.init(this,playersData) ;
+        this.pClubLogData.init(this,playersData) ;
+        this.pClubMessageData.init(this,playersData);
 
         this.refreshInfo();
     }
@@ -111,12 +112,32 @@ export default class ClubData {
 
     isSelfOwner() : boolean 
     {
-        return  this.jsInfo["creator"] == ClientData.getInstance().selfUID ;
+        return  this.jsInfo["creator"] && this.jsInfo["creator"] == ClientData.getInstance().selfUID ;
+    }
+
+    getSelfPrivlige() : eClubPrivilige
+    {
+        if ( this.isSelfOwner() )
+        {
+            return eClubPrivilige.eClubPrivilige_Creator ;
+        }
+
+        if ( this.isSelfMgr() )
+        {
+            return eClubPrivilige.eClubPrivilige_Manager ;
+        }
+
+        return eClubPrivilige.eClubPrivilige_Normal ;
     }
 
     isSelfMgr() : boolean 
     {
         let mgrUIDs : number[] = this.jsInfo["mgrs"] ;
+        if ( mgrUIDs == null )
+        {
+            return false ;
+        }
+
         let selfUID = ClientData.getInstance().selfUID ;
         for ( let v of mgrUIDs )
         {
@@ -157,5 +178,6 @@ export default class ClubData {
         this.pClubMemberData.onMsg(msgID,msg) ;
         this.pClubRoomData.onMsg(msgID,msg) ;
         this.pClubLogData.onMsg(msgID,msg) ;
+        this.pClubMessageData.onMsg(msgID,msg) ;
     }
 }

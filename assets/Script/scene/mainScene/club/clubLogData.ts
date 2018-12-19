@@ -84,7 +84,7 @@ export default class ClubLogData extends IPannelData  {
                  return true ;
              }
 
-             let vEvents : Object[] = msg["vEvents"] ;
+             let vEvents : Object[] = msg["vEvents"] || [];
              let self = this ;
              vEvents.forEach( ( eve : Object )=>{
                  let eveID : number = eve["eventID"] ;

@@ -23,7 +23,8 @@ export default class ClientNetwork extends cc.Component {
     @property(cc.Node)
     pRootNode : cc.Node = null ;
 
-    vDefaultIP : string[] = ["106.15.186.13","106.15.186.13"];
+    vDefaultIP : string[] = ["106.15.186.13","106.15.186.13"]; 
+    //vDefaultIP : string[] = ["192.168.1.56","192.168.1.56"]; 
 
     private strDstIp : string = "" ;
 

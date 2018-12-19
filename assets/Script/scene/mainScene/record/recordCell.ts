@@ -48,16 +48,14 @@ export default class recordCell extends cc.Component {
         this.pRule.string = str ;
     }
 
-    set roomID ( id : number )
+    set roomID ( id : string )
     {
-        this.pRoomID.string = id.toString();
+        this.pRoomID.string = id;
     } 
 
-    set time ( t : number )
+    set time ( t : string )
     {
-        let pDate = new Date(t * 1000 ) ;
-        let s = pDate.toLocaleString();
-        this.pTime.string = s ;
+        this.pTime.string = t ;
     }
 
     set isBtnDetail( isDetail : boolean )

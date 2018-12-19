@@ -29,7 +29,7 @@ export default class LogItem extends cc.Component {
         {
             case eClubEvent.eClubEvent_ApplyJoin:
             {
-                strContent = "【<color=#eb6c1f>" + data.getNameByID(jsDetail["respUID"]) + ( jsDetail["uid"] == 1 ? "</color>】同意了【<color=#eb6c1f>" : "</color>】拒绝了【<color=#eb6c1f>" ) + data.getNameByID(jsDetail[""]) + "</color>】加入俱乐部"; 
+                strContent = "【<color=#eb6c1f>" + data.getNameByID(jsDetail["respUID"]) + ( jsDetail["isAgree"] == 1 ? "</color>】同意了【<color=#eb6c1f>" : "</color>】拒绝了【<color=#eb6c1f>" ) + data.getNameByID(jsDetail["uid"]) + "</color>】加入俱乐部"; 
             }
             break;
             case eClubEvent.eClubEvent_Kick:

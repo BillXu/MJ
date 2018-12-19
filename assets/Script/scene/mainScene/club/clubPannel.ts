@@ -16,11 +16,22 @@ export default class ClubPannel extends cc.Component {
     show( data : ClubData ) : void 
     {
         this.node.active = true ;
+        this.unschedule(this.onReapeat) ;
+        if ( data != null )
+        {
+            this.schedule(this.onReapeat,30,100);
+        }
     }
 
     hide()
     {
-        this.node.active = false ;
+        //this.node.active = false ;
+        this.unschedule(this.onReapeat) ;
+    }
+
+    onReapeat()
+    {
+
     }
     // update (dt) {}
 }

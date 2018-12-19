@@ -29,7 +29,8 @@ import Utility from "../../../globalModule/Utility";
 export default class DlgClub extends DlgBase {
 
     private vClubDatas : ClubData[] = [] ;
-    private nCurSelClubIdx : number = 0 ;
+    private nCurSelClubIdx : number = -1 ;
+    private nSelfUID : number = ClientData.getInstance().selfUID;
 
     @property(PlayerBrifdata)
     pPlayerDatas : PlayerBrifdata = null ;
@@ -94,7 +95,7 @@ export default class DlgClub extends DlgBase {
             }
         }
 
-        if ( this.vClubDatas.length > 0 )
+        if ( this.vClubDatas.length > 0 && this.isAllClubRecievd() )
         {
             this.vClubDatas[0].refreshInfo();
             this.onSelectClubItem(this.vClubDatas[0].clubID) ;
@@ -106,7 +107,15 @@ export default class DlgClub extends DlgBase {
     {
         let nMsgID : eMsgType = event.detail[clientDefine.msgKey] ;
         let msg : Object = event.detail[clientDefine.msg] ;
-        this.vClubDatas.forEach( ( d : ClubData )=>{ d.onMsg(nMsgID,msg);} );
+        if ( this.nCurSelClubIdx != -1 )
+        {
+            this.vClubDatas[this.nCurSelClubIdx].onMsg(nMsgID,msg);
+        }
+        else
+        {
+            this.vClubDatas.forEach( ( cd : ClubData )=>{ cd.onMsg(nMsgID,msg);} );
+        }
+
         if ( nMsgID == eMsgType.MSG_CLUB_REQ_INFO && this.isAllClubRecievd() )
         {
             this.pLeftClubList.refresh(this.vClubDatas) ; 
@@ -152,9 +161,20 @@ export default class DlgClub extends DlgBase {
             case eClubSettingBtn.Btn_ControlCenter:
             {
                 let self = this ;
-                this.pDlgControlCenter.showDlg(( clubID : number )=>{
-                    console.log( "control center dlg result callback invoke only dissmessage club" );
-                    self.onDoLevedCurClub();
+                this.pDlgControlCenter.showDlg(( js : Object )=>{
+                    if ( js["type"] == "updateName" )
+                    {
+                        self.pLeftClubList.onClubNameUpdated(self.vClubDatas[self.nCurSelClubIdx].clubID,self.vClubDatas[self.nCurSelClubIdx].name);
+                    } 
+                    else if ( js["type"] == "dissmiss" )
+                    {
+                        console.log( "control center dlg result callback invoke only dissmessage club" );
+                        self.onDoLevedCurClub();
+                    }
+                    else
+                    {
+                        console.error( "unkown call back type = " + js );
+                    }
                 } , this.vClubDatas[this.nCurSelClubIdx] ) ;
             }
             break;
@@ -182,7 +202,33 @@ export default class DlgClub extends DlgBase {
             case eClubSettingBtn.Btn_Notice:
             {
                 let self = this ;
-                this.pDlgNotice.showDlg( ( notice : string )=>{ self.vClubDatas[self.nCurSelClubIdx].notice = notice ;this.pNoticeLabel.string = notice ;},{ name : this.vClubDatas[this.nCurSelClubIdx].name,notice : this.vClubDatas[this.nCurSelClubIdx].notice });
+                this.pDlgNotice.showDlg( ( notice : string )=>{ 
+            
+                    let msg = {} ;
+                    msg["clubID"] = self.vClubDatas[self.nCurSelClubIdx].clubID ;
+                    msg["notice"] = notice ;
+                    let selfID = ClientData.getInstance().selfUID ;
+                    Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_UPDATE_NOTICE,eMsgPort.ID_MSG_PORT_CLUB,selfID,( js : Object )=>{
+                        let ret : number = js["ret"] ;
+                        if ( ret == 0 )
+                        {
+                            self.vClubDatas[self.nCurSelClubIdx].notice = notice ;
+                            self.pNoticeLabel.string = notice ;
+                            self.pDlgNotice.closeDlg();
+                        }
+
+                        let verror = ["操作成功","权限不足"] ;
+                        if ( ret < verror.length )
+                        {
+                            Utility.showPromptText(verror[ret]);
+                        }
+                        else
+                        {
+                            Utility.showPromptText( "error code = " + ret );
+                        }
+                        return true ;
+                    } );
+                },{ name : this.vClubDatas[this.nCurSelClubIdx].name,notice : this.vClubDatas[this.nCurSelClubIdx].notice });
             }
             break ;
             default:
@@ -192,13 +238,13 @@ export default class DlgClub extends DlgBase {
 
     onSelectClubItem( nClubID : number )
     {
-        if ( this.nCurSelClubIdx != -1 && this.vClubDatas[this.nCurSelClubIdx].clubID == nClubID )
+        if ( this.nCurSelClubIdx != -1 &&  this.vClubDatas[this.nCurSelClubIdx] && this.vClubDatas[this.nCurSelClubIdx].clubID == nClubID )
         {
             console.log( "select the same club id" );
             return ;
         }
 
-        if ( this.nCurSelClubIdx != -1 )
+        if ( this.nCurSelClubIdx != -1 && this.vClubDatas[this.nCurSelClubIdx] )
         {
             this.vClubDatas[this.nCurSelClubIdx].onLoseFocus();
         }
@@ -218,7 +264,8 @@ export default class DlgClub extends DlgBase {
         if ( -1 == this.nCurSelClubIdx )
         {
             this.pNoticeLabel.string = "" ;
-            console.log( "no club is current selected" );
+            console.log( "no club is current selected = " + nClubID );
+            this.vClubInfoPannels[this.nCurPannelIdx].hide();
         }
         else
         {
@@ -237,6 +284,10 @@ export default class DlgClub extends DlgBase {
 
     onChangeClubInfoTable( event : cc.Event.EventTouch, nTablIdx : string )
     {
+        if ( this.nCurPannelIdx >= 0 )
+        {
+            this.vClubInfoPannels[this.nCurPannelIdx].hide();
+        }
         this.nCurPannelIdx = parseInt(nTablIdx);
         this.vClubInfoPannels[this.nCurPannelIdx].show(this.vClubDatas[this.nCurSelClubIdx]) ;
     }
@@ -246,7 +297,6 @@ export default class DlgClub extends DlgBase {
         ClientData.getInstance().onDoLevedClub(this.vClubDatas[this.nCurSelClubIdx].clubID );
         this.vClubDatas.splice(this.nCurSelClubIdx,1) ;
         this.pLeftClubList.refresh(this.vClubDatas);
-        this.onSelectClubItem(this.vClubDatas[0]?this.vClubDatas[0].clubID : -1 ) ;
     }
     // update (dt) {}
 }

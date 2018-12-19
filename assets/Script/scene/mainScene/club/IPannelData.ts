@@ -11,16 +11,23 @@ import PlayerBrifdata from "../record/playerBrifedata"
 import { Define } from "./clubDefine"
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Network from "../../../common/Network"
+import ClubData from "./clubData";
+import ClientData from "../../../globalModule/ClientData";
 export default abstract class IPannelData
 {
-    private nClubID : number = 0 ;
     private nLastRecivedDataTime : number = 0 ;
     lpfCallBack : ( nRoomID : number )=>void = null ;  // -1 means all ;
     protected playerDatas : PlayerBrifdata = null ;
+    protected pClubData : ClubData = null ;
 
-    init( clubID : number , playersData : PlayerBrifdata )
+    get nClubID() : number
     {
-        this.nClubID = clubID ;
+        return this.pClubData.clubID ;
+    }
+
+    init( clubData : ClubData , playersData : PlayerBrifdata )
+    {
+        this.pClubData = clubData ;
         this.playerDatas = playersData ;
     }
 
@@ -81,7 +88,8 @@ export default abstract class IPannelData
 
     protected sendClubMsg( msgID : eMsgType , msg : Object )
     {
-        Network.getInstance().sendMsg(msg,msgID,eMsgPort.ID_MSG_PORT_CLUB,this.nClubID) ;
+        let selfID = ClientData.getInstance().selfUID;
+        Network.getInstance().sendMsg(msg,msgID,eMsgPort.ID_MSG_PORT_CLUB,selfID) ;
     }
 
 }

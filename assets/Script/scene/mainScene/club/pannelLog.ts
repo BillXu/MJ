@@ -29,20 +29,22 @@ export default class PannelLog extends ClubPannel {
 
     onLoad ()
     {
-        this.pAdapter = new listLogViewAdpter();
-        this.pLogList.setAdapter(this.pAdapter);
+
     }
 
     start () {
-        // test code 
-        this.pAdapter.setDataSet([2,1,1,1,1,1,2,2,2,2,23,2]);
-        this.pLogList.notifyUpdate();
-        // test code 
     }
 
     show( data : ClubData )
     {
         super.show(data);
+
+        if ( null == this.pAdapter )
+        {
+            this.pAdapter = new listLogViewAdpter();
+            this.pLogList.setAdapter(this.pAdapter);
+        }
+
         if ( this.pData )
         {
             this.pData.onLoseFocus();
@@ -78,8 +80,8 @@ class listLogViewAdpter extends AbsAdapter
     {
         let comp = item.getComponent(LogItem);
         if (comp) {
-            //let pInfo : LogDataItem = this.getItem(posIndex) ;
-            //comp.refresh(pInfo) ;
+            let pInfo : LogDataItem = this.getItem(posIndex) ;
+            comp.refresh(pInfo) ;
         }
     }
 }

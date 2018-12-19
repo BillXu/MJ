@@ -19,6 +19,7 @@ export class RoomDataItem
     vPlayers : Object[] = [] ;
     isOpen : boolean = false ;
     isCircle : boolean = false ; 
+    seatCnt : number = 4 ;
     playedRound : number = 0 ;
     totalRound : number = 0 ;
 
@@ -40,10 +41,11 @@ export class RoomDataItem
     {
         this.isOpen = msgRoomItemInfo["isOpen"] == 1;
         this.isCircle = msgRoomItemInfo["opts"]["circle"] == 1 ;
+        this.seatCnt = msgRoomItemInfo["opts"]["seatCnt"] ;
         this.totalRound = this.getTotalRoundOrCircle(this.isCircle,msgRoomItemInfo["opts"]["level"] );
         this.playedRound = this.totalRound - msgRoomItemInfo["leftRound"] ;
 
-        let players : number[] = msgRoomItemInfo["players"] ;
+        let players : number[] = msgRoomItemInfo["players"] || [] ;
         let self = this ;
         players.forEach( ( playerID : number , idx : number )=>{
             self.vPlayers[idx] = { uid : playerID } ;
@@ -98,13 +100,9 @@ export default class ClubRoomData extends IPannelData  {
 
     featchData()
     {
-        if ( this.isNeedRefreshData() == false )
-        {
-            return ;
-        }
-
         let net = Network.getInstance() ;
         let msg = {} ;
+        msg["clubID"] = this.clubID;
         net.sendMsg(msg,eMsgType.MSG_CLUB_REQ_ROOMS,eMsgPort.ID_MSG_PORT_CLUB,this.clubID ) ;
     }
 
@@ -146,11 +144,6 @@ export default class ClubRoomData extends IPannelData  {
         }
 
         pdata.parseFromRoomItemMsg(msgRoomItemInfo,this.playerDatas);
-
-        if ( this.lpfCallBack && this.isAllRoomDataItemRecievedInfo() )
-        {
-            this.lpfCallBack( -1 );
-        }
         return true ;
     }
 
@@ -172,6 +165,10 @@ export default class ClubRoomData extends IPannelData  {
         if ( msgID == eMsgType.MSG_REQ_ROOM_ITEM_INFO )
         {
             this.onRecievedRoomItemInfo(msg);
+            if ( this.lpfCallBack && this.isAllRoomDataItemRecievedInfo() )
+            {
+                this.lpfCallBack( -1 );
+            }
             return true ;
         }
         return false ;
@@ -189,6 +186,12 @@ export default class ClubRoomData extends IPannelData  {
     getDataCnt(): number
     {
         return this.vRoomDataItems.length ;
+    }
+
+    deleteRoomID( nRoomID : number )
+    {
+        _.remove(this.vRoomDataItems,( id : RoomDataItem)=>{ return id.roomID == nRoomID ;} ) ;
+        this.lpfCallBack(-1);
     }
 
     // update (dt) {}

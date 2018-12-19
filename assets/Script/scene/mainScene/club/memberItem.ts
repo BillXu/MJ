@@ -50,7 +50,31 @@ export default class MemberItem extends cc.Component {
 
     refresh( mem : ClubMember )
     {
+        this.pData = mem ;
+        if ( mem.msgBrefData )
+        {
+            this.pHeadIcon.photoURL = mem.msgBrefData["headIcon"] ;
+            this.pName.string = mem.msgBrefData["name"] ;
+        }
+        else
+        {
+            this.pName.string = "" ;
+        }
 
+        this.pUID.string = mem.uid + "" ;
+        this.pOnlineState.string = mem.isOnline ? "在线" : "离线" ;
+        let vPriv = ["禁止进入","会员","管理员","会长"] ;
+        if ( mem.privliage < vPriv.length )
+        {
+            this.pPriviliage.string = vPriv[mem.privliage] ;
+        }
+        else
+        {
+            this.pPriviliage.string = "unknown " + mem.privliage ;
+        }
+        this.pUpgadePriviliage.active = mem.isCanUpPrivilige ;
+        this.pDownPriviliage.active = mem.isCanDownPrivlige ;
+        this.pKickOut.active = mem.isCanKickOut ;
     }
 
     onBtnKickOut()

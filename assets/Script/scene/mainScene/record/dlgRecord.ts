@@ -15,6 +15,7 @@ import RecordData from "./recordData"
 import { RecordItem } from "./recordData"
 import { clientEvent } from "../../../common/clientDefine"
 import DlgSingleRoomRecord from "./dlgSingleRoomRecorder";
+import ClientData from "../../../globalModule/ClientData";
 @ccclass
 export default class dlgRecord extends DlgBase {
 
@@ -33,6 +34,9 @@ export default class dlgRecord extends DlgBase {
     onLoad()
     {
         super.onLoad();
+        this.pRecordData.currentID = ClientData.getInstance().selfUID ;
+        this.pRecordData.isClub = false ;
+        this.pRecordData.nRefreshRate = 15*60 ; // 15 minite 
         cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
     }
 
@@ -59,8 +63,15 @@ export default class dlgRecord extends DlgBase {
     {
         super.showDlg(pfResult,jsUserData,pfOnClose);
         this.pEmptyBg.active = this.pRecordData.isDataEmpty() ;
+        if ( this.pRecordData.isDataEmpty() == false )
+        {
+            this.pRecorderView.setRecorderData(this.pRecordData.vRecorder,false) ;
+        }
         // do request data ;
-        this.pRecordData.fetchData() ;
+        if ( this.pRecordData.isMustFeatchData() )
+        {
+            this.pRecordData.fetchData() ;
+        }
     }
 
     onRecorderDataCallBack( vRecord : RecordItem[], isDetal : boolean )

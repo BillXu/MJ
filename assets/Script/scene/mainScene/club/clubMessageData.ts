@@ -36,6 +36,8 @@ export default class ClubMessageData extends IPannelData {
         msg["clientMaxEventID"] = 0 ;
         msg["state"] = eEventState.eEventState_WaitProcesse ; 
         this.sendClubMsg(eMsgType.MSG_CLUB_REQ_EVENTS,msg) ;
+        this.vDatas.length = 0 ;
+        console.log( "req client wait process event clubID = " + this.clubID );
     }
 
     getDataCnt(): number
@@ -55,7 +57,7 @@ export default class ClubMessageData extends IPannelData {
                  return true ;
              }
 
-             let vEvents : Object[] = msg["vEvents"] ;
+             let vEvents : Object[] = msg["vEvents"] || [];
              let self = this ;
              vEvents.forEach( ( eve : Object )=>{
                  let eveID : number = eve["eventID"] ;
@@ -81,7 +83,7 @@ export default class ClubMessageData extends IPannelData {
                  {
                      case eClubEvent.eClubEvent_ApplyJoin:
                      {
-                        let uid : number = msg["uid"] ;
+                        let uid : number = p.jsDetail["uid"] ;
                         p.uid = uid ;
                         let playedata = self.getPlayerBrifData(uid);
                         if ( playedata )

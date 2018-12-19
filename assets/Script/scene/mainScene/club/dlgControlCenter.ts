@@ -16,6 +16,7 @@ import DlgCreateRoom from "../dlgCreateRoom";
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Network from "../../../common/Network"
 import Utility from "../../../globalModule/Utility";
+import ClientData from "../../../globalModule/ClientData";
 @ccclass
 export default class DlgControlCenter extends DlgBase {
 
@@ -93,7 +94,7 @@ export default class DlgControlCenter extends DlgBase {
         
         this.pClubState.string = pdata.isStoped ? "俱乐部已经打烊，是否需要营业？" : "俱乐部正在营业，是否要打烊？" ;
         this.pBtnOpen.active = pdata.isStoped ;
-        this.pBtnStop.active = !this.pBtnOpen ;
+        this.pBtnStop.active = !this.pBtnOpen.active ;
         
         // wan fa ;
         let opts = pdata.opts ;
@@ -154,7 +155,8 @@ export default class DlgControlCenter extends DlgBase {
             let msg = {} ;
             msg["clubID"] = self.pClubData.clubID ;
             msg["opts"] = msgCreateRoom ;
-            Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_SET_ROOM_OPTS,eMsgPort.ID_MSG_PORT_CLUB,self.pClubData.clubID,( js : Object )=>{
+            let selfUID = ClientData.getInstance().selfUID;
+            Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_SET_ROOM_OPTS,eMsgPort.ID_MSG_PORT_CLUB,selfUID,( js : Object )=>{
                 let ret : number = js["ret"] ;
                 let vError = [ "玩法更改成功" , "权限不足","code 2"," code 3","无效玩家对象"] ;
                 if ( ret < vError.length )
@@ -164,6 +166,7 @@ export default class DlgControlCenter extends DlgBase {
                     {
                         self.pClubData.opts = msgCreateRoom ;
                         self.refresh(self.pClubData);
+                        self.pDlgCreateOpts.closeDlg();
                     }
                 }
                 else
@@ -189,11 +192,12 @@ export default class DlgControlCenter extends DlgBase {
             return ;
         }
 
+        let selfUID = ClientData.getInstance().selfUID;
         let self = this ;
         let msg = {} ;
         msg["clubID"] = self.pClubData.clubID ;
         msg["name"] = this.pNewName.string ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_UPDATE_NAME,eMsgPort.ID_MSG_PORT_CLUB,self.pClubData.clubID,( js : Object )=>{
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_UPDATE_NAME,eMsgPort.ID_MSG_PORT_CLUB,selfUID,( js : Object )=>{
             let ret : number = js["ret"] ;
             let vError = [ "改名字成功" , "权限不足","新名字与旧名字一样了","名字已经被其他俱乐部使用了","无效玩家对象"] ;
             if ( ret < vError.length )
@@ -203,6 +207,10 @@ export default class DlgControlCenter extends DlgBase {
                 {
                     self.pClubData.name = self.pNewName.string ;
                     self.refresh(self.pClubData);
+                    if ( self.pFuncResult  )
+                    {
+                        self.pFuncResult({ type : "updateName" } );
+                    }
                 }
             }
             else
@@ -218,8 +226,9 @@ export default class DlgControlCenter extends DlgBase {
         let self = this ;
         let msg = {} ;
         msg["clubID"] = self.pClubData.clubID ;
-        msg["isPause"] = !this.pClubData.isStoped;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_SET_STATE,eMsgPort.ID_MSG_PORT_CLUB,self.pClubData.clubID,( js : Object )=>{
+        msg["isPause"] = (!this.pClubData.isStoped) ? 1 : 0 ;
+        let selfUID = ClientData.getInstance().selfUID ;
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_SET_STATE,eMsgPort.ID_MSG_PORT_CLUB,selfUID,( js : Object )=>{
             let ret : number = js["ret"] ;
             let vError = [ "操作成功" , "权限不足"] ;
             if ( ret < vError.length )
@@ -241,10 +250,11 @@ export default class DlgControlCenter extends DlgBase {
 
     onDissmiss()
     {
+        let selfUID = ClientData.getInstance().selfUID;
         let self = this ;
         let msg = {} ;
         msg["clubID"] = self.pClubData.clubID ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_DISMISS_CLUB,eMsgPort.ID_MSG_PORT_CLUB,self.pClubData.clubID,( js : Object )=>{
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_DISMISS_CLUB,eMsgPort.ID_MSG_PORT_CLUB,selfUID,( js : Object )=>{
             let ret : number = js["ret"] ;
             let vError = [ "操作成功" , "权限不足"," code 2 ","有房间牌局没结束，无法解散，请稍后再试","无效玩家"] ;
             if ( ret < vError.length )
@@ -255,7 +265,7 @@ export default class DlgControlCenter extends DlgBase {
                     self.pClubData.isStoped = !self.pClubData.isStoped ;
                     if ( self.pFuncResult  )
                     {
-                        self.pFuncResult(this.pClubData.clubID);
+                        self.pFuncResult({ type : "dissmiss" } );
                     }
                     self.closeDlg();
                 }

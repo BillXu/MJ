@@ -123,7 +123,14 @@ export default class ListView extends cc.Component {
         } else {
             this.content.height = this.adapter.getCount() * (this._itemHeight + this.spacing) + this.spacing; // get total content height
         }
-        this.scrollView.scrollToTop()
+        //console.log( this.content.y +" befor = " + this.content.getParent().height + " anchor = " + this.content.getParent().anchorY );
+        this.scrollView.scrollToTop();
+        //console.log( this.content.y +" after = " + this.content.getParent().height + " anchor = " + this.content.getParent().anchorY );
+        // add by bill xu , 此处必须手动赋值，否自会因为精度问题，导致界面不刷新，scrollTop 并不能真正滑倒最顶部会有0.0000001的误差,
+        // 所以手动赋值，赋值不能代替scrollToTop函数，因为函数内部会做一些通知类的事情
+        {
+            this.content.y = this.content.getParent().height * this.content.getParent().anchorY;
+        }
     }
 
     public scrollToTop(anim: boolean = false) {

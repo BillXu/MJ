@@ -244,7 +244,6 @@ export default class Network{
             {
                 break ;
             }
-            return  ;
         }
        //console.log("dispath msg id " + msg );
         /// dispatch event ;

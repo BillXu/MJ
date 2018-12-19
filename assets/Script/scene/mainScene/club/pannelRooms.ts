@@ -14,6 +14,11 @@ import ClubPannel from "./clubPannel" ;
 import ClubRoomData, { RoomDataItem } from "./clubRoomData"
 import RoomItem from "./roomItem"
 import * as _ from "lodash"
+import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
+import Network from "../../../common/Network";
+import ClientData from "../../../globalModule/ClientData";
+import Utility from "../../../globalModule/Utility";
+import { SceneName } from "../../../common/clientDefine";
 @ccclass
 export default class PannelRoom extends ClubPannel {
 
@@ -113,6 +118,7 @@ export default class PannelRoom extends ClubPannel {
                 return ;
             }
             roomItem.refresh(item);
+            roomItem.lpfCallBack = self.onRoomItemCallBack.bind(self);
             roomItem.isShowDissmissBtn = self.pShowDismissBtn.node.active && self.pShowDismissBtn.isChecked ;
             self.pLayout.node.addChild(pNode);
         });
@@ -164,6 +170,60 @@ export default class PannelRoom extends ClubPannel {
             }
             pRoomItem.isShowDissmissBtn = isCheck ;
         });
+    }
+
+    onRoomItemCallBack( isDismiss : boolean ,  nRoomID : number )
+    {
+        if ( isDismiss )
+        {
+            let self = this ;
+            let msg = {} ;
+            let port = ClientData.getInstance().getMsgPortByRoomID(nRoomID) ;
+            Network.getInstance().sendMsg(msg,eMsgType.MSG_APPLY_DISMISS_VIP_ROOM,port,nRoomID,( js : Object )=>{
+                let ret = js["ret"] ;
+                if ( ret == 0 )
+                {
+                    self.pClubRoomData.deleteRoomID(nRoomID) ;
+                    self.onReapeat();
+                }
+                else
+                {
+                    Utility.showPromptText("error code = " + ret ) ;
+                }
+                return true ;
+            });
+        }
+        else // enter room 
+        {
+            let msg = { } ;
+            msg["roomID"] = nRoomID;
+            msg["uid"] = ClientData.getInstance().selfUID;
+            let port = ClientData.getInstance().getMsgPortByRoomID(nRoomID);
+            if ( eMsgPort.ID_MSG_PORT_ALL_SERVER <= port || port < eMsgPort.ID_MSG_PORT_LUOMJ  )
+            {
+                Utility.showTip( "房间不存在或已经解散 code" + 0 );
+                return ;
+            }
+    
+            Network.getInstance().sendMsg(msg,eMsgType.MSG_ENTER_ROOM,port,nRoomID,( msg : Object)=>
+            {
+                let ret = msg["ret"] ;
+                if ( ret )
+                {
+                    Utility.showTip( "房间不存在或已经解散 code" + ret );
+                    return true;
+                }
+                console.log( "set join room id = " + nRoomID );
+                ClientData.getInstance().stayInRoomID = nRoomID ;
+                cc.director.loadScene(SceneName.Scene_Room ) ;
+                return true ;
+            } );
+        }
+    }
+
+    onReapeat()
+    {
+        this.pClubRoomData.featchData() ;
     }
     // update (dt) {}
 }

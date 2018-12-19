@@ -25,6 +25,7 @@ export default class ClubListItem extends cc.Component {
     id : number = 0 ;
     // LIFE-CYCLE CALLBACKS:
 
+    lpCallBack : ( toggle : cc.Toggle, clubID : number )=>void = null ;
     // onLoad () {}
 
     start () {
@@ -37,6 +38,20 @@ export default class ClubListItem extends cc.Component {
         this.checkID.string = id.toString();
         this.unCheckName.string = name ;
         this.checkName.string = name ;
+    }
+
+    onToggleEvent( toggle : cc.Toggle )
+    {
+        if ( toggle.isChecked == false )
+        {
+            toggle.isChecked = true ;
+            return true ;
+        }
+        
+        if ( this.lpCallBack )
+        {
+            this.lpCallBack( toggle , this.id );
+        }
     }
 
     // update (dt) {}
