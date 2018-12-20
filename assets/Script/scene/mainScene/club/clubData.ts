@@ -24,6 +24,7 @@ export default class ClubData {
     pClubLogData : ClubLogData = new ClubLogData();
     pClubMessageData : ClubMessageData = new ClubMessageData();
 
+    nLastRecievedData : number = 0 ;
     clubID : number = 0 ;
 
     private jsInfo : Object = {} ;
@@ -92,6 +93,18 @@ export default class ClubData {
 
     refreshInfo()
     {
+        let interal = 60 * 1000 ;
+        if ( CC_DEBUG )
+        {
+            interal = 10 * 1000 ;
+        }
+
+        if ( Date.now() - this.nLastRecievedData < interal )
+        {
+            console.log( "club data refreshInfo wait to low club id = " + this.clubID );
+            return ;
+        }
+
         let msg = {} ;
         msg["clubID"] = this.clubID ;
         Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_REQ_INFO,eMsgPort.ID_MSG_PORT_CLUB,this.clubID ) ;
@@ -103,6 +116,15 @@ export default class ClubData {
         this.pClubRoomData.onLoseFocus();
         this.pClubLogData.onLoseFocus();
         this.pClubMessageData.onLoseFocus();
+    }
+
+    onFocus()
+    {
+        this.pClubMemberData.onFocus() ;
+        this.pClubRoomData.onFocus() ;
+        this.pClubLogData.onFocus() ;
+        this.pClubMessageData.onFocus() ;
+        this.refreshInfo();
     }
 
     isRecievdInfo() : boolean 
@@ -173,6 +195,7 @@ export default class ClubData {
                 return ;
             }
             this.jsInfo = msg ;
+            this.nLastRecievedData = Date.now();
             return ;
         }
         this.pClubMemberData.onMsg(msgID,msg) ;

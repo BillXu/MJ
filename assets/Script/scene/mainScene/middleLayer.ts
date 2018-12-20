@@ -91,6 +91,7 @@ export default class MiddleLayer extends cc.Component {
             return ;
         }
 
+        let self = this ;
         Network.getInstance().sendMsg(msg,eMsgType.MSG_ENTER_ROOM,port,parseInt(nJoinRoomID),( msg : Object)=>
         {
             let ret = msg["ret"] ;
@@ -100,6 +101,7 @@ export default class MiddleLayer extends cc.Component {
                 return true;
             }
             console.log( "set join room id = " + nJoinRoomID );
+            self.dlgJoinRoom.closeDlg();
             ClientData.getInstance().stayInRoomID = parseInt(nJoinRoomID) ;
             cc.director.loadScene(SceneName.Scene_Room ) ;
             return true ;

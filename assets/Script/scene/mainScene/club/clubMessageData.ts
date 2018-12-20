@@ -12,6 +12,7 @@
  import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
  import { eClubEvent,eEventState } from "./clubDefine"
  import * as _ from "lodash"
+import { clientEvent } from "../../../common/clientDefine";
  export class ClubMessageDataItem
  {
     eventID : number = 0 ;
@@ -24,20 +25,86 @@
 
 export default class ClubMessageData extends IPannelData {
     vDatas : ClubMessageDataItem[] = [] ;
-    nClientMaxEventID : number = 0 ;
+    nInteralFetachData : number = -1 ;
+    notOpenMaxEvnetID : number = 0 ;
+
+    set nClientMaxEventID( id : number ) 
+    {
+        cc.sys.localStorage.setItem("club_msg_max_eve_id"+this.clubID,id );
+    }
+
+    get nClientMaxEventID() : number
+    {
+        let eventID : string = cc.sys.localStorage.getItem( "club_msg_max_eve_id"+this.clubID );
+        if ( eventID )
+        {
+            return parseInt(eventID);
+        }
+        return 0 ;
+    }
+
     featchData()
     {
-        if ( !this.isNeedRefreshData() )
-        {
-            return false ;
-        }
         let msg = {} ;
         msg["clubID"] = this.clubID;
-        msg["clientMaxEventID"] = 0 ;
+        msg["clientMaxEventID"] = this.vDatas.length > 0 ? Math.max(this.nClientMaxEventID,this.notOpenMaxEvnetID) : 0 ;
         msg["state"] = eEventState.eEventState_WaitProcesse ; 
         this.sendClubMsg(eMsgType.MSG_CLUB_REQ_EVENTS,msg) ;
         this.vDatas.length = 0 ;
         console.log( "req client wait process event clubID = " + this.clubID );
+    }
+
+    doShowDataToPlayer()
+    {
+        if ( this.nClientMaxEventID < this.notOpenMaxEvnetID ) // message dlg is not show , and recieved new event , must show red dot 
+        {
+            this.nClientMaxEventID = this.notOpenMaxEvnetID
+        }
+    }
+
+    onFocus()
+    {
+        if ( this.pClubData.isSelfMgr() == false && false == this.pClubData.isSelfOwner() )
+        {
+            return ;
+        }
+
+        if ( this.lpfCallBack == null && this.nClientMaxEventID < this.notOpenMaxEvnetID ) // message dlg is not show , and recieved new event , must show red dot 
+        {
+           let ev : any = clientEvent.event_recived_new_clubMessage ;
+           let pEvent = new cc.Event.EventCustom(ev,true) ;
+           cc.systemEvent.dispatchEvent(pEvent);
+        }
+
+        if ( this.nInteralFetachData != -1 )
+        {
+            clearInterval(this.nInteralFetachData) ;
+            this.nInteralFetachData = -1 ;
+        }
+
+        let self = this ;
+        let interval = 30*1000 ;
+        if ( CC_DEBUG )
+        {
+            interval = 10* 1000 ;
+        }
+
+        this.nInteralFetachData = setInterval(()=>{ console.log( "inter feat evet msg clubID " + self.clubID ); if ( self.isNeedRefreshData() ){ self.featchData();} },interval);
+        if ( !this.isNeedRefreshData() )
+        {
+            return false ;
+        }
+        this.featchData();
+    }
+
+    onLoseFocus()
+    {
+        super.onLoseFocus();
+        if ( -1 != this.nInteralFetachData )
+        {
+            clearInterval(this.nInteralFetachData) ;
+            this.nInteralFetachData = -1 ;
+        }
     }
 
     getDataCnt(): number
@@ -68,9 +135,9 @@ export default class ClubMessageData extends IPannelData {
                      return ;
                  }
 
-                 if ( eveID > this.nClientMaxEventID )
+                 if ( eveID > self.notOpenMaxEvnetID )
                  {
-                     this.nClientMaxEventID = eveID ;
+                     self.notOpenMaxEvnetID = eveID ;
                  }
 
                  let p = new ClubMessageDataItem();
@@ -102,6 +169,19 @@ export default class ClubMessageData extends IPannelData {
                  if ( this.lpfCallBack )
                  {
                      this.lpfCallBack(-1);
+                     if ( this.notOpenMaxEvnetID > this.nClientMaxEventID )
+                     {
+                        this.nClientMaxEventID = this.notOpenMaxEvnetID ;
+                     }
+                 }
+                 else
+                 {
+                     if ( this.nClientMaxEventID < this.notOpenMaxEvnetID ) // message dlg is not show , and recieved new event , must show red dot 
+                     {
+                        let ev : any = clientEvent.event_recived_new_clubMessage ;
+                        let pEvent = new cc.Event.EventCustom(ev,true) ;
+                        cc.systemEvent.dispatchEvent(pEvent);
+                     }
                  }
              }
         }

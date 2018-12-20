@@ -59,6 +59,13 @@ export default class dlgClubMessage extends DlgBase {
         {
             this.pListView.notifyUpdate();
         }
+        this.pData.doShowDataToPlayer();
+    }
+
+    closeDlg()
+    {
+        super.closeDlg();
+        this.pData.lpfCallBack = null ;
     }
 
     onDataUpdate( idx : number )

@@ -68,6 +68,7 @@ export default class PannelRoom extends ClubPannel {
         
         if ( data == null )
         {
+            this.pClubRoomData = null ;
             this.refresh();
             return ;
         }

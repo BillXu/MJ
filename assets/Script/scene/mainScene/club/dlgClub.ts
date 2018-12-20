@@ -58,20 +58,12 @@ export default class DlgClub extends DlgBase {
     @property(DlgModifyNotice)
     pDlgNotice : DlgModifyNotice = null ;
 
+    @property(cc.Node)
+    pSettingBtnRedDot : cc.Node = null ;
+    @property(cc.Node)
+    pMessageBtnRedDot : cc.Node = null ;
+
     // LIFE-CYCLE CALLBACKS:
-
-    onLoad () 
-    {
-        super.onLoad();
-        cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this) ;
-        cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
-    }
-
-    onDestroy()
-    {
-        cc.systemEvent.targetOff(this);
-    }
-
     onRecievedBrifdata( event : cc.Event.EventCustom )
     {
         for ( let v of this.vClubDatas )
@@ -80,27 +72,96 @@ export default class DlgClub extends DlgBase {
         }
     }
 
-
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void )
     {
         super.showDlg(pfResult,jsUserData,pfOnClose);
-        if ( this.vClubDatas.length == 0 )
+        let vClubIDs : number[] = ClientData.getInstance().getJoinedClubsID();
+        let vClubDatas : ClubData[] = [] ;
+        for ( let v of vClubIDs )
         {
-            let vClubIDs : number[] = ClientData.getInstance().getJoinedClubsID();
-            for ( let v of vClubIDs )
+            let pClubData : ClubData = null ;
+            for ( let vData of this.vClubDatas )
+            {
+                if ( vData.clubID == v && vData.isRecievdInfo() )
+                {
+                    pClubData = vData ;
+                    break ;
+                }
+            }
+
+            if ( pClubData == null )
             {
                 let p = new ClubData();
                 p.init(v,this.pPlayerDatas);
-                this.vClubDatas.push(p);
+                vClubDatas.push(p);
+            }
+            else
+            {
+                vClubDatas.push(pClubData);
             }
         }
 
+        this.vClubDatas.length = 0 ;
+        this.vClubDatas = vClubDatas ;
+
         if ( this.vClubDatas.length > 0 && this.isAllClubRecievd() )
         {
-            this.vClubDatas[0].refreshInfo();
-            this.onSelectClubItem(this.vClubDatas[0].clubID) ;
-            this.onChangeClubInfoTable(null,"0") ;
+            let selectClubID = this.pLeftClubList.getSelectedClubID();
+            let seleIdx = -1 ;
+            if ( -1 != selectClubID )
+            {
+                for ( let idx in this.vClubDatas )
+                {
+                    if ( selectClubID == this.vClubDatas[idx].clubID )
+                    {
+                        seleIdx = parseInt(idx);
+                        break ;
+                    }
+                }
+            }
+
+            this.vClubDatas[ seleIdx != -1 ? seleIdx : 0 ].refreshInfo();
+            this.pLeftClubList.refresh(this.vClubDatas);
+            this.onChangeClubInfoTable(null,this.nCurPannelIdx.toString()) ;
         }
+
+        cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this) ;
+        cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
+        cc.systemEvent.on(clientEvent.event_leave_club,this.onEventLeaveClub,this);
+        cc.systemEvent.on(clientEvent.event_joined_club,this.onEventJoinedClub,this);
+        cc.systemEvent.on(clientEvent.event_recived_new_clubMessage,this.onEventNewClubMessage,this);
+    }
+
+    onEventNewClubMessage( event : cc.Event.EventCustom )
+    {
+        this.pSettingBtnRedDot.active = true ;
+        this.pMessageBtnRedDot.active = true ;
+    }
+
+    onEventJoinedClub( event : cc.Event.EventCustom )
+    {
+        let clubID : number = event.detail ;
+        let p = new ClubData();
+        p.init(clubID,this.pPlayerDatas);
+        this.vClubDatas.push(p);
+    }
+
+    onEventLeaveClub( event : cc.Event.EventCustom  )
+    {
+        let clubID : number = event.detail ;
+        for ( let idx in this.vClubDatas )
+        {
+            if ( clubID == this.vClubDatas[idx].clubID )
+            {
+                this.vClubDatas.splice(parseInt(idx),1) ;
+                
+                this.pLeftClubList.refresh(this.vClubDatas);
+                return ;
+            }
+        }
+
+        console.error( "you are not in this club how to leave ? id = " + clubID );
+        return ;
     }
 
     onMsg( event : cc.Event.EventCustom )
@@ -146,6 +207,7 @@ export default class DlgClub extends DlgBase {
             console.log( "current do not have club , do not show dlg" );
             return ;
         }
+        this.pSettingBtnRedDot.active = false ;
         this.pDlgSetting.showDlg(this.onDlgSettingResultCallBack.bind(this),this.vClubDatas[this.nCurSelClubIdx]) ;
     }
 
@@ -155,6 +217,7 @@ export default class DlgClub extends DlgBase {
         {
             case eClubSettingBtn.Btn_ClubMessage:
             {
+                this.pMessageBtnRedDot.active = false ;
                 this.pDlgMessage.showDlg(null,this.vClubDatas[this.nCurSelClubIdx].pClubMessageData);
             }
             break ;
@@ -183,13 +246,16 @@ export default class DlgClub extends DlgBase {
                 let self = this ;
                 let msg = {} ;
                 msg["clubID"] = this.vClubDatas[this.nCurSelClubIdx].clubID;
-                Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_PLAYER_LEAVE,eMsgPort.ID_MSG_PORT_CLUB,this.vClubDatas[this.nCurSelClubIdx].clubID,( js : Object )=>{
+                Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_PLAYER_LEAVE,eMsgPort.ID_MSG_PORT_CLUB,this.nSelfUID,( js : Object )=>{
                     let ret = js["ret"] ;
                     let vError = [ "成功退出俱乐部","您本来就不在俱乐部里" ,"code 2 "," code 3","无效玩家对象"] ;
                     if ( ret < vError.length )
                     {
                         Utility.showPromptText(vError[ret]);
-                        self.onDoLevedCurClub();
+                        if ( 0 == ret )
+                        {
+                            self.onDoLevedCurClub();
+                        }
                     }
                     else
                     {
@@ -240,6 +306,7 @@ export default class DlgClub extends DlgBase {
     {
         if ( this.nCurSelClubIdx != -1 &&  this.vClubDatas[this.nCurSelClubIdx] && this.vClubDatas[this.nCurSelClubIdx].clubID == nClubID )
         {
+            this.vClubDatas[this.nCurSelClubIdx].onFocus();
             console.log( "select the same club id" );
             return ;
         }
@@ -260,6 +327,11 @@ export default class DlgClub extends DlgBase {
             }
         }
 
+        if ( this.nCurSelClubIdx != -1 )
+        {
+            this.vClubDatas[this.nCurSelClubIdx].onFocus();
+        }
+        
         this.vClubInfoPannels[this.nCurPannelIdx].show(this.vClubDatas[this.nCurSelClubIdx]) ;
         if ( -1 == this.nCurSelClubIdx )
         {
@@ -297,6 +369,15 @@ export default class DlgClub extends DlgBase {
         ClientData.getInstance().onDoLevedClub(this.vClubDatas[this.nCurSelClubIdx].clubID );
         this.vClubDatas.splice(this.nCurSelClubIdx,1) ;
         this.pLeftClubList.refresh(this.vClubDatas);
+    }
+
+    closeDlg()
+    {
+        super.closeDlg();
+        if ( this.nCurSelClubIdx != -1 && this.vClubDatas[this.nCurSelClubIdx] )
+        {
+            this.vClubDatas[this.nCurSelClubIdx].onLoseFocus();
+        }
     }
     // update (dt) {}
 }

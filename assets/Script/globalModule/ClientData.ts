@@ -9,10 +9,11 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import {clientDefine,eGameType,eMusicType,eDeskBg,eMJBg} from "../common/clientDefine"
+import {clientDefine,eGameType,eMusicType,eDeskBg,eMJBg, clientEvent, eMailType} from "../common/clientDefine"
 import { eMsgType, eMsgPort } from "../common/MessageIdentifer"
 import Network from "../common/Network"
 import * as _ from "lodash"
+import Utility from "./Utility";
 @ccclass
 export default class ClientData  
 {
@@ -164,6 +165,14 @@ export default class ClientData
 
     public onJoinedNewClubID( clubID : number )
     {
+        let vClubs = this.getJoinedClubsID();
+        let idx = _.findIndex(vClubs,( id : number )=>{ return id == clubID ;}) ;
+        if ( idx != -1 )
+        {
+            console.warn( "already add clubid , do not add twice id = " + clubID );
+            return ;
+        }
+
         if ( this.jsSelfBaseDataMsg["clubs"] == null )
         {
             this.jsSelfBaseDataMsg["clubs"] = [] ;
@@ -261,6 +270,65 @@ export default class ClientData
         {
             this.jsSelfBaseDataMsg["coin"] = msg["coin"] ;
             this.jsSelfBaseDataMsg["diamond"] = msg["diamond"] ;
+
+            let ev : any = clientEvent.event_update_money ;
+            let pEvent = new cc.Event.EventCustom(ev,true) ;
+            pEvent.detail = msg;
+            cc.systemEvent.dispatchEvent(pEvent);
+            return ;
+        }
+
+        if ( eMsgType.MSG_NEW_MAIL == nMsgID )
+        {
+            let mailType : eMailType = msg["type"] ;
+            let deail : Object = msg["detail"] ;
+            switch ( mailType )
+            {
+                case eMailType.eMail_ResponeClubApplyJoin:
+                {
+                    let clubID : number = deail["clubID"] ;
+                    let isAgree = deail["nIsAgree"] == 1 ;
+                    if ( isAgree )
+                    {
+                        this.onJoinedNewClubID(clubID);
+                    }
+                    
+                    let str = "俱乐部：" + deail["clubName"] + " 的管理员" + (isAgree ? "同意了" : "拒绝了" )+ "您的加入申请。";
+                    Utility.showPromptText(str);
+
+                    let ev : any = clientEvent.event_joined_club ;
+                    let pEvent = new cc.Event.EventCustom(ev,true) ;
+                    pEvent.detail = clubID;
+                    cc.systemEvent.dispatchEvent(pEvent);
+                }
+                break;
+                case eMailType.eMail_ClubBeKick:
+                {
+                    let clubID : number = deail["clubID"] ;
+                    this.onDoLevedClub(clubID);
+                    let str = "您被俱乐部：" + deail["clubName"] + " 的管理员请出了俱乐部";
+                    Utility.showPromptText(str);
+
+                    let ev : any = clientEvent.event_leave_club ;
+                    let pEvent = new cc.Event.EventCustom(ev,true) ;
+                    pEvent.detail = clubID;
+                    cc.systemEvent.dispatchEvent(pEvent);
+                }
+                break;
+                case eMailType.eMail_ClubDismiss:
+                {
+                    let clubID : number = deail["clubID"] ;
+                    this.onDoLevedClub(clubID);
+                    let str = "您所在的俱乐部：" + deail["clubName"] + " 已经解散了。";
+                    Utility.showPromptText(str);
+                    
+                    let ev : any = clientEvent.event_leave_club ;
+                    let pEvent = new cc.Event.EventCustom(ev,true) ;
+                    pEvent.detail = clubID;
+                    cc.systemEvent.dispatchEvent(pEvent);
+                }
+                break;
+            }
             return ;
         }
     }

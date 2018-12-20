@@ -25,6 +25,11 @@ export default abstract class IPannelData
         return this.pClubData.clubID ;
     }
 
+    onFocus()
+    {
+        
+    }
+
     init( clubData : ClubData , playersData : PlayerBrifdata )
     {
         this.pClubData = clubData ;

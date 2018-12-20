@@ -35,6 +35,12 @@ export default class DlgJoinRoomOrClub extends DlgBase {
 
     }
 
+    showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void )
+    {
+        this.onClickClearAll();
+        super.showDlg(pfResult,jsUserData,pfOnClose);
+    }
+
     setDlgTitle( isJoinRoom : boolean )
     {
         this.pJoinRoomTitle.node.active = isJoinRoom ;

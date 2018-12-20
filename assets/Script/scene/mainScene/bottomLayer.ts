@@ -14,6 +14,8 @@ import utility from "../../globalModule/Utility"
 import dlgRecord from "./record/dlgRecord";
 import Bacground from "./background"
 import DlgBase from "../../common/DlgBase";
+import DlgShop from "./shop/dlgShop";
+import ClientData from "../../globalModule/ClientData";
 @ccclass
 export default class BottomLayer extends cc.Component {
 
@@ -28,6 +30,9 @@ export default class BottomLayer extends cc.Component {
 
     @property(DlgBase)
     pDlgHelp : DlgBase = null ;
+
+    @property(DlgShop)
+    pDlgShop : DlgShop = null ;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -44,6 +49,9 @@ export default class BottomLayer extends cc.Component {
     onBtnShop()
     {
         //utility.showTip("zhege shi yige weniz发掘的发生的噶") 
+        this.pDlgShop.showDlg( ( shopItemID : number )=>{
+            console.log( "send msg to buy shopitemID " + shopItemID );
+        } ,ClientData.getInstance().jsSelfBaseDataMsg["diamond"] ) ;
     }
 
     onBtnShowRecord()

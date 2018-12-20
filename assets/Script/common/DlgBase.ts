@@ -48,9 +48,14 @@ export default class DlgBase extends cc.Component {
         pCaptureEnvetNode.on( cc.Node.EventType.TOUCH_END ,this.onTouchEnd,this ) ;
     }
 
+    onDestroy()
+    {
+        this.closeDlg();
+    }
+    
     protected onTouchBegin( touch : cc.Touch )
     {
-        console.log("touch begin");
+        //console.log("touch begin");
         return true ;
     }
 
@@ -99,6 +104,7 @@ export default class DlgBase extends cc.Component {
         {
             this.pOnCloseCallBack(this);
         }
+        cc.systemEvent.targetOff(this);
     }
     
     // update (dt) {}

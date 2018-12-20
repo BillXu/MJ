@@ -74,6 +74,21 @@ export default class ClubList extends cc.Component {
         // this.pList.setAdapter(this.pListAdapter);
     }
 
+    getSelectedClubID() : number 
+    {
+        let selectedClubID = -1 ;
+        for ( let v of this.vClubs )
+        {
+            if ( v.isSelected )
+            {
+                selectedClubID = v.id ;
+                break ;
+            }
+        }
+
+        return selectedClubID ;
+    }
+
     refresh( vClubs : ClubData[] )
     {
         if ( null == this.pListAdapter )
@@ -84,18 +99,31 @@ export default class ClubList extends cc.Component {
             this.pList.setAdapter(this.pListAdapter);
         }
 
+        let selectedClubID = this.getSelectedClubID() ;
+
         let self = this ;
         this.vClubs.length = 0 ;
         vClubs.forEach( ( d : ClubData,idx : number )=>{
             let p = new clubItemData();
             p.id = d.clubID ;
             p.name = d.name ;
-            p.isSelected = idx == 0 ;
+            if ( selectedClubID == -1 )
+            {
+                p.isSelected = idx == 0 ;
+            }
+            else
+            {
+                p.isSelected = selectedClubID == p.id ;
+            }
             self.vClubs.push(p);
         } );
         this.pListAdapter.setDataSet(this.vClubs);
         this.pList.notifyUpdate();
-        cc.Component.EventHandler.emitEvents(this.vSelClubItemCallBack, this.vClubs.length == 0 ? -1 : this.vClubs[0].id ) ;
+        if ( selectedClubID == -1 && this.vClubs.length > 0 )
+        {
+            selectedClubID = this.vClubs[0].id ;
+        }
+        cc.Component.EventHandler.emitEvents(this.vSelClubItemCallBack, this.vClubs.length == 0 ? -1 : selectedClubID ) ;
     }
 
     onClubListItemSel( toggle : cc.Toggle, clubID : number  )
@@ -130,6 +158,7 @@ export default class ClubList extends cc.Component {
         let msg = { } ;
         msg["clubID"] = applyClubID;
         let selfID = ClientData.getInstance().selfUID ;
+        let self = this ;
         Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_APPLY_JOIN,eMsgPort.ID_MSG_PORT_CLUB,selfID,( msg : Object)=>
         {
             let ret = msg["ret"] ;
@@ -137,6 +166,7 @@ export default class ClubList extends cc.Component {
             if ( vError.length <= ret )
             {
                 Utility.showTip("unknown error code = " + ret ) ;
+                self.pDlgJoinClub.closeDlg();
                 return true ;
             }
             Utility.showTip( vError[ret] );
@@ -160,7 +190,7 @@ export default class ClubList extends cc.Component {
                 break ;
             }
         }
-        
+
         this.pList.notifyUpdate();
         console.log( "onClubNameUpdated" );
     }

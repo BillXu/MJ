@@ -37,12 +37,7 @@ export default class dlgRecord extends DlgBase {
         this.pRecordData.currentID = ClientData.getInstance().selfUID ;
         this.pRecordData.isClub = false ;
         this.pRecordData.nRefreshRate = 15*60 ; // 15 minite 
-        cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
-    }
-
-    onDestroy()
-    {
-        cc.systemEvent.targetOff(this);
+        
     }
 
     start () {
@@ -72,6 +67,8 @@ export default class dlgRecord extends DlgBase {
         {
             this.pRecordData.fetchData() ;
         }
+
+        cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
     }
 
     onRecorderDataCallBack( vRecord : RecordItem[], isDetal : boolean )

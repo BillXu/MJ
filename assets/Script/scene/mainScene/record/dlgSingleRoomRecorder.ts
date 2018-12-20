@@ -26,14 +26,8 @@ export default class DlgSingleRoomRecord extends DlgBase {
     onLoad()
     {
         super.onLoad();
-        cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
     }
-
-    onDestroy()
-    {
-        cc.systemEvent.targetOff(this);
-    }
-
+    
     start () {
 
     }
@@ -52,6 +46,7 @@ export default class DlgSingleRoomRecord extends DlgBase {
         let firstRecorder : RecordItem = vRecorderData[0] ;
         this.pRule.string = firstRecorder.rule ; 
         this.pRecorderView.setRecorderData(vRecorderData,true) ;
+        cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
     }
 
     onClickReplay( record : RecordItem  )

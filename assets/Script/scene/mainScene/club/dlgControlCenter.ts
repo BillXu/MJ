@@ -87,7 +87,8 @@ export default class DlgControlCenter extends DlgBase {
         this.pBtnModifyRule.active = (pdata.isSelfMgr() || pdata.isSelfOwner());
         this.pDismissTab.node.active = pdata.isSelfOwner();
         this.pMgrTab.forEach( ( pNodeToggle : cc.Toggle )=>{ pNodeToggle.node.active = pdata.isSelfMgr() || pdata.isSelfOwner() ;} );
-
+        this.pRuleToggle.node.active = true ;
+        
         this.pClubData = pdata ;
         this.pCurName.string = pdata.name ;
         this.pNewName.string = "" ;
@@ -95,7 +96,6 @@ export default class DlgControlCenter extends DlgBase {
         this.pClubState.string = pdata.isStoped ? "俱乐部已经打烊，是否需要营业？" : "俱乐部正在营业，是否要打烊？" ;
         this.pBtnOpen.active = pdata.isStoped ;
         this.pBtnStop.active = !this.pBtnOpen.active ;
-        
         // wan fa ;
         let opts = pdata.opts ;
         let gameType : eGameType = opts["gameType"] ;

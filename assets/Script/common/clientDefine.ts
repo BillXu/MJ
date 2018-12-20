@@ -18,6 +18,10 @@ let clientEvent =
 	setting_update_deskBg : "setting_update_deskBg",
 	setting_update_mjBg : "setting_update_mjBg",
 	event_recieved_brifData : "event_recieved_brifData",
+	event_update_money : "event_update_money",
+	event_leave_club : "event_leave_club",
+	event_joined_club : "event_joined_club",
+	event_recived_new_clubMessage : "event_recived_new_clubMessage",
 } ;
 
 let SceneName =
@@ -140,6 +144,34 @@ export enum eRoomState
 	eRoomState_JJ_DDZ_Chao_Zhuang,
 	eRoomState_DDZ_Double,
 	eRoomState_Max,
+};
+
+export enum eMailType
+{
+	eMail_Wechat_Pay, // { ret : 0 , diamondCnt : 23 }  // ret : 1 means verify error 
+	eMail_AppleStore_Pay, // { ret : 0 , diamondCnt : 23 }   // ret : 1 means verify error 
+	eMail_Agent_AddCard, // { agentID : 23 , serialNo : 2345 , cardOffset : 23 }
+	eMail_Consume_Diamond, // { diamond : 23 , roomID :23, reason : 0 } 
+	eMail_GiveBack_Diamond, // { diamond : 23 , roomID :23, reason : 0  } 
+	eMail_Consume_Emoji, // { roomID :23, cnt : 0 }
+	eMail_Agent_AddEmojiCnt, // { agentID : 23 ,addCnt : 23 }
+	// club 
+	eMail_ResponeClubApplyJoin,// { clubID : 23 , clubName : "abc", nIsAgree : 0  }
+	eMail_ClubInvite , //  { clubID : 23 , clubName : "abc",mgrID : 23  }
+	eMail_ClubBeKick, // { clubID : 23 , clubName : "abc",mgrID : 23  }
+	eMail_ClubDismiss, // { clubID : 23 , clubName : "abc"  }
+	eMail_Max,
+};
+
+export enum eMailState
+{
+	eMailState_Unread,
+	eMailState_WaitSysAct,
+	eMailState_WaitPlayerAct,
+	eMailState_SysProcessed,
+	eMailState_Delete,
+	eMailState_PlayerProcessed,
+	eMailState_Max,
 };
 
 export { clientDefine , SceneName,clientEvent }  ;

@@ -122,6 +122,11 @@ export default class ClubLogData extends IPannelData  {
                         self.addUIDToNeedNameVec(p.vNeedNameUID,p.jsDetail["actUID"] );
                      }
                      break;
+                     case eClubEvent.eClubEvent_Leave:
+                     {
+                        //self.addUIDToNeedNameVec(p.vNeedNameUID,p.jsDetail["uid"] );
+                     }
+                     break;
                      default:
                      cc.error( "unknown log event type = " + type + " do not process" );
                      self.vLogs.pop();

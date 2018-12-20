@@ -92,8 +92,8 @@ export default class RecordData extends cc.Component {
                 else
                 {
                     self.parseRecorder(js);
-                    self.doRecievedData();
                 }
+                self.doRecievedData();
             }
         };
         xhr.open("GET", url, true);
