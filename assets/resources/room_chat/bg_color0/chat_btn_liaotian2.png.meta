@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "abc3fd95-3056-4784-aaca-f94f47314d8a",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "chat_btn_liaotian2": {
+      "ver": "1.0.3",
+      "uuid": "39dc0792-0a22-412a-85ec-b418cbe15b11",
+      "rawTextureUuid": "abc3fd95-3056-4784-aaca-f94f47314d8a",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 53,
+      "height": 234,
+      "rawWidth": 53,
+      "rawHeight": 234,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

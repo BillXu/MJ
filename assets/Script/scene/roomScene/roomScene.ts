@@ -18,7 +18,7 @@ import Network from "../../common/Network"
 import { clientDefine , SceneName, eRoomState } from "../../common/clientDefine"
 import ClientData from "../../globalModule/ClientData"
 import { IOneMsgCallback } from "../../common/NetworkInterface"
-import { eMJActType,eEatType, eClientRoomState } from "./roomDefine";
+import { eMJActType,eEatType, eClientRoomState, eChatMsgType } from "./roomDefine";
 import DlgActList from "./dlgActList"
 import dlgActOptsCards from "./dlgActOptsCards"
 import { IPlayerCards, playerBaseData } from "./roomInterface";
@@ -29,6 +29,7 @@ import DlgDuiPu from "./dlgDuiPu"
 import Utility from "../../globalModule/Utility";
 import DlgBase from "../../common/DlgBase";
 import EffectLayer from "./effectLayer"
+import DlgRoomChat from "./dlgRoomChat";
 @ccclass
 export default class RoomScene extends cc.Component {
 
@@ -440,6 +441,14 @@ export default class RoomScene extends cc.Component {
                 }
                 p.race = score ;
                 this.pLayerPlayerInfo.onPlayerDuiPu(p.clientIdx,score) ;
+            }
+            break ;
+            case eMsgType.MSG_ROOM_CHAT_MSG:
+            {
+                let clientIdx = this.pRoomData.svrIdxToClientIdx( msg["playerIdx"] );
+                let type : eChatMsgType = msg["type"] ;
+                let contnet : string = msg["content"] ;
+                this.pLayerPlayerInfo.onRoomChatMsg(clientIdx,type,contnet) ;
             }
             break ;
         } 

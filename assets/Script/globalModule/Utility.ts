@@ -21,7 +21,7 @@ export default class Utility  {
         pompt.showDlg(strDesc,isOneBtn,pfResult,pfOnClose ) ;
     }
 
-    public static showPromptText( strDesc : string , nDisplayTime : number = 3 )
+    public static showPromptText( strDesc : string , nDisplayTime : number = 2 )
     {
         let node = cc.find("persisteNode");
         let pompt = node.getComponent(Prompt);

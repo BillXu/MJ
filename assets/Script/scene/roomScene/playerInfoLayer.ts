@@ -11,12 +11,13 @@
 const {ccclass, property} = cc._decorator;
 import RoomPlayerInfo from "./roomPlayerInfo"
 import { playerBaseData } from "./roomInterface"
-import { eClientRoomState } from "./roomDefine"
+import { eClientRoomState, eChatMsgType } from "./roomDefine"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import RoomData from "./roomData"
 import { eMsgType } from "../../common/MessageIdentifer"
 import ClientData from "../../globalModule/ClientData";
 import { eDeskBg, clientEvent } from "../../common/clientDefine"
+import DlgRoomChat from "./dlgRoomChat";
 @ccclass
 export default class PlayerInfoLayer extends roomSceneLayerBase {
 
@@ -58,6 +59,7 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         this.pBankIconForMoveAni.active = false ;
         // reg event ;
         cc.systemEvent.on(clientEvent.setting_update_deskBg,this.refreshDeskBg,this) ;
+
     }
 
     onDestroy()
@@ -260,6 +262,42 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
             } );
         }
         return false ;
+    }
+
+    onRoomChatMsg( nPlayerClientIdx : number , type : eChatMsgType , contnet : string  )
+    {
+        if ( nPlayerClientIdx >= this.vPlayers.length )
+        {
+            cc.error( "onRoomChatMsg invalid client idx = " + nPlayerClientIdx );
+            return ;
+        }
+
+        if ( type == eChatMsgType.eChatMsg_SysText )
+        {
+            let idx = parseInt(contnet);
+            if ( idx < DlgRoomChat.vSysText.length )
+            {
+                contnet = DlgRoomChat.vSysText[idx] ;
+            }
+            else
+            {
+                contnet = "invalid sys text idx = " + contnet ;
+            }
+        }
+
+        if ( type == eChatMsgType.eChatMsg_SysText || eChatMsgType.eChatMsg_InputText == type )
+        {
+            this.vPlayers[nPlayerClientIdx].onTextMsg(contnet) ;
+            return ;
+        }
+
+        if ( type == eChatMsgType.eChatMsg_Emoji )
+        {
+            this.vPlayers[nPlayerClientIdx].onEmojiMsg(contnet) ;
+            return ;
+        }
+
+        console.warn( "process voice msg" );
     }
 
     refreshDeskBg()

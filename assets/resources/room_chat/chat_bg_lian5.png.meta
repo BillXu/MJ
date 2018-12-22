@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "9a9e0cf9-3ebb-4238-9260-ff933bb2a0f5",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "chat_bg_lian5": {
+      "ver": "1.0.3",
+      "uuid": "ae7207dc-f8ef-483e-aef6-a8b578286ae3",
+      "rawTextureUuid": "9a9e0cf9-3ebb-4238-9260-ff933bb2a0f5",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 4,
+      "offsetY": 4,
+      "trimX": 8,
+      "trimY": 1,
+      "width": 59,
+      "height": 54,
+      "rawWidth": 67,
+      "rawHeight": 64,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

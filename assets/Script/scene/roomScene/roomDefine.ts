@@ -77,6 +77,15 @@ export enum eClientRoomState
 	State_GameOver,
 };
 
+export enum eChatMsgType
+{
+	eChatMsg_InputText,
+	eChatMsg_Voice,
+	eChatMsg_Emoji,
+	eChatMsg_SysText,
+	eChatMsg_Max,
+}
+
 let RoomEvent = 
 {
     Event_changeMJ : "event_changeMJ" ,

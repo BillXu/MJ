@@ -50,7 +50,7 @@ export default class DlgBase extends cc.Component {
 
     onDestroy()
     {
-        this.closeDlg();
+        cc.systemEvent.targetOff(this);
     }
     
     protected onTouchBegin( touch : cc.Touch )

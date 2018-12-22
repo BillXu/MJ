@@ -18,6 +18,7 @@ import DlgSetting from "../mainScene/dlgSetting"
 import { eDeskBg, clientEvent, eMJBg, SceneName } from "../../common/clientDefine"
 import ClientData from "../../globalModule/ClientData";
 import Utility from "../../globalModule/Utility";
+import DlgRoomChat from "./dlgRoomChat";
 @ccclass
 export default class RoomInfoLayer extends roomSceneLayerBase {
 
@@ -72,6 +73,9 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
 
     @property(cc.Sprite)
     pDeskBg : cc.Sprite = null ;
+
+    @property(DlgRoomChat)
+    pDlgChat : DlgRoomChat = null ;
 
     roomState : eClientRoomState = eClientRoomState.State_WaitReady ;
     onLoad ()
@@ -262,6 +266,8 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         {
             this.pDlgWantedOneCard.active = true ;
         }
+
+        this.pDlgChat.showDlg(null,this);
     }
 
     refreshDeskBg()
