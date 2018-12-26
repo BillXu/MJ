@@ -124,7 +124,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
 
     start () {
          
- 
+        
     }
 
     set circleCnt( cnt : string )

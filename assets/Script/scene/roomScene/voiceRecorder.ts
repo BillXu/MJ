@@ -1,5 +1,6 @@
 import recordCell from "../mainScene/record/recordCell";
 import Utility from "../../globalModule/Utility";
+import VoiceManager from "../../sdk/VoiceManager";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -89,6 +90,12 @@ export default class VoicRecorder extends cc.Component {
         this.pBtnRecord.on(cc.Node.EventType.TOUCH_CANCEL,this.onTouchCanncel,this);
         this.pBtnRecord.on(cc.Node.EventType.TOUCH_MOVE,this.onTouchMove,this);
         this.recordState = eRecordState.eState_Init ;
+        cc.systemEvent.on(VoiceManager.EVENT_UPLOAED,this.onUpdateRecordFileOk,this) ;
+    }
+
+    onDestroy()
+    {
+        cc.systemEvent.targetOff(this);
     }
 
     onTouchStart()
@@ -104,6 +111,12 @@ export default class VoicRecorder extends cc.Component {
         this.nReocrdedSeconds = this.maxRecorderSeconds ;
         this.schedule(this.onRecordFrame,1,this.maxRecorderSeconds) ;
         this.pRecordingTime.string = "" + this.nReocrdedSeconds ;
+
+        let ret = VoiceManager.getInstance().startRecord("self");
+        if ( ret == false )
+        {
+            this.recordState = eRecordState.eState_Init ;
+        }
     }
 
     onTouchMove( touchEvent : cc.Event.EventTouch )
@@ -127,7 +140,9 @@ export default class VoicRecorder extends cc.Component {
 
     onFinishRecord()
     {
-        if ( this.recordState == eRecordState.eState_Recording )
+        this.unschedule(this.onRecordFrame) ;
+        let ret = VoiceManager.getInstance().stopRecord(this.recordState == eRecordState.eState_Recording) ;
+        if ( ret && this.recordState == eRecordState.eState_Recording )
         {
             console.warn( "finish record , stop it, upload recordfile" );
             this.recordState = eRecordState.eState_Uploading ;

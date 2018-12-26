@@ -68,13 +68,12 @@ export default class LoginScene extends cc.Component {
         Network.getInstance().sendMsg(msgupdateinfo,eMsgType.MSG_PLAYER_UPDATE_INFO,eMsgPort.ID_MSG_PORT_DATA,clientData.getInstance().selfUID);
         if ( clientData.getInstance().stayInRoomID && clientData.getInstance().stayInRoomID > 0 )
         {
-            cc.director.loadScene(SceneName.Scene_Room) ;
+            cc.director.loadScene(SceneName.Scene_Room) ; 
         }
         else
         {
             cc.director.loadScene(SceneName.Scene_Main) ;
         }
-        
     }
 
     onConnectedToSvr()

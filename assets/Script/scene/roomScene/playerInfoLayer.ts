@@ -18,6 +18,7 @@ import { eMsgType } from "../../common/MessageIdentifer"
 import ClientData from "../../globalModule/ClientData";
 import { eDeskBg, clientEvent } from "../../common/clientDefine"
 import DlgRoomChat from "./dlgRoomChat";
+import VoiceManager from "../../sdk/VoiceManager";
 @ccclass
 export default class PlayerInfoLayer extends roomSceneLayerBase {
 
@@ -43,6 +44,8 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
 
     ptBankIconAniStartPos : cc.Vec2 = cc.Vec2.ZERO ;
 
+    vVoiceMsg : Object[] = [] ; // { clientIdx : 2 , file : "voice failed name" }
+
     // LIFE-CYCLE CALLBACKS:
 
     roomState : eClientRoomState = eClientRoomState.State_WaitReady ;
@@ -59,7 +62,8 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         this.pBankIconForMoveAni.active = false ;
         // reg event ;
         cc.systemEvent.on(clientEvent.setting_update_deskBg,this.refreshDeskBg,this) ;
-
+        cc.systemEvent.on(VoiceManager.EVENT_UPLOAED,this.onUploadedSlefVoice,this) ;
+        cc.systemEvent.on(VoiceManager.EVENT_PLAY_FINISH,this.onFinishedPlayVoice,this) ;
     }
 
     onDestroy()
@@ -116,6 +120,52 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         //     self.vPlayers[0].showBankerIcon();
         //     self.playBankIconMoveAni(0);
         // }, 5000);
+    }
+
+    onUploadedSlefVoice( event : cc.Event.EventCustom )
+    {
+        let detial : Object = event.detail ;
+        let isOk = detial["isOk"] ;
+        let isFileID = detial["fileName"] ;
+        if ( isOk )
+        {
+            let msg = {} ;
+            msg["type"] = eChatMsgType.eChatMsg_Voice ;
+            msg["content"] = isFileID;
+            this.roomScene.sendRoomMsg(msg,eMsgType.MSG_PLAYER_CHAT_MSG) ;
+        }
+        else
+        {
+            console.error( "upload self voice failed do not send msg" );
+        }
+    }
+
+    onFinishedPlayVoice()
+    {
+        if ( this.vVoiceMsg.length <= 0 )
+        {
+            cc.error( "why voice msg caher is null ? " );
+            return ;
+        }
+
+        let first : Object = this.vVoiceMsg[0];
+        this.vPlayers[first["clientIdx"]].stopVoice();
+        this.vVoiceMsg.splice(0,1) ;
+        console.log( "onFinishedPlayVoice" );
+
+        if ( this.vVoiceMsg.length > 0 )
+        {
+            let first : Object = this.vVoiceMsg[0];
+            if ( VoiceManager.getInstance().playVoice(first["file"]) )
+            {
+                this.vPlayers[first["clientIdx"]].onVoice();
+            }
+            else
+            {
+                console.log( "播放当前音频失败，立即结束" );
+                this.onFinishedPlayVoice();
+            }
+        }
     }
 
     enterWaitReadyState( pdata : RoomData )
@@ -294,6 +344,24 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         if ( type == eChatMsgType.eChatMsg_Emoji )
         {
             this.vPlayers[nPlayerClientIdx].onEmojiMsg(contnet) ;
+            return ;
+        }
+
+        if ( eChatMsgType.eChatMsg_Voice == type )
+        {
+            this.vVoiceMsg.push( { clientIdx : nPlayerClientIdx, file : contnet }) ;
+            if ( this.vVoiceMsg.length == 1 ) // current not playing voice
+            {
+                if ( VoiceManager.getInstance().playVoice(contnet) )
+                {
+                    this.vPlayers[nPlayerClientIdx].onVoice();
+                }
+                else
+                {
+                    this.vVoiceMsg.length = 0 ;
+                    console.error("recieved voice msg ,but play failed");
+                }
+            }
             return ;
         }
 

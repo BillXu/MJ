@@ -14,6 +14,7 @@ import { eMsgType, eMsgPort } from "../common/MessageIdentifer"
 import Network from "../common/Network"
 import * as _ from "lodash"
 import Utility from "./Utility";
+import GPSManager from "../sdk/GPSManager";
 @ccclass
 export default class ClientData  
 {
@@ -31,6 +32,8 @@ export default class ClientData
     private _musicTypeIdx : eMusicType = 0 ;
     private _deskBgIdx : eDeskBg = 0 ;
     private _mjBgIdx : eMJBg = 0 ;
+
+    private _lastRefreshGPS : number = 0 ;
 
     get stayInRoomID () : number
     {
@@ -145,6 +148,12 @@ export default class ClientData
         cc.sys.localStorage.setItem("pwd",strPwd);
     }
 
+    get isNeedRefreshGPS()
+    {
+        let now = Date.now();
+        return ( now - this._lastRefreshGPS > 60*1000 * 10 ) // 10 minites ;
+    }
+
     public static getInstance() : ClientData
     {
         if ( null == this.s_Data )
@@ -196,6 +205,8 @@ export default class ClientData
 
     public init()
     {
+        this.registerEvent();
+
         let acc : string = cc.sys.localStorage.getItem("acc");
         if ( acc && acc.length > 1 )
         {
@@ -213,8 +224,6 @@ export default class ClientData
         {
             nSelfUID = parseInt(strUID);
         }
-
-        cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this);
 
         // load settings
         this._deskBgIdx = parseInt(cc.sys.localStorage.getItem("_deskBgIdx"));
@@ -243,6 +252,34 @@ export default class ClientData
         {
             this._musicVolume = 0.5 ;
         }
+    }
+
+    public registerEvent()
+    {
+        cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this);
+        cc.systemEvent.on(GPSManager.EVENT_GPS_RESULT,this.onGPSResult,this) ;
+    }
+
+    public onGPSResult( event : cc.Event.EventCustom )
+    {
+        let jsDetail = event.detail;
+        let code : number = jsDetail["code"] ;
+        if ( code != 0 )
+        {
+            console.error( "read gps failed" );
+        }
+        else
+        {
+            this._lastRefreshGPS = Date.now();
+            console.log( "my address : " + jsDetail["address"] );
+        }
+
+        let msg = {} ;
+        msg["J"] = code != 0 ? 0 : jsDetail["longitude"] ;
+        msg["W"] = code != 0 ? 0 : jsDetail["latitude"] ;
+        this.jsSelfBaseDataMsg["J"] = msg["J"] ;
+        this.jsSelfBaseDataMsg["W"] = msg["W"] ;
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_PLAYER_UPDATE_GPS,eMsgPort.ID_MSG_PORT_DATA,this.selfUID) ;
     }
 
     public onMsg( event : cc.Event.EventCustom )

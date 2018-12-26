@@ -17,11 +17,12 @@
     "ParticleSystem",
     "TiledMap",
     "Spine Skeleton",
-    "DragonBones",
     "MotionStreak",
     "VideoPlayer",
     "WebView",
-    "Physics"
+    "Collider",
+    "Physics",
+    "StudioComponent"
   ],
   "fit-height": false,
   "fit-width": false,

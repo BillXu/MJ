@@ -289,7 +289,7 @@ export default class RoomPlayerInfo extends cc.Component {
         self.pTextChatMsgBg.setContentSize(size);
     }
 
-    onVoice( voiceUrl : string )
+    onVoice()
     {
         console.log( "player voice " );
         this.pVoiceNode.active = true ;

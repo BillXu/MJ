@@ -13,6 +13,7 @@ import PhotoItem from "../../commonItem/photoItem"
 import ClientData from "../../globalModule/ClientData"
 import { clientDefine } from "../../common/clientDefine"
 import { eMsgType } from "../../common/MessageIdentifer"
+import GPSManager from "../../sdk/GPSManager";
 @ccclass
 export default class SelfInfoLayer extends cc.Component {
 
@@ -41,6 +42,16 @@ export default class SelfInfoLayer extends cc.Component {
     {
         cc.systemEvent.on(clientDefine.netEventRecievedBaseData,this.onUpdateClientData,this) ;
         cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this);
+        cc.systemEvent.on(clientDefine.netEventReconnectd,this.doRefreshGPS,this);
+    }
+
+    doRefreshGPS()
+    {
+        // in main scene , when we reconected we must refresh gps ;
+        if ( ClientData.getInstance().isNeedRefreshGPS )
+        {
+            GPSManager.getInstance().requestGPS(true) ;
+        }
     }
 
     private onUpdateClientData()
@@ -52,6 +63,8 @@ export default class SelfInfoLayer extends cc.Component {
         this.pLabelCoin.string = baseDataMsg["coin"] || "0" ;
         this.pLabelTicket.string = "null";//baseDataMsg[""] ;
         this.pPhoto.photoURL = baseDataMsg["headIcon"] || "0";
+
+        this.doRefreshGPS();
     }
 
     private onMsg( event : cc.Event.EventCustom )
