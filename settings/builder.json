@@ -29,7 +29,7 @@
     "portrait": false,
     "upsideDown": false
   },
-  "packageName": "org.cocos2d.helloworld",
+  "packageName": "com.youhoo.cfmajiang",
   "privateKey": "",
   "qqplay": {
     "REMOTE_SERVER_ROOT": "",
