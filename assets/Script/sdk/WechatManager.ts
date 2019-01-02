@@ -37,6 +37,7 @@ export default class WechatManager  {
     static EVENT_WECHAT_CODE : string = "EVENT_WECHAT_CODE" ; // { errorCode : 0 , code : "" } 
     static EVENT_SHARE_RESULT : string = "EVENT_SHARE_RESULT" ; // { isOk : 0 , actFlag : "" } 
     static EVENT_RECIEVED_WECHAT_INFO : string = "EVENT_RECIEVED_WECHAT_INFO" ; // { isOk : 0 , unionid : "",nickname : "" ,sex : 1 , headimgurl : "" }
+    static EVENT_WECHAT_SHARE_RESULT : string = "EVENT_WECHAT_SHARE_RESULT"; // { isOk : 0 , actionTag : "" }
 
 
     static getInstance() : WechatManager

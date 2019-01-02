@@ -292,7 +292,16 @@ public class WechatManager implements IWXAPIEventHandler {
     protected  void onShareCallback( SendMessageToWX.Resp resp )
     {
         Log.d("onResp", "onResp: transaction : " + resp.transaction + " error code = " + resp.errCode + " error str = " + resp.errStr  );
-        boolean isOk =  BaseResp.ErrCode.ERR_OK == resp.errCode ;
-        Log.d("onShareCallback", "onShareCallback: 分享 ： " + (isOk ? "成功" : "失败")) ;
+        JSONObject jsObj = new JSONObject();
+        try {
+            jsObj.put("errorCode",resp.errCode );
+            jsObj.put( "isOk",BaseResp.ErrCode.ERR_OK == resp.errCode ? 1 : 0 );
+            jsObj.put( "actionTag",resp.transaction ) ;
+        }
+        catch ( JSONException je )
+        {
+            System.out.println( "json exception = " + je.getMessage() );
+        }
+        this.sendJsEvent("EVENT_WECHAT_SHARE_RESULT", jsObj );
     }
 }
