@@ -1,4 +1,4 @@
-package org.cocos2dx.javascript;
+package com.youhoo.cfmajiang;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,6 +10,7 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.CoordinateConverter;
 import com.amap.api.location.DPoint;
 
+import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxJavascriptJavaBridge;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +24,7 @@ import static android.content.ContentValues.TAG;
 public class GPSManager implements AMapLocationListener {
     private volatile static GPSManager gpsManager = null;
     private Context mContext;
-    private AppActivity mActivity;
+    private Cocos2dxActivity mActivity;
     public AMapLocationClientOption mLocationOption = null;
     public AMapLocationClient mLocationClient = null;
     public CoordinateConverter mDistanceCaculater = null ;
@@ -41,7 +42,7 @@ public class GPSManager implements AMapLocationListener {
         return gpsManager;
     }
 
-    public int bindActivity(AppActivity activity) {
+    public int bindActivity(Cocos2dxActivity activity) {
         int ret = 0;
         String logStr;
         if (activity == null) {

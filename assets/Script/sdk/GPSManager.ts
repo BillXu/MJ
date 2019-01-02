@@ -1,3 +1,5 @@
+import { SDK_DEF } from "./SDK_DEF";
+
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -29,7 +31,7 @@ export default class GPSManager{
     {
         if ( CC_JSB && cc.sys.ANDROID )
         {
-            jsb.reflection.callStaticMethod("org/cocos2dx/javascript/GPSManager", "JSrequstGPS", "(Z)V",isNeedAddress );
+            jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH + "GPSManager", "JSrequstGPS", "(Z)V",isNeedAddress );
         }
         else
         {
@@ -41,7 +43,7 @@ export default class GPSManager{
     {
         if ( CC_JSB && cc.sys.ANDROID )
         {
-            let ret = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/GPSManager", "JScaculateDistance", "(FFFF)F",A_longitude , A_latitude ,B_longitude , B_latitude );
+            let ret = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH +"GPSManager", "JScaculateDistance", "(FFFF)F",A_longitude , A_latitude ,B_longitude , B_latitude );
             return Math.floor(ret + 0.5) ;
         }
         else

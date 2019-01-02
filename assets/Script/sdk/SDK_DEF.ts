@@ -8,18 +8,9 @@
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-function sdkSendEvent( eventID  , detail )
+let SDK_DEF =
 {
-    let evet = new cc.Event.EventCustom(eventID,true);
-    evet.detail = detail ;
-    cc.systemEvent.dispatchEvent(evet) ;
-    console.log( "大师的立即发货给sdkSendEvent" + eventID + " detail :" + detail );
+    PACKAGE_NAME_PATH : "com/youhoo/cfmajiang/",
 }
 
-
-
-// let SDKHelp = {} ;
-
-// // voice module ;
-// let SDK_Voice = {} ;
-// let v = SDK_Voice; 
+export { SDK_DEF } ;

@@ -1,4 +1,4 @@
-package org.cocos2dx.javascript;
+package com.youhoo.cfmajiang;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,7 @@ import com.tencent.gcloud.voice.GCloudVoiceEngine;
 import com.tencent.gcloud.voice.GCloudVoiceErrno;
 import com.tencent.gcloud.voice.IGCloudVoiceNotify;
 
+import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxJavascriptJavaBridge;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +48,7 @@ public class GvoiceManager implements IGCloudVoiceNotify {
      * GCloudVoice 初始化时需要使用到的参数
      */
     private Context mContext;
-    private AppActivity mActivity;
+    private Cocos2dxActivity mActivity;
 
     private GvoiceManager() {
         bEngineInit = false;
@@ -72,7 +73,7 @@ public class GvoiceManager implements IGCloudVoiceNotify {
      * @param activity
      * @return 0:初始化成功  负值：当前application定义的错误 正值：GCloudVoiceErrno 错误码
      */
-    public int bindActivity(AppActivity activity) {
+    public int bindActivity(Cocos2dxActivity activity) {
         int ret = 0;
         String logStr;
         if (activity == null) {

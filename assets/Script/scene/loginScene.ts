@@ -14,6 +14,8 @@ import { eMsgPort,eMsgType } from "../common/MessageIdentifer"
 import clientData from "../globalModule/ClientData"
 import Network from "../common/Network"
 import Utilty from "../globalModule/Utility"
+import WechatManager from "../sdk/WechatManager";
+import Utility from "../globalModule/Utility";
 @ccclass
 export default class LoginScene extends cc.Component {
 
@@ -27,12 +29,14 @@ export default class LoginScene extends cc.Component {
     strWechatName : string = "";
     strWechatHeadUrl : string = "" ;
     nWechatSex : number = 1 ;
+    isClickWechat : boolean = false ;
     
 
     onLoad () {
         cc.systemEvent.on(clientDefine.netEventRecievedBaseData,this.onRecievedBaseData,this);
         cc.systemEvent.on(clientDefine.netEventOpen,this.onConnectedToSvr,this);
         cc.systemEvent.on(clientDefine.netEventReconnectd,this.onConnectedToSvr,this);
+        cc.systemEvent.on(WechatManager.EVENT_RECIEVED_WECHAT_INFO,this.onRecivedWechatInfo , this);
         this.pTipMask.active = false ;
     }
 
@@ -42,10 +46,12 @@ export default class LoginScene extends cc.Component {
             cc.log( "debug , not auto login" );
             return ;
         }
+
         if ( clientData.getInstance().curAccount.length > 1 && clientData.getInstance().curPwd.length > 1 )
         {
             this.strAccount = clientData.getInstance().curAccount ;
             this.strPassword = clientData.getInstance().curPwd ;
+            this.isClickWechat = false ;
             this.doLogin();
         }
     }
@@ -53,19 +59,44 @@ export default class LoginScene extends cc.Component {
     onClickWechatLogin()
     {
         // lanch wechat
+        WechatManager.getInstance().reqAuthor();
+    }
+
+    onRecivedWechatInfo( event : cc.Event.EventCustom )
+    {
+        let detail = event.detail ;
+        let isOk = detail["isOk"] == 1 ;
+        if ( isOk == false )
+        {
+            Utility.showPromptText( "获取微信授权失败" );
+            return ;
+        }
+
+        this.isClickWechat = true ;
+        this.strAccount = detail["unionid"] ;
+        this.strPassword = "mjdsl" ;
+        this.strWechatName = detail["nickname"] ;
+        this.strWechatHeadUrl = detail["headimgurl"] ; ;
+        this.nWechatSex = detail["sex"] ; 
+        console.log( "recieved wechat info , try just login " );
+        this.doLogin();
     }
 
     // clientData will recieved base data , and invoke loading scene ;
     onRecievedBaseData()
     {
-        let msgupdateinfo = {} ;
-        msgupdateinfo["name"] = this.strWechatName ;
-        msgupdateinfo["headIcon"] = this.strWechatHeadUrl;
-        msgupdateinfo["sex"] = this.nWechatSex;
-        clientData.getInstance().jsSelfBaseDataMsg["name"] = this.strWechatName ;
-        clientData.getInstance().jsSelfBaseDataMsg["headIcon"] = this.strWechatHeadUrl ;
-        clientData.getInstance().jsSelfBaseDataMsg["sex"] = this.nWechatSex ;
-        Network.getInstance().sendMsg(msgupdateinfo,eMsgType.MSG_PLAYER_UPDATE_INFO,eMsgPort.ID_MSG_PORT_DATA,clientData.getInstance().selfUID);
+        if ( this.isClickWechat )
+        {
+            let msgupdateinfo = {} ;
+            msgupdateinfo["name"] = this.strWechatName ;
+            msgupdateinfo["headIcon"] = this.strWechatHeadUrl;
+            msgupdateinfo["sex"] = this.nWechatSex;
+            clientData.getInstance().jsSelfBaseDataMsg["name"] = this.strWechatName ;
+            clientData.getInstance().jsSelfBaseDataMsg["headIcon"] = this.strWechatHeadUrl ;
+            clientData.getInstance().jsSelfBaseDataMsg["sex"] = this.nWechatSex ;
+            Network.getInstance().sendMsg(msgupdateinfo,eMsgType.MSG_PLAYER_UPDATE_INFO,eMsgPort.ID_MSG_PORT_DATA,clientData.getInstance().selfUID);
+        }
+        
         if ( clientData.getInstance().stayInRoomID && clientData.getInstance().stayInRoomID > 0 )
         {
             cc.director.loadScene(SceneName.Scene_Room) ; 
@@ -152,6 +183,13 @@ export default class LoginScene extends cc.Component {
     onClickVisitorBtn( event : cc.Event.EventTouch, customEventData : string )
     {
         let nIdx : number = parseInt(customEventData) ;
+        if ( CC_JSB && 3 == nIdx )
+        {
+            console.log( "click visitor 4 , we regard it as wechat login" );
+            this.onClickWechatLogin();
+            return ;    
+        }
+
         let vAcc : string[] = [ "new1","new2","new3","new4"] ;
         let vName : string[] =  [ "new1","new2","new3","new4"] ;
         let vHeadIcon : string[] = [ "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTL2VH53lyG0F6mKtichN8XU0iacH4T9laIrRicYlMicILK9h78kChjsosmgibD0xD8Q8Toy1wv01JT3MaQ/132"

@@ -1,4 +1,5 @@
 import Utility from "../globalModule/Utility";
+import { SDK_DEF } from "./SDK_DEF";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -79,7 +80,7 @@ export default class VoiceManager extends cc.Component {
         let nRet = 0 ;
         if ( CC_JSB && cc.sys.ANDROID )
         {
-            nRet = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/GvoiceManager", "JSinitWithPlayer", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",this.APP_ID,this.APP_KEY, playerTag);
+            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSinitWithPlayer", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",this.APP_ID,this.APP_KEY, playerTag);
         }
         else
         {
@@ -158,7 +159,7 @@ export default class VoiceManager extends cc.Component {
         let nRet : number = 0 ;
         if ( CC_JSB && cc.sys.ANDROID )
         {
-            nRet = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/GvoiceManager", "JSstartRecord", "(Ljava/lang/String;)I",this.TEMP_PATH + fileName );
+            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSstartRecord", "(Ljava/lang/String;)I",this.TEMP_PATH + fileName );
         }
         else
         {
@@ -203,7 +204,7 @@ export default class VoiceManager extends cc.Component {
         let nRet : number = 0 ;
         if ( CC_JSB && cc.sys.ANDROID )
         {
-            nRet = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/GvoiceManager", "JSstopRecord", "(ZI)I",isUpLoad,upLoadTimeOutMiliseconds );
+            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSstopRecord", "(ZI)I",isUpLoad,upLoadTimeOutMiliseconds );
         }
         else
         {
@@ -224,7 +225,7 @@ export default class VoiceManager extends cc.Component {
         let nRet : number = 0 ;
         if ( CC_JSB && cc.sys.ANDROID )
         {
-            nRet = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/GvoiceManager", "JSdownLoadFile", "(Ljava/lang/String;Ljava/lang/String;I)I",fileName,this.TEMP_PATH, downloadTimeOutMiliseconds);
+            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSdownLoadFile", "(Ljava/lang/String;Ljava/lang/String;I)I",fileName,this.TEMP_PATH, downloadTimeOutMiliseconds);
         }
         else
         {
@@ -288,7 +289,7 @@ export default class VoiceManager extends cc.Component {
         let nRet : number = 0 ;
         if ( CC_JSB && cc.sys.ANDROID )
         {
-            nRet = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/GvoiceManager", "JSplayFile", "(Ljava/lang/String;)I",this.TEMP_PATH + fileName );
+            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSplayFile", "(Ljava/lang/String;)I",this.TEMP_PATH + fileName );
         }
         else
         {

@@ -221,6 +221,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 27 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Gradle: com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.1.6@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\Users\billcomputer\Documents\GitHub\MJ\build\jsb-link\frameworks\runtime-src\proj.android-studio\app\libs\GCloudVoice.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\CocosCreator\resources\cocos2d-x\cocos\platform\android\java\libs\android-async-http-1.4.9.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\CocosCreator\resources\cocos2d-x\cocos\platform\android\java\libs\com.android.vending.expansion.zipfile.jar:unspecified@jar" level="project" />
