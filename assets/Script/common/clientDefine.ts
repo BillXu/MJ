@@ -33,6 +33,11 @@ let SceneName =
     Scene_Replay : "replay",
 }
 
+let configDef = 
+{ 
+	APP_DOWNLOAD_URL : "http://qq.com",
+};
+
 export enum eMusicType
 {
 	eMusic_Relax,
@@ -174,4 +179,4 @@ export enum eMailState
 	eMailState_Max,
 };
 
-export { clientDefine , SceneName,clientEvent }  ;
+export { clientDefine , SceneName,clientEvent,configDef }  ;

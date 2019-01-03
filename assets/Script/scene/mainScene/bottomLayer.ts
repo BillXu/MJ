@@ -17,6 +17,7 @@ import DlgBase from "../../common/DlgBase";
 import DlgShop from "./shop/dlgShop";
 import ClientData from "../../globalModule/ClientData";
 import WechatManager, { eWechatShareDestType } from "../../sdk/WechatManager";
+import { eChatMsgType } from "../roomScene/roomDefine";
 @ccclass
 export default class BottomLayer extends cc.Component {
 
@@ -69,13 +70,12 @@ export default class BottomLayer extends cc.Component {
 
     onBtnShare()
     {
-        console.log( "onBtnShare" );
-        WechatManager.getInstance().shareImageWechat(this.pBackground.node,eWechatShareDestType.eDest_Firend,"callback");
+        WechatManager.getInstance().shareTextWechat("test check",eWechatShareDestType.eDest_Firend,"title") ;
     }
 
     onBtnActivty()
     {
-        WechatManager.getInstance().shareTextWechat("这里是文字的内容，好的啊，真的好，就是牛逼",eWechatShareDestType.eDest_Firend,"这里就是文字类型的标题","hello back");
+
     }
     // update (dt) {}
 }

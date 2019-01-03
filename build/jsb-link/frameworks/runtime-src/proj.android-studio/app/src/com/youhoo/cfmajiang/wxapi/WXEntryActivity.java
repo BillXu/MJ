@@ -1,6 +1,4 @@
 package com.youhoo.cfmajiang.wxapi;
-
-import android.app.Activity;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -10,21 +8,8 @@ import com.cocos.analytics.CAAgent;
 import com.youhoo.cfmajiang.GPSManager;
 import com.youhoo.cfmajiang.GvoiceManager;
 import com.youhoo.cfmajiang.WechatManager;
-
-
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.tencent.mm.opensdk.modelbase.BaseReq;
-import com.tencent.mm.opensdk.modelbase.BaseResp;
-import com.tencent.mm.opensdk.modelmsg.SendAuth;
-
-import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
-
-import static android.content.ContentValues.TAG;
-
 
 public class WXEntryActivity extends Cocos2dxActivity {
 

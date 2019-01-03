@@ -120,6 +120,17 @@ public class WechatManager implements IWXAPIEventHandler {
 
     public void onNewIntent(Intent intent)
     {
+        if ( intent == null )
+        {
+            Log.d(TAG, "onNewIntent: 参数为空");
+            return;
+        }
+        
+        if ( mApi == null )
+        {
+            Log.d(TAG, "onNewIntent: api 对象为空");
+            return;
+        }
         mApi.handleIntent(intent,this);
     }
 

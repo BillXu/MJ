@@ -372,11 +372,16 @@ export default class ClientData
 
     public clearWhenLogout()
     {
+        let hodpath = cc.sys.localStorage.getItem("HotUpdateSearchPaths");
         this.selfUID = 0 ;
         this.curAccount = "";
         this.curPwd = "" ;
         this.jsSelfBaseDataMsg = {} ;
         cc.sys.localStorage.clear();
+        if ( hodpath != null )
+        {
+            cc.sys.localStorage.setItem("HotUpdateSearchPaths",hodpath) ;
+        }
     }
     
     getMsgPortByGameType( game : eGameType ) : eMsgPort

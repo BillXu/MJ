@@ -13,6 +13,7 @@ import DlgRoomOverResultItem from "./dlgRoomOverResultItem"
 import DlgBase from "../../common/DlgBase"
 import RoomData from "./roomData";
 import { SceneName } from "../../common/clientDefine"
+import WechatManager, { eWechatShareDestType } from "../../sdk/WechatManager";
 @ccclass
 export default class DlgRoomOverResult extends DlgBase {
 
@@ -90,7 +91,7 @@ export default class DlgRoomOverResult extends DlgBase {
 
     onBtnShare()
     {
-
+        WechatManager.getInstance().shareImageWechat(this.pBgImgArea,eWechatShareDestType.eDest_Firend);
     }
 
     onBtnGoOn()

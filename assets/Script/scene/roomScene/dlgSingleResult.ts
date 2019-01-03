@@ -16,6 +16,7 @@ import CardFactory from "./cardFactory"
 import { playerBaseData } from "./roomInterface";
 import { eMJActType } from "./roomDefine";
 import DlgBase from "../../common/DlgBase"
+import WechatManager, { eWechatShareDestType } from "../../sdk/WechatManager";
 @ccclass
 export default class dlgSingleResult extends DlgBase {
 
@@ -200,6 +201,7 @@ export default class dlgSingleResult extends DlgBase {
     {
         this.unschedule(this.onCountDownTimer) ;
         cc.Component.EventHandler.emitEvents(this.vReusltHandle,false) ;
+        WechatManager.getInstance().shareImageWechat(this.pBgImgArea,eWechatShareDestType.eDest_Firend);
     }
 
     onClickGoOn()

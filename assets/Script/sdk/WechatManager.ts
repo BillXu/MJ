@@ -11,13 +11,6 @@ import { SDK_DEF } from "./SDK_DEF";
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-export enum eWechatShareContentType
-{
-    eContent_Text,
-    eContent_Imgage,
-    eContent_Link,
-    eContent_Max,
-};
 
 export enum eWechatShareDestType
 {
@@ -179,7 +172,7 @@ export default class WechatManager  {
         xhr.send();
     }
 
-    shareTextWechat( strContent : string,type : eWechatShareDestType, strTitle : string, actionTag : string )
+    shareTextWechat( strContent : string,type : eWechatShareDestType, strTitle : string, actionTag : string= "defaultTag" )
     {
         if ( CC_JSB && cc.sys.ANDROID )
         {
@@ -191,7 +184,7 @@ export default class WechatManager  {
         }
     }
 
-    shareLinkWechat( strLink : string,type : eWechatShareDestType, strTitle : string, strDesc : string, actionTag : string )
+    shareLinkWechat( strLink : string,type : eWechatShareDestType, strTitle : string, strDesc : string, actionTag : string= "defaultTag" )
     {
         if ( CC_JSB && cc.sys.ANDROID )
         {
@@ -203,7 +196,7 @@ export default class WechatManager  {
         }
     }
 
-    shareImageWechat( pCaptureNode: cc.Node ,type : eWechatShareDestType, actionTag : string )
+    shareImageWechat( pCaptureNode: cc.Node ,type : eWechatShareDestType, actionTag : string = "defaultTag" )
     {
         let strPathFile = "" ;
         if ( CC_JSB )

@@ -10,7 +10,7 @@
 
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../../common/DlgBase"
-import { clientDefine ,clientEvent} from "../../../common/clientDefine"
+import { clientDefine ,clientEvent, configDef} from "../../../common/clientDefine"
 import { eMsgPort , eMsgType } from "../../../common/MessageIdentifer"
 import ClubData from "./clubData";
 import ClubList from "./clubList";
@@ -25,6 +25,7 @@ import ClientData from "../../../globalModule/ClientData";
 import { eClubSettingBtn } from "./dlgClubSetting"
 import Network from "../../../common/Network";
 import Utility from "../../../globalModule/Utility";
+import WechatManager, { eWechatShareDestType } from "../../../sdk/WechatManager";
 @ccclass
 export default class DlgClub extends DlgBase {
 
@@ -197,7 +198,16 @@ export default class DlgClub extends DlgBase {
 
     onBtnShare()
     {
+        if ( this.nCurSelClubIdx == -1 )
+        {
+            Utility.showPromptText( "当前无选中俱乐部" );
+            return ;
+        }
 
+        let id = this.vClubDatas[this.nCurSelClubIdx].clubID ;
+        let title = "诚邀加入俱乐部ID:"+ id ;
+        let desc = ClientData.getInstance().jsSelfBaseDataMsg["name"] + " 诚邀您加入俱乐部(ID:" + id +")大家庭，一起为麻将狂欢，请火速集结!";
+        WechatManager.getInstance().shareLinkWechat(configDef.APP_DOWNLOAD_URL,eWechatShareDestType.eDest_Firend,title,desc) ;
     }
 
     onBtnSetting()

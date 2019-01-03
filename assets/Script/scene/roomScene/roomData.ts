@@ -79,6 +79,11 @@ export default class RoomData extends cc.Component {
         return this.jsRoomInfoMsg["opts"]["guapu"] == 1 ;
     }
 
+    get isEnableAvoidCheat() : boolean
+    {
+        return this.jsRoomInfoMsg["opts"]["enableAvoidCheat"] == 1 ;
+    }
+
     get gameType() : eGameType
     {
         return this.jsRoomInfoMsg["opts"]["gameType"] ;

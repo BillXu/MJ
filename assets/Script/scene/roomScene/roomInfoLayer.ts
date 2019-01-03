@@ -15,10 +15,11 @@ import RoomData from "./roomData"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import { eMsgType } from "../../common/MessageIdentifer"
 import DlgSetting from "../mainScene/dlgSetting"
-import { eDeskBg, clientEvent, eMJBg, SceneName } from "../../common/clientDefine"
+import { eDeskBg, clientEvent, eMJBg, SceneName, eGameType, configDef } from "../../common/clientDefine"
 import ClientData from "../../globalModule/ClientData";
 import Utility from "../../globalModule/Utility";
 import DlgRoomChat from "./dlgRoomChat";
+import WechatManager, { eWechatShareDestType } from "../../sdk/WechatManager";
 @ccclass
 export default class RoomInfoLayer extends roomSceneLayerBase {
 
@@ -241,7 +242,45 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
 
     onBtnWechatInviate()
     {
+        let strRule = "" ;
+        let gameType = this.roomScene.pRoomData.gameType ;
+        if ( eGameType.eGame_AHMJ == gameType )
+        {
+            strRule = "敖汉麻将";
+        }
+        else if ( eGameType.eGame_CFMJ == gameType )
+        {
+            strRule = "赤峰麻将";
+        }
+        else if ( eGameType.eGame_NCMJ == gameType )
+        {
+            strRule = "宁城麻将";
+        }
+        else
+        {
+            strRule = "unknown: " + gameType;
+        }
 
+        if ( this.roomScene.pRoomData.seatCnt == 2 )
+        {
+            strRule += ":二人麻将" ;
+        }
+        else if ( 3 == this.roomScene.pRoomData.seatCnt )
+        {
+            strRule += ":三人麻将" ;
+        }
+        else
+        {
+            strRule += ":四人麻将" ;
+        }
+
+        strRule += " 房间号：" + this.roomScene.pRoomData.roomID;
+        let desc = this.roomScene.pRoomData.isDuipu ? "对铺," : "" ;
+        desc += this.roomScene.pRoomData.isEnableAvoidCheat ? "防作弊," : "";
+        let cnt = this.roomScene.pRoomData.totalCircleOrRoundCnt + ( this.roomScene.pRoomData.isCircleType ? "圈" : "局" ) ;
+        desc += cnt ;
+        desc += ",速度来啊！手机在家就能玩，随时随地打" + cnt + "!";
+        WechatManager.getInstance().shareLinkWechat(configDef.APP_DOWNLOAD_URL,eWechatShareDestType.eDest_Firend,strRule,desc) ;
     }
 
     onBtnDismissRoom()
