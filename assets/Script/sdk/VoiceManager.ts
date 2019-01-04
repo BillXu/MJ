@@ -51,6 +51,12 @@ export default class VoiceManager extends cc.Component {
     static EVENT_APPLY_KEY : string  = "VOICE_EVENT_APPLY_KEY" ;  // { code : 2 }
     static EVENT_DOWNLOADED : string  = "VOICE_EVENT_DOWNLOADED" ; // { code : 2 , fileName : "" }
 
+    static SDK_VOICE_INIT : string = "SDK_VOICE_INIT" ; // { appID : "adf", appKey : "adf", playerTag : "uid" }
+    static SDK_VOICE_RECORD : string = "SDK_VOICE_RECORD"; // { fullPathFile : "c://music/r.mp3" }
+    static SDK_VOICE_STOP_RECORD : string = "SDK_VOICE_STOP_RECORD" ; // { isUpload : 1 , uploadTimeout : 4000 } // timeout is milliseconds ;
+    static SDK_VOICE_DOWNLOAD_FILE : string = "SDK_VOICE_DOWNLOAD_FILE" ; // { fileID : "23s", path : "c://abc/", timeout : 2000 } // timeout is milliseconds ;
+    static SDK_VOICE_PLAY_FILE : string = "SDK_VOICE_PLAY_FILE" ; // { fullPathFile : "c://music/r.mp3" }
+
     public static getInstance() : VoiceManager
     {
         if ( VoiceManager.s_voiceMgr == null )
@@ -77,17 +83,7 @@ export default class VoiceManager extends cc.Component {
         this.unRegisterEvent();
         this.registerEvent();
         // do init work
-        let nRet = 0 ;
-        if ( CC_JSB && cc.sys.ANDROID )
-        {
-            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSinitWithPlayer", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",this.APP_ID,this.APP_KEY, playerTag);
-        }
-        else
-        {
-            cc.warn( "other platform not implement " );
-            return false ;
-        }
-
+        let nRet = sendRequestToPlatform(VoiceManager.SDK_VOICE_INIT,{ appID : this.APP_ID, appKey : this.APP_KEY, playerTag : playerTag } ) ;
         if ( nRet != GCloudVoiceErrno.GCLOUD_VOICE_SUCC )
         {
             Utility.showTip("语音模块初始化失败，请开启语音授权后，关闭进程重启app再试一下!code = " + nRet ) ;
@@ -156,17 +152,7 @@ export default class VoiceManager extends cc.Component {
             return false ;
         }
 
-        let nRet : number = 0 ;
-        if ( CC_JSB && cc.sys.ANDROID )
-        {
-            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSstartRecord", "(Ljava/lang/String;)I",this.TEMP_PATH + fileName );
-        }
-        else
-        {
-            cc.warn( "other platform not implement " );
-            return false ;
-        }
-
+        let nRet : number = sendRequestToPlatform(VoiceManager.SDK_VOICE_RECORD,{ fullPathFile : this.TEMP_PATH + fileName }) ;
         if ( nRet == GCloudVoiceErrno.GCLOUD_VOICE_AUTHKEY_ERR )
         {
             Utility.showPromptText( "语音授权失败" );
@@ -201,17 +187,7 @@ export default class VoiceManager extends cc.Component {
             return false;
         }
 
-        let nRet : number = 0 ;
-        if ( CC_JSB && cc.sys.ANDROID )
-        {
-            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSstopRecord", "(ZI)I",isUpLoad,upLoadTimeOutMiliseconds );
-        }
-        else
-        {
-            cc.warn( "other platform not implement " );
-            return false ;
-        }
-
+        let nRet : number = sendRequestToPlatform(VoiceManager.SDK_VOICE_STOP_RECORD,{ isUpload : (isUpLoad ? 1 : 0) , uploadTimeout : upLoadTimeOutMiliseconds } ) ;
         if ( nRet != GCloudVoiceErrno.GCLOUD_VOICE_SUCC )
         {
             Utility.showPromptText( "停止录音错误code " + nRet );
@@ -222,17 +198,7 @@ export default class VoiceManager extends cc.Component {
 
     private downloadFile( fileName : string, downloadTimeOutMiliseconds : number = 6000 ) : boolean
     {
-        let nRet : number = 0 ;
-        if ( CC_JSB && cc.sys.ANDROID )
-        {
-            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSdownLoadFile", "(Ljava/lang/String;Ljava/lang/String;I)I",fileName,this.TEMP_PATH, downloadTimeOutMiliseconds);
-        }
-        else
-        {
-            console.warn( "not implement other platform" );
-            return false;
-        }
-
+        let nRet : number = sendRequestToPlatform(VoiceManager.SDK_VOICE_DOWNLOAD_FILE,{ fileID :fileName, path : this.TEMP_PATH, timeout : downloadTimeOutMiliseconds }) ;
         if ( nRet != GCloudVoiceErrno.GCLOUD_VOICE_SUCC )
         {
             Utility.showPromptText( "下载录音错误code " + nRet );
@@ -286,17 +252,7 @@ export default class VoiceManager extends cc.Component {
 
     private doPlayFile( fileName : string ) : boolean
     {
-        let nRet : number = 0 ;
-        if ( CC_JSB && cc.sys.ANDROID )
-        {
-            nRet = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH+"GvoiceManager", "JSplayFile", "(Ljava/lang/String;)I",this.TEMP_PATH + fileName );
-        }
-        else
-        {
-            cc.warn( "other platform not implement do play file" );
-            return false ;
-        }
-
+        let nRet : number = sendRequestToPlatform(VoiceManager.SDK_VOICE_PLAY_FILE,{ fullPathFile : this.TEMP_PATH + fileName }) ;
         if ( nRet != GCloudVoiceErrno.GCLOUD_VOICE_SUCC )
         {
             Utility.showPromptText( "播放录音错误code " + nRet );

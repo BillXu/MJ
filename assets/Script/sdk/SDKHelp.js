@@ -17,6 +17,27 @@ function sdkSendEvent( eventID  , detail )
 }
 
 
+function sendRequestToPlatform( eventID , jsDetail )
+{
+    if ( false == cc.sys.isNative )
+    {
+        cc.warn( "only navtive platform can use this function" );
+        return ;
+    }
+
+    let jsString = JSON.stringify(jsDetail);
+    if ( cc.sys.ANDROID )
+    {
+        return jsb.reflection.callStaticMethod("SDKHelp/SDKHelp", "onRecievedJsRequest", "(Ljava/lang/String;Ljava/lang/String;)I", eventID, jsString );
+    }
+
+    if ( cc.sys.OS_IOS )
+    {
+        return jsb.reflection.callStaticMethod("SDKHelp","onRecievedJsRequest:detail:",eventID,jsString);
+    }
+    console.error( "unknown platform Request do not dispatch" );
+    return 0 ;
+}
 
 // let SDKHelp = {} ;
 

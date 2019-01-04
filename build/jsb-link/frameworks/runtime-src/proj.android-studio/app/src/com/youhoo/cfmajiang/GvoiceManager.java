@@ -16,6 +16,8 @@ import org.json.JSONObject;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import SDKHelp.SDKHelp;
+
 import static android.content.ContentValues.TAG;
 
 /**
@@ -95,7 +97,6 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         return bEngineInit;
     }
 
-
     // js interface
     public int initWithPlayer( String appID , String appKey, String playerTag )
     {
@@ -173,12 +174,6 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         return ret;
     }
 
-    public static int JSinitWithPlayer( String appID , String appKey, String playerTag )
-    {
-        System.out.println("System JSinitWithPlayer");
-        Log.d("23","JSinitWithPlayer log") ;
-       return GvoiceManager.getInstance().initWithPlayer(appID,appKey,playerTag) ;
-    }
 
     public int startRecord( String strFileName )
     {
@@ -192,10 +187,6 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         return ret ;
     }
 
-    public static int JSstartRecord( String strFileName )
-    {
-        return GvoiceManager.getInstance().startRecord(strFileName) ;
-    }
 
     public int stopRecord( boolean isUpload , int msUploadTimeout )
     {
@@ -221,10 +212,7 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         }
         return ret ;
     }
-    public static int JSstopRecord( boolean isUpload , int msUploadTimeout )
-    {
-        return GvoiceManager.getInstance().stopRecord(isUpload,msUploadTimeout) ;
-    }
+
 
     public int downLoadFile( String strFileName, String path , int msTimeout )
     {
@@ -245,10 +233,7 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         return  0;
     }
 
-    public static  int JSdownLoadFile( String strFileName, String path , int msTimeout )
-    {
-        return GvoiceManager.getInstance().downLoadFile(strFileName,path,msTimeout) ;
-    }
+
     public int playFile( String pathFile )
     {
         int ret = mVoiceEngine.PlayRecordedFile(pathFile);
@@ -260,10 +245,6 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         return ret ;
     }
 
-    public static  int JSplayFile( String pathFile )
-    {
-        return GvoiceManager.getInstance().playFile(pathFile) ;
-    }
 
 //    public static  void JSupdate()
 //    {
@@ -305,7 +286,7 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         {
             System.out.println( "json exception = " + je.getMessage() );
         }
-        sendJsEvent("VOICE_EVENT_UPLOAED",jsObj );
+        SDKHelp.sendJsEvent("VOICE_EVENT_UPLOAED",jsObj );
     }
 
     /**
@@ -340,7 +321,7 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         {
             System.out.println( "json exception = " + je.getMessage() );
         }
-        sendJsEvent("VOICE_EVENT_DOWNLOADED",jsObj );
+        SDKHelp.sendJsEvent("VOICE_EVENT_DOWNLOADED",jsObj );
         Log.d(TAG, "OnDownloadFile: 只是为了停止录音的log");
         stopRecord(false,3000) ; // just test
     }
@@ -370,7 +351,7 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         {
             System.out.println( "json exception = " + je.getMessage() );
         }
-        sendJsEvent("VOICE_EVENT_PLAY_FINISH",jsObj );
+        SDKHelp.sendJsEvent("VOICE_EVENT_PLAY_FINISH",jsObj );
     }
 
     /**
@@ -397,8 +378,7 @@ public class GvoiceManager implements IGCloudVoiceNotify {
         {
             System.out.println( "json exception = " + je.getMessage() );
         }
-        sendJsEvent("VOICE_EVENT_APPLY_KEY", jsObj );
-
+        SDKHelp.sendJsEvent("VOICE_EVENT_APPLY_KEY", jsObj );
     }
 
 //    private void sendJsEvent( final String eventID , final String strDetail )
@@ -414,18 +394,53 @@ public class GvoiceManager implements IGCloudVoiceNotify {
 //        });
 //    }
 
-    private void sendJsEvent( final String eventID , JSONObject jsDetail )
+//    private void sendJsEvent( final String eventID , JSONObject jsDetail )
+//    {
+//        final String strDetail = jsDetail.toString();
+//        mActivity.runOnGLThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String js = "sdkSendEvent(\"" + eventID + "\"," + strDetail + ");" ;
+//                //String js = "sdkSendEvent(" + eventID + "," + strDetail + ");" ;
+//                Log.d("sendJsEvent", js);
+//                Cocos2dxJavascriptJavaBridge.evalString( js ) ;
+//            }
+//        });
+//    }
+    public int onRecievedJsRequest( String SDKRequestID, JSONObject jsArg )
     {
-        final String strDetail = jsDetail.toString();
-        mActivity.runOnGLThread(new Runnable() {
-            @Override
-            public void run() {
-                String js = "sdkSendEvent(\"" + eventID + "\"," + strDetail + ");" ;
-                //String js = "sdkSendEvent(" + eventID + "," + strDetail + ");" ;
-                Log.d("sendJsEvent", js);
-                Cocos2dxJavascriptJavaBridge.evalString( js ) ;
+        try {
+            if ( "SDK_VOICE_INIT".equals(SDKRequestID)  )
+            {
+                return  initWithPlayer(jsArg.getString("appID"),jsArg.getString("appKey"),jsArg.getString("playerTag")) ;
             }
-        });
+
+            if ( "SDK_VOICE_RECORD" .equals(SDKRequestID) )
+            {
+                return startRecord(jsArg.getString("fullPathFile")) ;
+            }
+
+            if ( "SDK_VOICE_STOP_RECORD" .equals(SDKRequestID) )
+            {
+                return  stopRecord(jsArg.getInt("isUpload") == 1 ,jsArg.getInt("uploadTimeout")) ;
+            }
+
+            if ( "SDK_VOICE_DOWNLOAD_FILE" .equals(SDKRequestID))
+            {
+                return  downLoadFile(jsArg.getString("fileID"),jsArg.getString("path"),jsArg.getInt("timeout")) ;
+            }
+
+            if ( "SDK_VOICE_PLAY_FILE".equals(SDKRequestID)  )
+            {
+                return  playFile( jsArg.getString("fullPathFile") ) ;
+            }
+        }
+        catch ( JSONException je )
+        {
+            Log.e("Gvoice", "获取参数错误: " + SDKRequestID + " error :" + je.getMessage() );
+            return  999999;
+        }
+        return SDKHelp.NOT_PROCESS_CODE ;
     }
     // not used callback
     @Override

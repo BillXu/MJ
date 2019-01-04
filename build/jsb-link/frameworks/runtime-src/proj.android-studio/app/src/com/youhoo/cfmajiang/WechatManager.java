@@ -29,6 +29,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import SDKHelp.SDKHelp;
+
 import static android.content.ContentValues.TAG;
 
 public class WechatManager implements IWXAPIEventHandler {
@@ -64,19 +66,19 @@ public class WechatManager implements IWXAPIEventHandler {
         return ret;
     }
 
-    public void sendJsEvent( final String eventID , JSONObject jsDetail )
-    {
-        final String strDetail = jsDetail.toString();
-        mActivity.runOnGLThread(new Runnable() {
-            @Override
-            public void run() {
-                String js = "sdkSendEvent(\"" + eventID + "\"," + strDetail + ");" ;
-                //String js = "sdkSendEvent(" + eventID + "," + strDetail + ");" ;
-                Log.d("sendJsEvent", js);
-                Cocos2dxJavascriptJavaBridge.evalString( js ) ;
-            }
-        });
-    }
+//    public void sendJsEvent( final String eventID , JSONObject jsDetail )
+//    {
+//        final String strDetail = jsDetail.toString();
+//        mActivity.runOnGLThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String js = "sdkSendEvent(\"" + eventID + "\"," + strDetail + ");" ;
+//                //String js = "sdkSendEvent(" + eventID + "," + strDetail + ");" ;
+//                Log.d("sendJsEvent", js);
+//                Cocos2dxJavascriptJavaBridge.evalString( js ) ;
+//            }
+//        });
+//    }
 
     // js interface
     void init( String appID )
@@ -163,7 +165,7 @@ public class WechatManager implements IWXAPIEventHandler {
         return WechatManager.getInstance().shareLinkToWeChat(link,title,desc,type,actTag) ;
     }
     //type:1 好友 2 朋友圈
-    public boolean shareTextToWeChat( String content_txt, int type, String title,String actTag )
+    public boolean shareTextToWeChat( String content_txt, int type,String actTag )
     {
 
         WXTextObject textObj = new WXTextObject();
@@ -172,7 +174,7 @@ public class WechatManager implements IWXAPIEventHandler {
         WXMediaMessage msg = new WXMediaMessage();
         msg.mediaObject = textObj;
         msg.description = content_txt;
-        msg.title = title;
+        msg.title = "title";
 
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = actTag;
@@ -190,7 +192,7 @@ public class WechatManager implements IWXAPIEventHandler {
 
     static  boolean JSshareTextToWechat( String content_txt, int type, String title ,String actTag )
     {
-        return  WechatManager.getInstance().shareTextToWeChat(content_txt,type,title,actTag) ;
+        return  WechatManager.getInstance().shareTextToWeChat(content_txt,type,actTag) ;
     }
     //type:1 好友 2 朋友圈
     public boolean shareImageToWeChat(String pathFile, int type,String actTag )
@@ -297,7 +299,7 @@ public class WechatManager implements IWXAPIEventHandler {
             System.out.println( "json exception = " + je.getMessage() );
         }
 
-        this.sendJsEvent("EVENT_WECHAT_CODE", jsObj );
+        SDKHelp.sendJsEvent("EVENT_WECHAT_CODE", jsObj );
     }
 
     protected  void onShareCallback( SendMessageToWX.Resp resp )
@@ -313,6 +315,47 @@ public class WechatManager implements IWXAPIEventHandler {
         {
             System.out.println( "json exception = " + je.getMessage() );
         }
-        this.sendJsEvent("EVENT_WECHAT_SHARE_RESULT", jsObj );
+        SDKHelp.sendJsEvent("EVENT_WECHAT_SHARE_RESULT", jsObj );
+    }
+
+    public int onRecievedJsRequest( String SDKRequestID, JSONObject jsArg )
+    {
+        try {
+            if ( "SDK_WECHAT_INIT" .equals(SDKRequestID)  )
+            {
+                this.init( jsArg.getString("appID"));
+                return  0 ;
+            }
+
+            if ( "SDK_WECHAT_AUTHOR".equals(SDKRequestID)  )
+            {
+                this.reqAuthor();
+                return  0 ;
+            }
+
+            if ( "SDK_WECHAT_SHARE_TEXT".equals(SDKRequestID)  )
+            {
+                boolean isOK = shareTextToWeChat(jsArg.getString("strContent"),jsArg.getInt("type"),jsArg.getString("actionTag") );
+                return  isOK ? 0 : 1 ;
+            }
+
+            if ( "SDK_WECHAT_SHARE_LINK".equals(SDKRequestID)  )
+            {
+                boolean isOK = shareLinkToWeChat(jsArg.getString("strLink"),jsArg.getString("strTitle"),jsArg.getString("strDesc"),jsArg.getInt("type"),jsArg.getString("actionTag") );
+                return  isOK ? 0 : 1 ;
+            }
+
+            if ( "SDK_WECHAT_SHARE_IMAGE".equals(SDKRequestID)  )
+            {
+                boolean isOK = shareImageToWeChat(jsArg.getString("file"),jsArg.getInt("type"),jsArg.getString("actionTag") );
+                return  isOK ? 0 : 1 ;
+            }
+        }
+        catch ( JSONException je )
+        {
+            Log.e("WeChatMgr", "获取参数错误: " + SDKRequestID + " error :" + je.getMessage() );
+            return  999999;
+        }
+        return SDKHelp.NOT_PROCESS_CODE ;
     }
 }

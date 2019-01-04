@@ -17,6 +17,9 @@ export default class GPSManager{
 
     static s_Mgr : GPSManager = null ;
     static EVENT_GPS_RESULT : string = "EVENT_GPS_RESULT" ; // { code : 2 , longitude : 23 , latitude : 2 , address : "" }
+    
+    static SDK_GPS_REQUEST_GPSINFO : string = "SDK_GPS_REQUEST_GPSINFO" ; // { isNeedAddress : 1 } 
+    static SDK_GPS_CACULATE_DISTANCE : string = "SDK_GPS_CACULATE_DISTANCE" ; // { A_longitude : 23, A_latitude : 23 ,B_longitude : 23, B_latitude : 23 }
     // longitude = J (jing du )
     static getInstance() : GPSManager
     {
@@ -29,27 +32,14 @@ export default class GPSManager{
  
     requestGPS( isNeedAddress : boolean = false )
     {
-        if ( CC_JSB && cc.sys.ANDROID )
-        {
-            jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH + "GPSManager", "JSrequstGPS", "(Z)V",isNeedAddress );
-        }
-        else
-        {
-            cc.warn( "other platform not implement requestGPS" );
-        }
+        let jsArg = { } ;
+        jsArg["isNeedAddress"] = isNeedAddress ? 1 : 0 ;
+        return sendRequestToPlatform(GPSManager.SDK_GPS_REQUEST_GPSINFO,jsArg) ;
     }
 
     caculateDistance( A_longitude : number  , A_latitude : number ,B_longitude : number, B_latitude : number ) : number
     {
-        if ( CC_JSB && cc.sys.ANDROID )
-        {
-            let ret = jsb.reflection.callStaticMethod(SDK_DEF.PACKAGE_NAME_PATH +"GPSManager", "JScaculateDistance", "(FFFF)F",A_longitude , A_latitude ,B_longitude , B_latitude );
-            return Math.floor(ret + 0.5) ;
-        }
-        else
-        {
-            cc.warn( "other platform not implement requestGPS" );
-        }
-        return 1000 ;
+        let jsArg = { A_longitude : A_longitude , A_latitude : A_latitude , B_longitude : B_longitude , B_latitude : B_latitude} ;
+        return sendRequestToPlatform(GPSManager.SDK_GPS_CACULATE_DISTANCE,jsArg) ;
     }
 }

@@ -15,6 +15,8 @@ import org.cocos2dx.lib.Cocos2dxJavascriptJavaBridge;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import SDKHelp.SDKHelp;
+
 import static android.content.ContentValues.TAG;
 
 /**
@@ -55,19 +57,19 @@ public class GPSManager implements AMapLocationListener {
         return ret;
     }
 
-    private void sendJsEvent( final String eventID , JSONObject jsDetail )
-    {
-        final String strDetail = jsDetail.toString();
-        mActivity.runOnGLThread(new Runnable() {
-            @Override
-            public void run() {
-                String js = "sdkSendEvent(\"" + eventID + "\"," + strDetail + ");" ;
-                //String js = "sdkSendEvent(" + eventID + "," + strDetail + ");" ;
-                Log.d("sendJsEvent", js);
-                Cocos2dxJavascriptJavaBridge.evalString( js ) ;
-            }
-        });
-    }
+//    private void sendJsEvent( final String eventID , JSONObject jsDetail )
+//    {
+//        final String strDetail = jsDetail.toString();
+//        mActivity.runOnGLThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String js = "sdkSendEvent(\"" + eventID + "\"," + strDetail + ");" ;
+//                //String js = "sdkSendEvent(" + eventID + "," + strDetail + ");" ;
+//                Log.d("sendJsEvent", js);
+//                Cocos2dxJavascriptJavaBridge.evalString( js ) ;
+//            }
+//        });
+//    }
 
     // js interface
     void requestGPS( boolean isNeedAddress )
@@ -93,11 +95,6 @@ public class GPSManager implements AMapLocationListener {
         isRequestingGPS = true ;
     }
 
-    static  void JSrequstGPS( boolean isNeedAddress )
-    {
-         GPSManager.getInstance().requestGPS(isNeedAddress);
-    }
-
     float caculateDistance( double A_longitude , double A_latitude ,double B_longitude , double B_latitude )
     {
         if ( null == mDistanceCaculater )
@@ -115,10 +112,6 @@ public class GPSManager implements AMapLocationListener {
         return mDistanceCaculater.calculateLineDistance(A,B) ;
     }
 
-    static float JScaculateDistance( float A_longitude , float A_latitude ,float B_longitude , float B_latitude )
-    {
-        return GPSManager.getInstance().caculateDistance(A_longitude,A_latitude,B_longitude,B_latitude) ;
-    }
     // call back ;
     public void onLocationChanged(AMapLocation amapLocation )
     {
@@ -151,8 +144,39 @@ public class GPSManager implements AMapLocationListener {
         {
             System.out.println( "json exception = " + je.getMessage() );
         }
-        sendJsEvent("EVENT_GPS_RESULT", jsObj );
+        SDKHelp.sendJsEvent("EVENT_GPS_RESULT", jsObj );
 
         mLocationClient.stopLocation();
+    }
+
+    public int onRecievedJsRequest( String SDKRequestID, JSONObject jsArg )
+    {
+        if ( SDKRequestID.equals("SDK_GPS_CACULATE_DISTANCE")  )
+        {
+            try
+            {
+                return (int)caculateDistance(jsArg.getDouble("A_longitude"),jsArg.getDouble("A_latitude"),jsArg.getDouble("B_longitude"),jsArg.getDouble("B_latitude") );
+            }
+            catch ( JSONException je )
+            {
+                Log.e("GPS", "获取参数错误: " + SDKRequestID + " error :" + je.getMessage() );
+                return 9999999;
+            }
+        }
+
+        if ( "SDK_GPS_REQUEST_GPSINFO".equals( SDKRequestID ) )
+        {
+            try
+            {
+                requestGPS(jsArg.getInt("isNeedAddress") == 1 );
+                return  0 ;
+            }
+            catch ( JSONException je )
+            {
+                Log.e("GPS", "获取参数错误: " + SDKRequestID + " error :" + je.getMessage() );
+                return 9999999;
+            }
+        }
+        return SDKHelp.NOT_PROCESS_CODE ;
     }
 }

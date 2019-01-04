@@ -32,6 +32,11 @@ export default class WechatManager  {
     static EVENT_RECIEVED_WECHAT_INFO : string = "EVENT_RECIEVED_WECHAT_INFO" ; // { isOk : 0 , unionid : "",nickname : "" ,sex : 1 , headimgurl : "" }
     static EVENT_WECHAT_SHARE_RESULT : string = "EVENT_WECHAT_SHARE_RESULT"; // { isOk : 0 , actionTag : "" }
 
+    static SDK_WECHAT_INIT : string = "SDK_WECHAT_INIT" ; // { appID : "dsjfa" }
+    static SDK_WECHAT_AUTHOR : string = "SDK_WECHAT_AUTHOR" ; // {} 
+    static SDK_WECHAT_SHARE_TEXT : string = "SDK_WECHAT_SHARE_TEXT" ; // { strContent : "aa", type : eWechatShareDestType, actionTag : "aa" }
+    static SDK_WECHAT_SHARE_LINK : string = "SDK_WECHAT_SHARE_LINK" ; // { strLink : "http://abc.com", type : eWechatShareDestType, strTitle : "hello", strDesc : "desc", actionTag : "tag"}
+    static SDK_WECHAT_SHARE_IMAGE :string = "SDK_WECHAT_SHARE_IMAGE" ; // { file : "c://hello/a.png" , type : eWechatShareDestType , actionTag : "aa" }
 
     static getInstance() : WechatManager
     {
@@ -46,6 +51,9 @@ export default class WechatManager  {
     private init()
     {
         this.registerEvent();
+
+        sendRequestToPlatform(WechatManager.SDK_WECHAT_INIT,{ appID : this.APP_ID } ) ;
+        return ;
         if ( CC_JSB && cc.sys.ANDROID )
         {
             jsb.reflection.callStaticMethod( SDK_DEF.PACKAGE_NAME_PATH + "WechatManager", "JSinit", "(Ljava/lang/String;)V",this.APP_ID );
@@ -68,6 +76,8 @@ export default class WechatManager  {
 
     reqAuthor()
     {
+        sendRequestToPlatform(WechatManager.SDK_WECHAT_AUTHOR,{} ) ;
+        return ;
         if ( CC_JSB && cc.sys.ANDROID )
         {
             jsb.reflection.callStaticMethod( SDK_DEF.PACKAGE_NAME_PATH + "WechatManager", "JSreqAuthor", "()V" );
@@ -174,6 +184,13 @@ export default class WechatManager  {
 
     shareTextWechat( strContent : string,type : eWechatShareDestType, strTitle : string, actionTag : string= "defaultTag" )
     {
+        let jsArg = {} ;
+        jsArg["strContent"] = strContent;
+        jsArg["type"] = type;
+        jsArg["actionTag"] = actionTag ;
+        sendRequestToPlatform(WechatManager.SDK_WECHAT_SHARE_TEXT,jsArg) ;
+        return ;
+
         if ( CC_JSB && cc.sys.ANDROID )
         {
             jsb.reflection.callStaticMethod( SDK_DEF.PACKAGE_NAME_PATH + "WechatManager", "JSshareTextToWechat", "(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)Z",strContent, type,strTitle,actionTag );
@@ -186,6 +203,8 @@ export default class WechatManager  {
 
     shareLinkWechat( strLink : string,type : eWechatShareDestType, strTitle : string, strDesc : string, actionTag : string= "defaultTag" )
     {
+        sendRequestToPlatform(WechatManager.SDK_WECHAT_SHARE_LINK,{ strLink : strLink , type : type , strTitle : strTitle , strDesc : strDesc, actionTag : actionTag } ) ;
+        return ;
         if ( CC_JSB && cc.sys.ANDROID )
         {
             jsb.reflection.callStaticMethod( SDK_DEF.PACKAGE_NAME_PATH + "WechatManager", "JSshareLinkToWechat", "(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z",strLink,type, strTitle,strDesc,actionTag );
@@ -205,6 +224,9 @@ export default class WechatManager  {
         }
 
         this.captureScreen(pCaptureNode,strPathFile) ;
+
+        sendRequestToPlatform(WechatManager.SDK_WECHAT_SHARE_IMAGE,{ file : strPathFile,type : type , actionTag : actionTag}) ;
+        return ;
         if ( CC_JSB && cc.sys.ANDROID )
         {
             jsb.reflection.callStaticMethod( SDK_DEF.PACKAGE_NAME_PATH + "WechatManager", "JSshareImageToWeChat", "(Ljava/lang/String;ILjava/lang/String;)Z",strPathFile,type,actionTag );

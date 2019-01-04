@@ -13,6 +13,7 @@ import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 public class WXEntryActivity extends Cocos2dxActivity {
 
+    public  static  Cocos2dxActivity g_AppActivity = null ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +26,10 @@ public class WXEntryActivity extends Cocos2dxActivity {
             return;
         }
         // DO OTHER INITIALIZATION BELOW
-
+        if ( g_AppActivity == null )
+        {
+            g_AppActivity = this ;
+        }
         org.cocos2dx.javascript.SDKWrapper.getInstance().init(this);
         CAAgent.enableDebug(false);
         GvoiceManager.getInstance().bindActivity(this);
