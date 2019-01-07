@@ -10,14 +10,12 @@
 
 const {ccclass, property} = cc._decorator;
 import DlgSetting from "./dlgSetting"
-import utility from "../../globalModule/Utility"
 import dlgRecord from "./record/dlgRecord";
 import Bacground from "./background"
 import DlgBase from "../../common/DlgBase";
 import DlgShop from "./shop/dlgShop";
 import ClientData from "../../globalModule/ClientData";
-import WechatManager, { eWechatShareDestType } from "../../sdk/WechatManager";
-import { eChatMsgType } from "../roomScene/roomDefine";
+import DlgShare from "./dlgShare";
 @ccclass
 export default class BottomLayer extends cc.Component {
 
@@ -35,6 +33,9 @@ export default class BottomLayer extends cc.Component {
 
     @property(DlgShop)
     pDlgShop : DlgShop = null ;
+
+    @property(DlgShare)
+    pDlgShare : DlgShare = null ;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -70,7 +71,7 @@ export default class BottomLayer extends cc.Component {
 
     onBtnShare()
     {
-        WechatManager.getInstance().shareTextWechat("test check",eWechatShareDestType.eDest_Firend,"title") ;
+         this.pDlgShare.showDlg();
     }
 
     onBtnActivty()
