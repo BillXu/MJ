@@ -22,7 +22,7 @@ local/
 /build/jsb-link/frameworks/runtime-src/proj.android-studio/app/release/
 /build/jsb-link/frameworks/runtime-src/proj.android-studio/app/.externalNativeBuild/
 !/build/jsb-link/frameworks/runtime-src/proj.ios_mac/
-/build/jsb-link/frameworks/runtime-src/proj.ios_mac/mac/
+#/build/jsb-link/frameworks/runtime-src/proj.ios_mac/mac/
  
 
 #/////////////////////////////////////////////////////////////////////////////
