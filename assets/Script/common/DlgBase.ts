@@ -1,3 +1,5 @@
+import Utility from "../globalModule/Utility";
+
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -104,7 +106,7 @@ export default class DlgBase extends cc.Component {
         {
             this.pOnCloseCallBack(this);
         }
-        cc.systemEvent.targetOff(this);
+        cc.systemEvent.targetOff(this); 
     }
     
     // update (dt) {}

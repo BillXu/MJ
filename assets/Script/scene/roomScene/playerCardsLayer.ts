@@ -59,7 +59,7 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
 
             let pcards = self.vPlayerCards[p.clientIdx] ;
             let cardsData = p.cards ;
-            pcards.onRefreshCards(cardsData.vHoldCard,cardsData.nHoldCardCnt,cardsData.vMingCards,cardsData.vChuCards,cardsData.nNewFeatchedCard) ;
+            pcards.onRefreshCards(p.isMale(),cardsData.vHoldCard,cardsData.nHoldCardCnt,cardsData.vMingCards,cardsData.vChuCards,cardsData.nNewFeatchedCard) ;
         } ); 
 
         if (  pdata.jsRoomInfoMsg["state"] != eRoomState.eRoomState_AskForHuAndPeng )
@@ -160,7 +160,7 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
 
     clearAllCards()
     {
-        this.vPlayerCards.forEach( ( v : PlayerCard )=>{ v.onRefreshCards(null,0,null,null,0) ;} ) ; 
+        this.vPlayerCards.forEach( ( v : PlayerCard )=>{ v.onRefreshCards(v.isMale,null,0,null,null,0) ;} ) ; 
         this.hideArrowTargetChuCardAni();
     }
 

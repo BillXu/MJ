@@ -16,6 +16,7 @@ import DlgBase from "../../common/DlgBase";
 import DlgShop from "./shop/dlgShop";
 import ClientData from "../../globalModule/ClientData";
 import DlgShare from "./dlgShare";
+import Utility from "../../globalModule/Utility";
 @ccclass
 export default class BottomLayer extends cc.Component {
 
@@ -47,6 +48,7 @@ export default class BottomLayer extends cc.Component {
     onBtnSetting()
     {
         this.pDlgSetting.showDlg();
+        Utility.audioBtnClick();
     }
 
     onBtnShop()
@@ -55,6 +57,7 @@ export default class BottomLayer extends cc.Component {
         this.pDlgShop.showDlg( ( shopItemID : number )=>{
             console.log( "send msg to buy shopitemID " + shopItemID );
         } ,ClientData.getInstance().jsSelfBaseDataMsg["diamond"] ) ;
+        Utility.audioBtnClick();
     }
 
     onBtnShowRecord()
@@ -62,21 +65,24 @@ export default class BottomLayer extends cc.Component {
         this.pBackground.hide();
         let self = this ;
         this.pDlgRecord.showDlg( null ,null,(dlg : DlgBase)=>{ self.pBackground.show();});
+        Utility.audioBtnClick();
     }
 
     onBtnHelp()
     {
         this.pDlgHelp.showDlg();
+        Utility.audioBtnClick();
     }
 
     onBtnShare()
     {
          this.pDlgShare.showDlg();
+         Utility.audioBtnClick();
     }
 
     onBtnActivty()
     {
-
+        Utility.audioBtnClick();
     }
     // update (dt) {}
 }

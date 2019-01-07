@@ -176,6 +176,8 @@ export default class DlgControlCenter extends DlgBase {
                 return true ;
             }) ;
         });
+
+        Utility.audioBtnClick();
     }
 
     onChangeName()
@@ -219,6 +221,8 @@ export default class DlgControlCenter extends DlgBase {
             }
             return true ;
         }) ;
+
+        Utility.audioBtnClick();
     }
 
     onSwitchStopOpen()
@@ -246,6 +250,8 @@ export default class DlgControlCenter extends DlgBase {
             }
             return true ;
         }) ;
+
+        Utility.audioBtnClick();
     }
 
     onDissmiss()
@@ -276,11 +282,14 @@ export default class DlgControlCenter extends DlgBase {
             }
             return true ;
         }) ;
+
+        Utility.audioBtnClick();
     }    
 
     onChangeTab( event : cc.Toggle )
     {
         this.pMgrTab.forEach( ( p : cc.Toggle )=>{ p.node.zIndex = event == p ? 1 : 0 ; } );
+        Utility.audioBtnClick();
     }
     // update (dt) {}
 }

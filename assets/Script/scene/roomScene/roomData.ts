@@ -112,6 +112,12 @@ export default class RoomData extends cc.Component {
     {
         this.jsRoomInfoMsg["curActIdex"] = idx ;
     }
+
+    getPlayerSex( clientIdx : number ) : number
+    { 
+        let p = this.getPlayerDataByClientIdx(clientIdx) ;
+        return p.sex;
+    }
     
     getPrivousPlayerIdx( nCurIdx : number ) : number 
     {

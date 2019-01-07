@@ -105,6 +105,11 @@ export default class CheckHotUpdate extends cc.Component {
 
     checkUpdate()
     {
+        if ( cc.sys.isNative == false )
+        {
+            return ;
+        }
+        
         console.log( "检查热更新" );
         if (this.isUpdateing) {
             console.log( "已经在更新了检查热更新" );

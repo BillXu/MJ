@@ -198,6 +198,7 @@ export default class DlgClub extends DlgBase {
 
     onBtnShare()
     {
+        Utility.audioBtnClick();
         if ( this.nCurSelClubIdx == -1 )
         {
             Utility.showPromptText( "当前无选中俱乐部" );
@@ -212,6 +213,7 @@ export default class DlgClub extends DlgBase {
 
     onBtnSetting()
     {
+        Utility.audioBtnClick();
         if ( ! this.vClubDatas[this.nCurSelClubIdx] )
         {
             console.log( "current do not have club , do not show dlg" );
@@ -223,6 +225,7 @@ export default class DlgClub extends DlgBase {
 
     onDlgSettingResultCallBack( btn : eClubSettingBtn )
     {
+        Utility.audioBtnClick();
         switch ( btn )
         {
             case eClubSettingBtn.Btn_ClubMessage:
@@ -354,6 +357,7 @@ export default class DlgClub extends DlgBase {
             this.pNoticeLabel.string = this.vClubDatas[this.nCurSelClubIdx].notice ;
         }
         
+        Utility.audioBtnClick();
     }
 
     onCreateNewClub( nClubID : number )

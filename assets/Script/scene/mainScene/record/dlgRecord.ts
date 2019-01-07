@@ -16,6 +16,7 @@ import { RecordItem } from "./recordData"
 import { clientEvent } from "../../../common/clientDefine"
 import DlgSingleRoomRecord from "./dlgSingleRoomRecorder";
 import ClientData from "../../../globalModule/ClientData";
+import Utility from "../../../globalModule/Utility";
 @ccclass
 export default class dlgRecord extends DlgBase {
 
@@ -87,10 +88,12 @@ export default class dlgRecord extends DlgBase {
     onClickLookOtherReplay()
     {
         // show enter replay id dlg ;
+        Utility.audioBtnClick();
     }
 
     onClickLookDetail( record : RecordItem )
     {
+        Utility.audioBtnClick();
         if ( record.vSingleDetail.length == 0 )
         {
             // go to featch from net ;

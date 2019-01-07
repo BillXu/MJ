@@ -300,6 +300,7 @@ export class playerBaseData
     W : number = 0 ;
     race : number = -1 ;    
 
+    isMale(){ return this.sex == 0 ;}
     parseFromMsg( info : Object )
     {
         this.uid = info["uid"] ;

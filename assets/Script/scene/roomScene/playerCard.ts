@@ -10,10 +10,11 @@
 
 const {ccclass, property} = cc._decorator;
 import CardFactory from "./cardFactory"
-import {eCardSate, eArrowDirect, RoomEvent } from "./roomDefine"
+import {eCardSate, eArrowDirect, RoomEvent, eMJActType } from "./roomDefine"
 import { IHoldMingPai } from "./roomInterface"
 import Card from "./card";
 import * as _ from "lodash"
+import RoomSound from "./roomSound";
 
 enum eOptNodeState 
 {
@@ -53,6 +54,9 @@ export default class PlayerCard extends cc.Component {
     @property(cc.Node)
     pRootNode : cc.Node = null ;
 
+    @property(RoomSound)
+    pRoomSound : RoomSound = null ;
+
     @property
     nPosIdx : number = 0 ;
 
@@ -77,6 +81,8 @@ export default class PlayerCard extends cc.Component {
     @property
     nCardOutstandOffset : number = 30 ;
     pOutstandNode : cc.Node = null ;
+
+    isMale : boolean = true ;
 
     @property([cc.Component.EventHandler])
     vDoChuPaiHandle : cc.Component.EventHandler[] = [] ;
@@ -315,8 +321,9 @@ export default class PlayerCard extends cc.Component {
         
     }
 
-    onRefreshCards( vHoldCards : number[] , holdCnt : number , vMingCards : IHoldMingPai[] , vOutCards : number[] , nFetchedCard: number )
+    onRefreshCards( isMale : boolean, vHoldCards : number[] , holdCnt : number , vMingCards : IHoldMingPai[] , vOutCards : number[] , nFetchedCard: number )
     {
+        this.isMale = isMale;
         // recycle all cards ;
         let self = this ;
         this.vOutCards.forEach( ( node : cc.Node )=>{ self.pCardFactory.recycleNode(node);} ) ;
@@ -397,7 +404,7 @@ export default class PlayerCard extends cc.Component {
     onDistributeCards( vHoldCards : number[] , holdCnt : number,nFetchedCard: number )
     {
         // here may be some animation ;
-        this.onRefreshCards(vHoldCards,holdCnt,null,null,nFetchedCard) ;
+        this.onRefreshCards(this.isMale,vHoldCards,holdCnt,null,null,nFetchedCard) ;
     }
 
     private doRelayoutAllCards()
@@ -643,7 +650,7 @@ export default class PlayerCard extends cc.Component {
         vHold.push(cardTFeng);
         vHold.push(cardTFeng);
 
-        this.onRefreshCards(vHold,vHold.length,vMIng,vOut,0) ;
+        this.onRefreshCards(false,vHold,vHold.length,vMIng,vOut,0) ;
     }
 
     private doRemoveCardFromHold( cardNum : number , cnt : number = 1 ) : cc.Node[] 
@@ -720,6 +727,7 @@ export default class PlayerCard extends cc.Component {
          // layout holdCards ;
          this.relayoutHoldCards();
          this.onWaitChu();
+         this.pRoomSound.playerActSound(this.isMale,eMJActType.eMJAct_Peng);
     }
 
     onZhiMingGang( cardNum : number , invokerClientIdx : number , gangNewCard : number )
@@ -733,6 +741,7 @@ export default class PlayerCard extends cc.Component {
         // layout holdCards ;
         this.onMo(gangNewCard) ;
         this.relayoutHoldCards();
+        this.pRoomSound.playerActSound(this.isMale,eMJActType.eMJAct_MingGang);
     }
 
     onBuMingGang( cardNum : number , invokerClientIdx : number , gangNewCard : number )
@@ -769,6 +778,7 @@ export default class PlayerCard extends cc.Component {
         // layout holdCards ;
         this.relayoutHoldCards();
         this.onMo(gangNewCard) ;
+        this.pRoomSound.playerActSound(this.isMale,eMJActType.eMJAct_AnGang);
     }
 
     onEat( targetCardNum : number , selfCardA : number , selfCardB : number )
@@ -783,6 +793,7 @@ export default class PlayerCard extends cc.Component {
         
         this.relayoutHoldCards();
         this.onWaitChu();
+        this.pRoomSound.playerActSound(this.isMale,eMJActType.eMJAct_Chi);
     }
 
     onMo( cardNum? : number )
@@ -824,6 +835,7 @@ export default class PlayerCard extends cc.Component {
             return ;
         }
         pChuNodePos = v[0].position ;
+        this.pRoomSound.playerCardSound(this.isMale,cardNum) ;
         this.doChuAnimation(cardNum,pChuNodePos,this.onChuPaiAniFinish.bind(this));
     }
 
@@ -843,6 +855,7 @@ export default class PlayerCard extends cc.Component {
         {
             this.pFetchedCard.zIndex = this.vHoldCards.length ;
         }
+        this.pRoomSound.playerActSound(this.isMale,eMJActType.eMJAct_Hu) ;
     }
 
     private onChuPaiAniFinish( pnode : cc.Node )
@@ -863,6 +876,8 @@ export default class PlayerCard extends cc.Component {
         {
             this.pfunChuAniFinishCallBack(pnode) ;
         }
+
+        this.pRoomSound.playerActSound(this.isMale,eMJActType.eMJAct_Chu) ;
     }
 
     getLastChuCardNode() : cc.Node
@@ -947,6 +962,7 @@ export default class PlayerCard extends cc.Component {
         this.isWaitChu = false ;
         this.doChuAnimation(cardNum,pos,this.onChuPaiAniFinish.bind(this));
         cc.Component.EventHandler.emitEvents(this.vDoChuPaiHandle,cardNum) ;
+        this.pRoomSound.playerCardSound(this.isMale,cardNum) ;
     }
 
     onChuPaiFailed( nCardNum )

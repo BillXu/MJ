@@ -44,6 +44,7 @@ export default class DlgModifyNotice extends DlgBase {
         this.pInputContent.setFocus();
         this.pBtnDoModify.active = true ;
         this.pBtnEnterModifyMode.active = !this.pBtnDoModify.active ;
+        Utility.audioBtnClick();
     }
 
     onStartInput()
@@ -73,6 +74,7 @@ export default class DlgModifyNotice extends DlgBase {
 
         this.pBtnDoModify.active = false ;
         this.pBtnEnterModifyMode.active = !this.pBtnDoModify.active ;
+        Utility.audioBtnClick();
     }
 
     // update (dt) {}

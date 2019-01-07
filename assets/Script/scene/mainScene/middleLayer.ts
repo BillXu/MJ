@@ -43,6 +43,7 @@ export default class MiddleLayer extends cc.Component {
         this.pBackground.hide();
         let self = this ;
         this.pDlgClub.showDlg( null ,null,(dlg : DlgCreateRoom)=>{ self.pBackground.show();});
+        Utility.audioBtnClick();
     }
 
     onClickCreateRoom( btn : cc.Button )
@@ -50,6 +51,7 @@ export default class MiddleLayer extends cc.Component {
         this.pBackground.hide();
         let self = this ;
         this.dlgCreateRoom.showDlg( this.onCreateRoomDlgResult.bind(this) ,null,(dlg : DlgCreateRoom)=>{ self.pBackground.show();});
+        Utility.audioBtnClick();
     }
 
     protected onCreateRoomDlgResult( msgCreateRoom : Object )
@@ -69,6 +71,7 @@ export default class MiddleLayer extends cc.Component {
             self.onJoinRoomDlgResult(roomID) ;
             return true ;
         });
+        Utility.audioBtnClick();
 
     }
 
@@ -76,6 +79,7 @@ export default class MiddleLayer extends cc.Component {
     {
         this.dlgJoinRoom.setDlgTitle(true); // must invoke ,before show ;
         this.dlgJoinRoom.showDlg( this.onJoinRoomDlgResult.bind(this));
+        Utility.audioBtnClick();
     }
 
     protected onJoinRoomDlgResult( nJoinRoomID : string )
@@ -110,7 +114,7 @@ export default class MiddleLayer extends cc.Component {
 
     onClickCompetition( btn : cc.Button )
     {
-
+        Utility.audioBtnClick();
     }
     // update (dt) {}
 }

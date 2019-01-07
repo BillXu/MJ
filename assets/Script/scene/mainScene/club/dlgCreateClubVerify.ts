@@ -91,6 +91,7 @@ export default class DlgCreateClubVerify extends DlgBase {
         let url = "http://cf2.youhoox.com/?ct=club&ac=send_code&mobile=" + this.pPhoneNumer.string ;
         xhr.open("GET", url, true);
         xhr.send();
+        Utility.audioBtnClick();
     }
 
     onClickNext()
@@ -144,6 +145,8 @@ export default class DlgCreateClubVerify extends DlgBase {
         let url = "http://cf2.youhoox.com/?ct=club&ac=check_code&mobile=" + this.pPhoneNumer.string + "&code=" + this.pCode.string;
         xhr.open("GET", url, true);
         xhr.send();
+
+        Utility.audioBtnClick();
     }
 
     // update (dt) {}

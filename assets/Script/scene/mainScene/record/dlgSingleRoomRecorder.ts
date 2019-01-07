@@ -13,6 +13,7 @@ import DlgBase from "../../../common/DlgBase"
 import RecordView from "./recordView"
 import {RecordItem} from "./recordData"
 import { clientEvent } from "../../../common/clientDefine"
+import Utility from "../../../globalModule/Utility";
 @ccclass
 export default class DlgSingleRoomRecord extends DlgBase {
 
@@ -52,6 +53,7 @@ export default class DlgSingleRoomRecord extends DlgBase {
     onClickReplay( record : RecordItem  )
     {
         console.warn( "jump to replay scene");
+        Utility.audioBtnClick();
     }
 
     // update (dt) {}

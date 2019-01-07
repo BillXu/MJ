@@ -305,7 +305,26 @@ export default class RoomScene extends cc.Component {
             break ;
             case eMsgType.MSG_ROOM_MQMJ_PLAYER_HU:
             {
-
+                let isZiMo = msg["isZiMo"] == 1 ;
+                let huCard = msg["huCard"] ;
+                if ( isZiMo )
+                {
+                    let huIdx = msg["detail"]["huIdx"] ;
+                    let clientIdx = this.pRoomData.svrIdxToClientIdx(huIdx) ;
+                    this.pLayerPlayerCards.onPlayerHu( clientIdx,huCard);
+                    this.pLayerEffect.playPlayerEffect(clientIdx,eMJActType.eMJAct_Hu) ;
+                }
+                else
+                {
+                    let vHuPlayers : Object[] = msg["detail"]["huPlayers"] ;
+                    for ( let v of vHuPlayers )
+                    {
+                        let idx = v["idx"] ;
+                        let clientIdx = this.pRoomData.svrIdxToClientIdx(idx) ;
+                        this.pLayerPlayerCards.onPlayerHu( clientIdx,huCard);
+                        this.pLayerEffect.playPlayerEffect(clientIdx,eMJActType.eMJAct_Hu) ;
+                    }
+                }
             }
             break;
             case eMsgType.MSG_ROOM_CFMJ_GAME_WILL_START:

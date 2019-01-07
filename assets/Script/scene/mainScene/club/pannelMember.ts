@@ -129,6 +129,8 @@ export default class PannelMember extends ClubPannel {
 
             return true ;
         }) ;
+
+        Utility.audioBtnClick();
     }
 
     onUpdateMember( idx : number ) 

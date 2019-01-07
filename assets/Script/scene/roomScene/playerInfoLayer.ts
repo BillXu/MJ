@@ -19,6 +19,7 @@ import ClientData from "../../globalModule/ClientData";
 import { eDeskBg, clientEvent } from "../../common/clientDefine"
 import DlgRoomChat from "./dlgRoomChat";
 import VoiceManager from "../../sdk/VoiceManager";
+import RoomSound from "./roomSound";
 @ccclass
 export default class PlayerInfoLayer extends roomSceneLayerBase {
 
@@ -41,6 +42,10 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
 
     @property(cc.Node)
     pBankIconForMoveAni : cc.Node = null ;
+
+    @property(RoomSound)
+    pRoomSound : RoomSound = null ;
+
 
     ptBankIconAniStartPos : cc.Vec2 = cc.Vec2.ZERO ;
 
@@ -328,6 +333,8 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
             if ( idx < DlgRoomChat.vSysText.length )
             {
                 contnet = DlgRoomChat.vSysText[idx] ;
+                let p = this.roomScene.pRoomData.getPlayerDataByClientIdx(nPlayerClientIdx);
+                this.pRoomSound.playGameTalk( p ? p.isMale() : false,idx);
             }
             else
             {

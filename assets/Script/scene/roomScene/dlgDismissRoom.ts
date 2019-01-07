@@ -13,6 +13,7 @@ import DlgBase from "../../common/DlgBase"
 import PhotoItem from "../../commonItem/photoItem"
 import RoomData from "./roomData";
 import { playerBaseData } from "./roomInterface";
+import Utility from "../../globalModule/Utility";
 @ccclass
 export default class DlgDismiss extends DlgBase {
 
@@ -122,6 +123,7 @@ export default class DlgDismiss extends DlgBase {
             this.pFuncResult({ isAgree : true }) ;
         }
         this.onSelfRespone();
+        Utility.audioBtnClick();
     }
 
     onBtnDisagree()
@@ -132,6 +134,7 @@ export default class DlgDismiss extends DlgBase {
         }
         this.onSelfRespone();
         this.closeDlg();
+        Utility.audioBtnClick();
     }
 
     // update (dt) {}
