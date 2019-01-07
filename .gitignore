@@ -8,10 +8,13 @@ local/
 /build/*
 !/build/jsb-link/
 /build/jsb-link/*
+!/build/jsb-link/.cocos-project.json
+!/build/jsb-link/.cocos-project.json
 !/build/jsb-link/frameworks/
 /build/jsb-link/frameworks/*
 !/build/jsb-link/frameworks/runtime-src/
 /build/jsb-link/frameworks/runtime-src/*
+!/build/jsb-link/frameworks/runtime-src/Classes/
 
 !/build/jsb-link/frameworks/runtime-src/proj.android-studio/
 /build/jsb-link/frameworks/runtime-src/proj.android-studio/build/
