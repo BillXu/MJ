@@ -106,6 +106,7 @@ export default class DlgSetting extends DlgBase {
     {
         let type : eMusicType = parseInt(selIdx) ;
         ClientData.getInstance().musicTypeIdx = type;
+        Utility.bgMusic(type) ;
         /// dispatch event ;
         let pEvent = new cc.Event.EventCustom(clientEvent.setting_upate_Music,true) ;
         pEvent.detail = type ;

@@ -73,6 +73,10 @@ export default class RoomScene extends cc.Component {
         cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this) ;
         cc.systemEvent.on(clientDefine.netEventRecievedBaseData,this.doRequestRoomInfoToRefreshRoom,this) ;
         cc.systemEvent.on(clientDefine.netEventReconnectd,this.doRequestRoomInfoToRefreshRoom,this);
+        if ( cc.audioEngine.isMusicPlaying() == false )
+        {
+            Utility.bgMusic(ClientData.getInstance().musicTypeIdx);
+        }
     }
 
     start () {
