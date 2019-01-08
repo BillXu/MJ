@@ -83,8 +83,6 @@ export default class DlgBase extends cc.Component {
         return true ;
     }
 
- 
-
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void  )
     {
         this.pFuncResult = pfResult ;
@@ -107,6 +105,17 @@ export default class DlgBase extends cc.Component {
             this.pOnCloseCallBack(this);
         }
         cc.systemEvent.targetOff(this); 
+
+        // play audio effect
+        let url = "sound/Button32";
+        cc.loader.loadRes(url, cc.AudioClip, function (err, clip) {
+            if ( err )
+            {
+                console.error( "load btn audio error + url = " + url );
+                return ;
+            }
+            cc.audioEngine.playEffect(clip, false);  
+        });
     }
     
     // update (dt) {}

@@ -3029,12 +3029,8 @@
       "__id__": 10
     },
     "_enabled": true,
-    "pPromptDlg": {
-      "__id__": 45
-    },
-    "pPromptTextPrefab": {
-      "__uuid__": "a5a7bd9d-2cca-40fc-94ee-e3eaded0c62e"
-    },
+    "pPromptDlg": null,
+    "pPromptTextPrefab": null,
     "_id": "09P++tK6JLSLOZ1DIVS4OQ"
   }
 ]
