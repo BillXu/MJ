@@ -150,6 +150,7 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         if ( this.vVoiceMsg.length <= 0 )
         {
             cc.error( "why voice msg caher is null ? " );
+            cc.audioEngine.resumeMusic();
             return ;
         }
 
@@ -170,6 +171,10 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
                 console.log( "播放当前音频失败，立即结束" );
                 this.onFinishedPlayVoice();
             }
+        }
+        else
+        {
+            cc.audioEngine.resumeMusic();
         }
     }
 
