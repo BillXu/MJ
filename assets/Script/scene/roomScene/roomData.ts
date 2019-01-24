@@ -148,7 +148,7 @@ export default class RoomData extends cc.Component {
 
     get isRoomOpened() : boolean
     {
-        return this.jsRoomInfoMsg["isOpen"] ;
+        return this.jsRoomInfoMsg["isOpen"];
     }
 
     set isRoomOpened( isOpen : boolean ) 

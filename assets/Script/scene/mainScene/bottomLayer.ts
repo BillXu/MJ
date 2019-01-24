@@ -83,6 +83,7 @@ export default class BottomLayer extends cc.Component {
     onBtnActivty()
     {
         Utility.audioBtnClick();
+        Utility.showPromptText("暂无活动,敬请关注") ;
     }
     // update (dt) {}
 }

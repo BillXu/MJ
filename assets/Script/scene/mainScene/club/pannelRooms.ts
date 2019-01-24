@@ -211,6 +211,11 @@ export default class PannelRoom extends ClubPannel {
                 let ret = msg["ret"] ;
                 if ( ret )
                 {
+                    if ( 8 == ret )
+                    {
+                        Utility.showTip( "您的钻石不足，无法进入房间" + ret );
+                        return true;
+                    }
                     Utility.showTip( "房间不存在或已经解散 code" + ret );
                     return true;
                 }

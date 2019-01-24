@@ -15,6 +15,7 @@ import { IHoldMingPai } from "./roomInterface"
 import Card from "./card";
 import * as _ from "lodash"
 import RoomSound from "./roomSound";
+import PlayerCardsLayer from "./playerCardsLayer";
 
 enum eOptNodeState 
 {
@@ -41,7 +42,7 @@ export default class PlayerCard extends cc.Component {
     nOtherRowLeftExtenCnt : number = 1;
 
     @property(cc.Vec2)
-    ptHoldStartPos : cc.Vec2 = cc.v2(0,0);;
+    ptHoldStartPos : cc.Vec2 = cc.v2(0,0);
     @property
     nHoldOffset : number = 0 ;
 
@@ -86,6 +87,8 @@ export default class PlayerCard extends cc.Component {
 
     @property([cc.Component.EventHandler])
     vDoChuPaiHandle : cc.Component.EventHandler[] = [] ;
+
+    pPlayerCardsLayer : PlayerCardsLayer = null ;
 
     isLeft() : boolean { return 3 == this.nPosIdx } 
     isRight() : boolean { return 1 == this.nPosIdx } 
@@ -205,6 +208,7 @@ export default class PlayerCard extends cc.Component {
                 pSelNode.zIndex = 10 ; // darging node should cover others ;
                 this.optNodeProperty["moveOrg"] = null ;
                 console.log( "as draging state" );
+                this.highLightSameCard(pSelNode) ;
             }
         }
     }
@@ -287,6 +291,27 @@ export default class PlayerCard extends cc.Component {
        
         this.pOutstandNode = pNode ;
         this.pOutstandNode.position = cc.v2( this.pOutstandNode.position.x,this.pOutstandNode.position.y + this.nCardOutstandOffset );
+
+        // let card 
+        this.highLightSameCard(pNode);
+    }
+
+    highLightSameCard( node : cc.Node )
+    {
+        if ( null == node )
+        {
+            this.pPlayerCardsLayer.highLightChuCard(0);
+            return ;
+        }
+        // let card 
+        let card : Card = node.getComponent(Card);
+        if ( null == card )
+        {
+            console.error( "why do not have card compent" );
+            return ;
+        }
+
+        this.pPlayerCardsLayer.highLightChuCard(card.cardNumber) ;
     }
 
     onDoubleClickCardNode( pNode : cc.Node )
@@ -304,6 +329,7 @@ export default class PlayerCard extends cc.Component {
         if ( this.isWaitChu == false )
         {
             pNode.position = nodeOrgPos ;
+            this.highLightSameCard(null);
             return ;
         } 
 
@@ -315,6 +341,7 @@ export default class PlayerCard extends cc.Component {
         else
         {
             pNode.position = nodeOrgPos ;
+            this.highLightSameCard(null);
             return ;
         }
         //pNode.position = nodeOrgPos ;
@@ -963,6 +990,8 @@ export default class PlayerCard extends cc.Component {
         this.doChuAnimation(cardNum,pos,this.onChuPaiAniFinish.bind(this));
         cc.Component.EventHandler.emitEvents(this.vDoChuPaiHandle,cardNum) ;
         this.pRoomSound.playerCardSound(this.isMale,cardNum) ;
+
+        this.highLightSameCard(null);
     }
 
     onChuPaiFailed( nCardNum )
@@ -988,5 +1017,19 @@ export default class PlayerCard extends cc.Component {
         this.vHoldCards.push(pHold) ;
         this.pRootNode.addChild(pHold);
         this.relayoutHoldCards();
+    }
+
+    highLightChuCard( cardNum : number )
+    {
+        for ( let v of this.vOutCards )
+        {
+            let card : Card = v.getComponent(Card) ;
+            if ( card == null )
+            {
+                console.error( "no card compent" );
+                return ;
+            }
+            v.color = cardNum == card.cardNumber ? cc.color(255,255,100) : cc.Color.WHITE ;
+        }
     }
 }

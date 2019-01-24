@@ -116,7 +116,7 @@ export default class RecordData extends cc.Component {
             p.sieralNum = sieal;
             let t = v["time"] ;
             let pDate = new Date(t * 1000 ) ;
-            p.time = pDate.toLocaleString();
+            p.time = pDate.toLocaleString("zh-CN");
             
             let vOffset : Object[] = v["offsets"] ;
             for ( let offset of vOffset )

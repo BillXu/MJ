@@ -40,10 +40,11 @@ export default class ProgressSlider extends cc.Component {
     onLoad () 
     {
         this.pProgess.totalLength = this.pProgess.node.getContentSize().width ;
+        this.pProgess.progress = this.pSlider.progress ;
     }
 
     start () {
-        this.pProgess.progress = this.pSlider.progress ;
+        
     }
 
     onSlider( slider : cc.Slider )

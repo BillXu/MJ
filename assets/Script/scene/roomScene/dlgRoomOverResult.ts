@@ -81,7 +81,7 @@ export default class DlgRoomOverResult extends DlgBase {
         } );
 
         // cur time 
-        this.pCurTime.string = (new Date()).toLocaleString();
+        this.pCurTime.string = (new Date()).toLocaleString("zh-CN");
 
         // rule
         this.pRule.string = pdata.rule;

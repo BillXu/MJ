@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.39609375,
-      "y": 0.39609375,
+      "x": 0.60155029296875,
+      "y": 0.60155029296875,
       "z": 1
     },
     "_quat": {
@@ -1570,8 +1570,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "visitor_2",
-    "_N$string": "visitor_2",
+    "_string": "visitor_3",
+    "_N$string": "visitor_3",
     "_fontSize": 20,
     "_lineHeight": 40,
     "_enableWrapText": false,

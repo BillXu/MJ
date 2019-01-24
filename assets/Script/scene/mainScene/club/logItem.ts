@@ -65,7 +65,7 @@ export default class LogItem extends cc.Component {
 
         this.pContent.string = "<color=#835B35>" + strContent + "</c>" ;
         let date = new Date(data.time * 1000 ) ;
-        this.pTime.string = date.toLocaleString();
+        this.pTime.string = date.toLocaleString("zh-CN");
     }
     // LIFE-CYCLE CALLBACKS:
 

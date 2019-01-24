@@ -137,6 +137,12 @@ export default class DlgSetting extends DlgBase {
         Utility.audioBtnClick();
     }
 
+    showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void )
+    {
+        super.showDlg(pfResult,jsUserData,pfOnClose) ;
+        this.refreshSetingDisplay();
+    }
+
     protected refreshSetingDisplay()
     {
         this.pEffectVoluem.progress = ClientData.getInstance().effectVolume ;
