@@ -64,7 +64,7 @@ int GClould::onRecievedJsRequest(NSString* SDKRequestID ,NSString* jsArg){
         NSString* path = [data objectForKey:@"path"];
         NSString* timeout = [data objectForKey:@"timeout"];
         int time = [timeout intValue];
-        return DownloadRecordedFile(fileID,path,time);
+        return DownloadRecordedFile(fileID,[path stringByAppendingString:fileID],time);
         //[self DownloadRecordedFile : fileID Title:path detail:time];
         //return true;
     }
@@ -131,6 +131,8 @@ GCloudVoiceErrno GClould::UploadRecordedFile(NSString* path ,int mostLog)
 
 GCloudVoiceErrno GClould::DownloadRecordedFile(NSString* fileID ,NSString* Path ,int mostLog)
 {
+    std::string str = [Path UTF8String];
+    printf("_____%s",str.c_str());
     return gcloud_voice::GetVoiceEngine()->DownloadRecordedFile([fileID UTF8String],[Path UTF8String] ,mostLog);
 }
 GCloudVoiceErrno GClould::PlayRecordedFile(NSString* path)
@@ -146,7 +148,7 @@ void GClould::OnUploadFile(GCloudVoiceCompleteCode code ,const char * path ,cons
         NSString *jstring = [[NSString alloc] initWithString:[NSString stringWithFormat:@"{\"code\":%d,\"fileName\":\"%s\",\"isOk\":1}",code,fileID.c_str()]];
         
         NSLog(@"%@",jstring);
-        [SDKHelp sendJsEvent:@"VOICE_EVENT_DOWNLOADED" detail:jstring];
+        [SDKHelp sendJsEvent:@"VOICE_EVENT_UPLOAED" detail:jstring];
     }
 }
 
@@ -158,7 +160,7 @@ void GClould::OnDownloadFile(GCloudVoiceCompleteCode code ,const char * path ,co
         NSString *jstring = [[NSString alloc] initWithString:[NSString stringWithFormat:@"{\"code\":%d,\"fileName\":\"%s\"}",code,fileID.c_str()]];
         
         NSLog(@"%@",jstring);
-        [SDKHelp sendJsEvent:@"GV_ON_DOWNLOAD_RECORD_DONE" detail:jstring];
+        [SDKHelp sendJsEvent:@"VOICE_EVENT_DOWNLOADED" detail:jstring];
     }
 
 }
@@ -166,7 +168,7 @@ void GClould::OnPlayRecordedFile(GCloudVoiceCompleteCode code ,const char* path)
     
     if(code == GV_ON_PLAYFILE_DONE){
         std::string filePath = path ;
-        //std::string fileID = id ;
+        //std::string fileID = id ];
         NSString *jstring = [[NSString alloc] initWithString:[NSString stringWithFormat:@"{\"code\":%d,\"fileName\":\"%s\"}",code,filePath.c_str()]];
         
         NSLog(@"%@",jstring);
