@@ -26,13 +26,15 @@ function sendRequestToPlatform( eventID , jsDetail )
     }
 
     let jsString = JSON.stringify(jsDetail);
-    if ( cc.sys.ANDROID )
+    if (cc.sys.os == cc.sys.OS_ANDROID )
     {
+        console.log("android")
         return jsb.reflection.callStaticMethod("SDKHelp/SDKHelp", "onRecievedJsRequest", "(Ljava/lang/String;Ljava/lang/String;)I", eventID, jsString );
     }
 
-    if ( cc.sys.OS_IOS )
+    if (cc.sys.os == cc.sys.OS_IOS )
     {
+        console.log("ios")
         return jsb.reflection.callStaticMethod("SDKHelp","onRecievedJsRequest:detail:",eventID,jsString);
     }
     console.error( "unknown platform Request do not dispatch" );
