@@ -645,7 +645,6 @@ export default class RoomScene extends cc.Component {
     onDestroy()
     {
         cc.systemEvent.targetOff(this);
-        VoiceManager.getInstance().unRegisterEvent();
     }
 
     sendRoomMsg( msg : Object , msgID : eMsgType, callBack? : IOneMsgCallback ) : boolean
