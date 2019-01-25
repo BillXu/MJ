@@ -44,6 +44,18 @@
 		509D4AE717EBB81800697056 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509D4AE617EBB81800697056 /* OpenGL.framework */; };
 		509D4AE917EBB82000697056 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509D4AE817EBB82000697056 /* AppKit.framework */; };
 		509D4AEB17EBB82600697056 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509D4AEA17EBB82600697056 /* IOKit.framework */; };
+		8E4040DC21FAE06F00B9B5A6 /* AMapLocationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040DA21FAE06F00B9B5A6 /* AMapLocationKit.framework */; };
+		8E4040DE21FAE0A800B9B5A6 /* AMapFoundationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040DB21FAE06F00B9B5A6 /* AMapFoundationKit.framework */; };
+		8E4040E021FAE12700B9B5A6 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040DF21FAE12700B9B5A6 /* ExternalAccessory.framework */; };
+		8E4040E221FAE14000B9B5A6 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040E121FAE14000B9B5A6 /* libc++.tbd */; };
+		8E4040E421FAE15700B9B5A6 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040E321FAE15700B9B5A6 /* libz.tbd */; };
+		8E4040E621FAE16D00B9B5A6 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040E521FAE16D00B9B5A6 /* GLKit.framework */; };
+		8E4040E821FAE18200B9B5A6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040E721FAE18200B9B5A6 /* Security.framework */; };
+		8E4040EA21FAE19C00B9B5A6 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040E921FAE19C00B9B5A6 /* CoreTelephony.framework */; };
+		8E4040EC21FAE1A800B9B5A6 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040EB21FAE1A800B9B5A6 /* SystemConfiguration.framework */; };
+		8E4040EE21FAE1E900B9B5A6 /* MAMapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040ED21FAE1E900B9B5A6 /* MAMapKit.framework */; };
+		8E4040F321FAE90500B9B5A6 /* GPSLocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8E4040F221FAE90500B9B5A6 /* GPSLocation.mm */; };
+		8E4040F521FAFD9400B9B5A6 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4040F421FAFD9400B9B5A6 /* MapKit.framework */; };
 		8E4F867521F87FD70039B94A /* libGCloudVoice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4F867321F87FD70039B94A /* libGCloudVoice.a */; };
 		8E4F867621F87FD70039B94A /* GCloudVoice.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8E4F867421F87FD70039B94A /* GCloudVoice.bundle */; };
 		8E4F867821F89A210039B94A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4F867721F89A210039B94A /* AVFoundation.framework */; };
@@ -149,6 +161,21 @@
 		509D4AE617EBB81800697056 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		509D4AE817EBB82000697056 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		509D4AEA17EBB82600697056 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		8E4040D621FAE05100B9B5A6 /* AMapLocationKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AMapLocationKit.framework; path = ios/AMapLocationKit.framework; sourceTree = "<group>"; };
+		8E4040D721FAE05100B9B5A6 /* AMapFoundationKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AMapFoundationKit.framework; path = ios/AMapFoundationKit.framework; sourceTree = "<group>"; };
+		8E4040DA21FAE06F00B9B5A6 /* AMapLocationKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AMapLocationKit.framework; path = ios/AMapLocationKit.framework; sourceTree = "<group>"; };
+		8E4040DB21FAE06F00B9B5A6 /* AMapFoundationKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AMapFoundationKit.framework; path = ios/AMapFoundationKit.framework; sourceTree = "<group>"; };
+		8E4040DF21FAE12700B9B5A6 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/ExternalAccessory.framework; sourceTree = DEVELOPER_DIR; };
+		8E4040E121FAE14000B9B5A6 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		8E4040E321FAE15700B9B5A6 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		8E4040E521FAE16D00B9B5A6 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
+		8E4040E721FAE18200B9B5A6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		8E4040E921FAE19C00B9B5A6 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		8E4040EB21FAE1A800B9B5A6 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
+		8E4040ED21FAE1E900B9B5A6 /* MAMapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MAMapKit.framework; path = ios/MAMapKit.framework; sourceTree = "<group>"; };
+		8E4040F021FAE8D900B9B5A6 /* GPSLocation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPSLocation.h; sourceTree = "<group>"; };
+		8E4040F221FAE90500B9B5A6 /* GPSLocation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPSLocation.mm; sourceTree = "<group>"; };
+		8E4040F421FAFD9400B9B5A6 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
 		8E4F866B21F86AC90039B94A /* GClould.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GClould.h; sourceTree = "<group>"; };
 		8E4F866F21F87FC50039B94A /* GCloudVoice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCloudVoice.h; path = ../../../../../../../../Downloads/VoiceTutorial/GCloudVoice/include/GCloudVoice.h; sourceTree = "<group>"; };
 		8E4F867021F87FC50039B94A /* GCloudVoiceExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCloudVoiceExtension.h; path = ../../../../../../../../Downloads/VoiceTutorial/GCloudVoice/include/GCloudVoiceExtension.h; sourceTree = "<group>"; };
@@ -229,6 +256,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E4040F521FAFD9400B9B5A6 /* MapKit.framework in Frameworks */,
+				8E4040EE21FAE1E900B9B5A6 /* MAMapKit.framework in Frameworks */,
+				8E4040EC21FAE1A800B9B5A6 /* SystemConfiguration.framework in Frameworks */,
+				8E4040EA21FAE19C00B9B5A6 /* CoreTelephony.framework in Frameworks */,
+				8E4040E821FAE18200B9B5A6 /* Security.framework in Frameworks */,
+				8E4040E621FAE16D00B9B5A6 /* GLKit.framework in Frameworks */,
+				8E4040E421FAE15700B9B5A6 /* libz.tbd in Frameworks */,
+				8E4040E221FAE14000B9B5A6 /* libc++.tbd in Frameworks */,
+				8E4040E021FAE12700B9B5A6 /* ExternalAccessory.framework in Frameworks */,
+				8E4040DE21FAE0A800B9B5A6 /* AMapFoundationKit.framework in Frameworks */,
 				8E4F867A21F89A6B0039B94A /* CoreAudio.framework in Frameworks */,
 				8E4F867821F89A210039B94A /* AVFoundation.framework in Frameworks */,
 				8EA731FA21F5CC9B00309E58 /* libstdc++.6.0.9.tbd in Frameworks */,
@@ -248,6 +285,7 @@
 				D6B061241803AB9F0077942B /* CoreMotion.framework in Frameworks */,
 				1A82F5FB169AC92500C4B13A /* libsqlite3.dylib in Frameworks */,
 				D454520C156E22BD00887EB5 /* libz.dylib in Frameworks */,
+				8E4040DC21FAE06F00B9B5A6 /* AMapLocationKit.framework in Frameworks */,
 				A92275421517C094001B78AA /* QuartzCore.framework in Frameworks */,
 				A92275441517C094001B78AA /* OpenGLES.framework in Frameworks */,
 				A92275461517C094001B78AA /* OpenAL.framework in Frameworks */,
@@ -322,6 +360,16 @@
 		A92275401517C094001B78AA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8E4040F421FAFD9400B9B5A6 /* MapKit.framework */,
+				8E4040EB21FAE1A800B9B5A6 /* SystemConfiguration.framework */,
+				8E4040E921FAE19C00B9B5A6 /* CoreTelephony.framework */,
+				8E4040E721FAE18200B9B5A6 /* Security.framework */,
+				8E4040E521FAE16D00B9B5A6 /* GLKit.framework */,
+				8E4040E321FAE15700B9B5A6 /* libz.tbd */,
+				8E4040E121FAE14000B9B5A6 /* libc++.tbd */,
+				8E4040DF21FAE12700B9B5A6 /* ExternalAccessory.framework */,
+				8E4040D721FAE05100B9B5A6 /* AMapFoundationKit.framework */,
+				8E4040D621FAE05100B9B5A6 /* AMapLocationKit.framework */,
 				8E4F867921F89A6B0039B94A /* CoreAudio.framework */,
 				8E4F867721F89A210039B94A /* AVFoundation.framework */,
 				8EA731F921F5CC9B00309E58 /* libstdc++.6.0.9.tbd */,
@@ -378,7 +426,10 @@
 				8E4F866F21F87FC50039B94A /* GCloudVoice.h */,
 				8E4F867221F87FC60039B94A /* GCloudVoiceErrno.h */,
 				8E4F867021F87FC50039B94A /* GCloudVoiceExtension.h */,
+				8E4040DB21FAE06F00B9B5A6 /* AMapFoundationKit.framework */,
+				8E4040DA21FAE06F00B9B5A6 /* AMapLocationKit.framework */,
 				8E4F867121F87FC60039B94A /* GCloudVoiceVersion.h */,
+				8E4040ED21FAE1E900B9B5A6 /* MAMapKit.framework */,
 				8EA731EB21F5C0EE00309E58 /* WXApiObject.h */,
 				4011F9D1212BD6750091CC5B /* LaunchScreen.storyboard */,
 				1AFFCD7B1F7A5D4F00628F2C /* LaunchScreenBackground.png */,
@@ -405,6 +456,8 @@
 				8EA731FD21F5D38E00309E58 /* SDKHelp.h */,
 				8E4F866B21F86AC90039B94A /* GClould.h */,
 				8E787AC221F9E18F00EE5A5A /* GClould.mm */,
+				8E4040F021FAE8D900B9B5A6 /* GPSLocation.h */,
+				8E4040F221FAE90500B9B5A6 /* GPSLocation.mm */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -556,6 +609,7 @@
 				509D4AC917EBB2AB00697056 /* RootViewController.mm in Sources */,
 				D4545227156E28EF00887EB5 /* AppDelegate.cpp in Sources */,
 				509D4AC817EBB2AB00697056 /* main.m in Sources */,
+				8E4040F321FAE90500B9B5A6 /* GPSLocation.mm in Sources */,
 				8E75003F21F724A300E86EBE /* SDKHelp.mm in Sources */,
 				8E787AC321F9E18F00EE5A5A /* GClould.mm in Sources */,
 				509D4ABC17EBB2AB00697056 /* AppController.mm in Sources */,
@@ -704,10 +758,15 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				DEVELOPMENT_TEAM = BVNY3CEG6J;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ios",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -742,10 +801,15 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				DEVELOPMENT_TEAM = BVNY3CEG6J;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ios",
+				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ios/Prefix.pch;

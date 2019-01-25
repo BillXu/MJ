@@ -9,6 +9,7 @@
 #include "SDKHelp.h"
 #include "WXApiManager.h"
 #include "GClould.h"
+#include "GPSLocation.h"
 #include "cocos/scripting/js-bindings/jswrapper/SeApi.h"
 #include "cocos2d.h"
 //using namespace std;
@@ -26,6 +27,10 @@
         ret = GClould::GClouldManager()->onRecievedJsRequest(SDKRequestID, jsArg);
 //        GCApi = [GClould GClouldManager];
 //        ret = [GCApi onRecievedJsRequest:SDKRequestID detail:jsArg];
+        if(ret != haveDeal){
+            return ret;
+        }
+        ret = [[GPSLocation GPSdManager] onRecievedJsRequest:SDKRequestID detail:jsArg];
         if(ret != haveDeal){
             return ret;
         }

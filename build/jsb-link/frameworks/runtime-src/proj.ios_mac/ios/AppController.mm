@@ -29,6 +29,7 @@
 #import "AppDelegate.h"
 #import "RootViewController.h"
 #include "WXApiManager.h"
+#include "GPSLocation.h"
 #import "platform/ios/CCEAGLView-ios.h"
 
 #import "cocos-analytics/CAAgent.h"
@@ -75,6 +76,8 @@ Application* app = nullptr;
     [window makeKeyAndVisible];
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
+    [AMapServices sharedServices].apiKey =@"8f516780b48ecc7cfc04da84c5b6f5e2";
+    //8f516780b48ecc7cfc04da84c5b6f5e2
 
     //run the cocos2d-x game scene
     app->start();
