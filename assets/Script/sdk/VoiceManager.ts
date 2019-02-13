@@ -115,7 +115,7 @@ export default class VoiceManager extends cc.Component {
         {
             case VoiceManager.EVENT_APPLY_KEY:
             {
-                this.onApplyKey( parseInt(jsDetail["code"]) ) ;
+                this.onApplyKey( parseInt(jsDetail["code"]) ) ;  
             }
             break;
             case VoiceManager.EVENT_DOWNLOADED:

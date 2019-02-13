@@ -1,3 +1,5 @@
+import { clientEvent } from "../common/clientDefine";
+
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -31,6 +33,9 @@ export default class CheckHotUpdate extends cc.Component {
     @property(cc.ProgressBar)
     pProgress : cc.ProgressBar = null ; 
 
+    @property(cc.Label)
+    pProgressLabel : cc.Label = null ;
+
     isUpdateing : boolean = false ;
     _storagePath : string = "" ;
     _canRetry : boolean = false ;
@@ -44,7 +49,7 @@ export default class CheckHotUpdate extends cc.Component {
     }
 
     start () {
-        if ( CC_JSB && cc.sys.ANDROID )
+        if ( CC_JSB )
         {
             this.checkUpdate();
         }
@@ -151,10 +156,11 @@ export default class CheckHotUpdate extends cc.Component {
                 this.finishHotUpdate();
                 return ;
             case jsb.EventAssetsManager.NEW_VERSION_FOUND:
-                this.pProgressInfo.string = '发现新版本：' + this.pAssertManager.getTotalBytes() / 1000 + "M";
-                this.pHotUpdatePannel.active = true ;
-                this.pBtnUpdateRightNow.active = true ;
-                break; 
+                console.log('发现新版本：' + this.pAssertManager.getTotalBytes() + "M") ;
+                this.isUpdateing = false;
+                this.pAssertManager.setEventCallback(null);
+                this.doUpdate();
+                return; 
             case jsb.EventAssetsManager.UPDATE_PROGRESSION:
                 {
                     var msg = event.getMessage();
@@ -190,6 +196,8 @@ export default class CheckHotUpdate extends cc.Component {
             this.isUpdateing = true;
             this.pBtnRetry.active = false;
             this.pBtnUpdateRightNow.active = false ;
+            this.pHotUpdatePannel.active = true ;
+            this.pProgressInfo.string = "正在更新资源....";
             console.log( "do update act" );
         }
         else
@@ -202,6 +210,7 @@ export default class CheckHotUpdate extends cc.Component {
     {
         let needRestart = false;
         let failed = false;
+        console.log('updateCb Code: ' + event.getEventCode());
         switch (event.getEventCode())
         {
             case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
@@ -213,15 +222,25 @@ export default class CheckHotUpdate extends cc.Component {
                 //this.panel.fileProgress.progress = event.getPercentByFile();
 
                 //this.panel.fileLabel.string = event.getDownloadedFiles() + ' / ' + event.getTotalFiles();
-                this.pProgressInfo.string = "已经下载资源:" + event.getDownloadedBytes() + ' / ' + event.getTotalBytes();
+                //this.pProgressInfo.string = "已经下载资源:" + event.getDownloadedBytes() + ' / ' + event.getTotalBytes();
 
                 var msg = event.getMessage();
                 if (msg) {
                     //this.panel.info.string = 'Updated file: ' + msg;
                     console.log(event.getPercent()/100 + '% : ' + msg);
                 }
-                this.pProgress.progress = event.getPercent() / 100 ;
-                this.pProgress.node.active = true ;
+                //this.pProgress.progress = event.getPercent() / 100 ;
+                //this.pProgress.node.active = true ;
+                this.pProgressLabel.node.active = true ;
+                if ( event.getPercent() == null )
+                {
+                    this.pProgressLabel.string = "100%" ;
+                }
+                else
+                {
+                    this.pProgressLabel.string = Math.floor( event.getPercent() * 100 ) + "%" ;
+                }
+                
                 break;
             case jsb.EventAssetsManager.ERROR_DOWNLOAD_MANIFEST:
             case jsb.EventAssetsManager.ERROR_PARSE_MANIFEST:
@@ -239,6 +258,7 @@ export default class CheckHotUpdate extends cc.Component {
             case jsb.EventAssetsManager.UPDATE_FAILED:
                 this.pProgressInfo.string = 'Update failed. ' + event.getMessage();
                 this.pBtnRetry.active = true;
+                this.pProgressLabel.node.active = false ;
                 this.isUpdateing = false;
                 this._canRetry = true ;
                 this.pProgress.node.active = false ;
@@ -296,8 +316,10 @@ export default class CheckHotUpdate extends cc.Component {
 
     protected finishHotUpdate()
     {
-        this.pAssertManager = null ;
+        this.pAssertManager = null ;   
         this.isUpdateing = false;
+        let pEvent = new cc.Event.EventCustom(clientEvent.event_checkUpdateOk,true) ;
+        cc.systemEvent.dispatchEvent(pEvent);
     }
     // update (dt) {}
 }

@@ -9,7 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import {SceneName} from "../common/clientDefine" 
+import {SceneName, clientEvent} from "../common/clientDefine" 
 @ccclass
 export default class InitScene extends cc.Component {
 
@@ -21,10 +21,24 @@ export default class InitScene extends cc.Component {
     onLoad ()
     {
         cc.game.addPersistRootNode(this.pNodePersite);
+        cc.systemEvent.on(clientEvent.event_checkUpdateOk,this.onCheckupdateOk,this) ;
     }
 
     start () {
-        cc.director.loadScene(SceneName.Scene_login);
+        
+    }
+
+    onDestroy()
+    {
+        cc.systemEvent.targetOff(this);
+    }
+
+    onCheckupdateOk()
+    {
+        setTimeout(() => {
+            cc.director.loadScene(SceneName.Scene_login);
+        }, 5000);
+        
     }
 
     // update (dt) {}
