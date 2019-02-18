@@ -219,6 +219,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
             }
             return true ;
         }) ;
+        Utility.audioBtnClick();
     }
 
     onBtnStartGame()
@@ -231,6 +232,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
             let msgdoOpen = {} ;
             this.sendRoomMsg(msgdoOpen,eMsgType.MSG_PLAYER_OPEN_ROOM);
         }
+        Utility.audioBtnClick();
     }
 
     onBtnReady()
@@ -238,6 +240,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         let msg = { } ;
         this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_SET_READY) ;
         this.pBtnReady.active = false ;
+        Utility.audioBtnClick();
     }
 
     onBtnWechatInviate()
@@ -287,6 +290,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
     {
         let msg = {} ;
         this.roomScene.sendRoomMsg(msg,eMsgType.MSG_APPLY_DISMISS_VIP_ROOM) ;
+        Utility.audioBtnClick();
     }
 
     onBtnRecorderVoice()
@@ -297,6 +301,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
     onBtnSetting()
     {
         this.pDlgSettting.showDlg();
+        Utility.audioBtnClick();
     }
 
     onBtnChat()
@@ -307,6 +312,7 @@ export default class RoomInfoLayer extends roomSceneLayerBase {
         }
 
         this.pDlgChat.showDlg(null,this);
+        Utility.audioBtnClick();
     }
 
     refreshDeskBg()

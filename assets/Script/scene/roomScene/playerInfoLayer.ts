@@ -19,6 +19,8 @@ import ClientData from "../../globalModule/ClientData";
 import { eDeskBg, clientEvent } from "../../common/clientDefine"
 import DlgRoomChat from "./dlgRoomChat";
 import VoiceManager from "../../sdk/VoiceManager";
+import RoomSound from "./roomSound";
+import dlgPlayerInfo from "./dlgPlayerInfo";
 @ccclass
 export default class PlayerInfoLayer extends roomSceneLayerBase {
 
@@ -41,6 +43,13 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
 
     @property(cc.Node)
     pBankIconForMoveAni : cc.Node = null ;
+
+    @property(RoomSound)
+    pRoomSound : RoomSound = null ;
+
+    @property(dlgPlayerInfo)
+    pdlgPlayerInfo : dlgPlayerInfo = null ;
+
 
     ptBankIconAniStartPos : cc.Vec2 = cc.Vec2.ZERO ;
 
@@ -145,6 +154,7 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
         if ( this.vVoiceMsg.length <= 0 )
         {
             cc.error( "why voice msg caher is null ? " );
+            cc.audioEngine.resumeMusic();
             return ;
         }
 
@@ -165,6 +175,10 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
                 console.log( "播放当前音频失败，立即结束" );
                 this.onFinishedPlayVoice();
             }
+        }
+        else
+        {
+            cc.audioEngine.resumeMusic();
         }
     }
 
@@ -328,6 +342,8 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
             if ( idx < DlgRoomChat.vSysText.length )
             {
                 contnet = DlgRoomChat.vSysText[idx] ;
+                let p = this.roomScene.pRoomData.getPlayerDataByClientIdx(nPlayerClientIdx);
+                this.pRoomSound.playGameTalk( p ? p.isMale() : false,idx);
             }
             else
             {
@@ -406,6 +422,18 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
             }
             self.vPlayers.forEach( ( pp : RoomPlayerInfo)=>{ pp.pSeatEmptyPhoto.spriteFrame = spriteFrame ;} ) ;
         });
+    }
+
+    onClickPlayerHeadIcon( event : any , sidx : string )
+    {
+        let clientIdx = parseInt(sidx);
+        if ( this.vPlayers[clientIdx].isEmpty() )
+        {
+            return ;
+        }
+
+        let playerData = this.roomScene.pRoomData.getPlayerDataByClientIdx(clientIdx) ;
+        this.pdlgPlayerInfo.showDlg(null,playerData) ;
     }
     // update (dt) {}
 }

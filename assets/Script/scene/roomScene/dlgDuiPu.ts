@@ -10,6 +10,7 @@
 
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../common/DlgBase"
+import Utility from "../../globalModule/Utility";
 @ccclass
 export default class DlgDuiPu extends DlgBase {
 
@@ -38,11 +39,13 @@ export default class DlgDuiPu extends DlgBase {
     {
         this.pSelOpt.active = false ;
         this.pSelScore.active = true ;
+        Utility.audioBtnClick();
     }
 
     onClickPass()
     {
         this.closeDlg();
+        Utility.audioBtnClick();
     }
 
     onClickScore( event : cc.Event.EventTouch, score : string )

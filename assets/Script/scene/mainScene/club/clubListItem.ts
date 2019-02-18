@@ -1,3 +1,5 @@
+import Utility from "../../../globalModule/Utility";
+
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -52,6 +54,8 @@ export default class ClubListItem extends cc.Component {
         {
             this.lpCallBack( toggle , this.id );
         }
+
+        Utility.audioBtnClick();
     }
 
     // update (dt) {}

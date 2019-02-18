@@ -107,6 +107,13 @@ export default class ClientNetwork extends cc.Component {
     onConnectSuccess()
     {
         this.setTipDesc("");
+        if ( cc.sys.isNative == false )
+        {
+            if ( cc.director.getScene().name != SceneName.Scene_login )
+            {
+                cc.director.loadScene(SceneName.Scene_login);
+            }
+        }
     }
 
     start () {

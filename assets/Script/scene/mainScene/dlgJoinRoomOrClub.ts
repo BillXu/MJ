@@ -10,6 +10,7 @@
 
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../common/DlgBase"
+import Utility from "../../globalModule/Utility";
 @ccclass
 export default class DlgJoinRoomOrClub extends DlgBase {
 
@@ -67,12 +68,15 @@ export default class DlgJoinRoomOrClub extends DlgBase {
                 this.pFuncResult(strNum);
             }
         }
+
+        Utility.audioBtnClick();
     }
 
     onClickClearAll()
     {
         this.vInputLabel.forEach(( label : cc.Label )=>{ label.string = "" ;}) ;
         this.inputedCnt = 0 ;
+        Utility.audioBtnClick();
     }
 
     onClickBackDel()
@@ -83,6 +87,7 @@ export default class DlgJoinRoomOrClub extends DlgBase {
             return ;
         }
         this.vInputLabel[--this.inputedCnt].string = "";
+        Utility.audioBtnClick();
     }
 
     // update (dt) {}

@@ -31,6 +31,7 @@ import DlgBase from "../../common/DlgBase";
 import EffectLayer from "./effectLayer"
 import DlgRoomChat from "./dlgRoomChat";
 import VoiceManager from "../../sdk/VoiceManager";
+import DlgLocation from "./location/dlgLocation";
 @ccclass
 export default class RoomScene extends cc.Component {
 
@@ -67,12 +68,19 @@ export default class RoomScene extends cc.Component {
     @property(DlgDuiPu)
     pdlgDuiPu : DlgDuiPu = null ;
 
+    @property(DlgLocation)
+    pLocation : DlgLocation = null ;
+
     onLoad ()
     {
         VoiceManager.getInstance().init("cfmj" + ClientData.getInstance().selfUID );
         cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this) ;
         cc.systemEvent.on(clientDefine.netEventRecievedBaseData,this.doRequestRoomInfoToRefreshRoom,this) ;
         cc.systemEvent.on(clientDefine.netEventReconnectd,this.doRequestRoomInfoToRefreshRoom,this);
+        if ( cc.audioEngine.isMusicPlaying() == false )
+        {
+            Utility.bgMusic(ClientData.getInstance().musicTypeIdx);
+        }
     }
 
     start () {
@@ -140,6 +148,17 @@ export default class RoomScene extends cc.Component {
                 let uid = msg["uid"] ;
                 let p = this.pRoomData.getPlayerDataByUID(uid);
                 this.pLayerPlayerInfo.onRefreshPlayerDetail(p);
+                this.pLayerPlayerCards.refreshPlayerSex(p.clientIdx,p.isMale()) ;
+
+                if ( this.pRoomData.isRoomOpened == false )
+                {
+                    this.pLocation.showDlg(null,this.pRoomData) ;
+                }
+
+                if ( this.pLocation.node.active )
+                {
+                    this.pLocation.refresh(this.pRoomData) ;
+                }
             }
             break ;
             case eMsgType.MSG_ROOM_SIT_DOWN:
@@ -159,6 +178,10 @@ export default class RoomScene extends cc.Component {
                     break 
                 }
                 this.pLayerPlayerInfo.onPlayerLeave(data.clientIdx);
+                if ( this.pLocation.node.active )
+                {
+                    this.pLocation.refresh(this.pRoomData) ;
+                }
             }
             break ;
             case eMsgType.MSG_ROOM_PLAYER_READY:
@@ -305,11 +328,31 @@ export default class RoomScene extends cc.Component {
             break ;
             case eMsgType.MSG_ROOM_MQMJ_PLAYER_HU:
             {
-
+                let isZiMo = msg["isZiMo"] == 1 ;
+                let huCard = msg["huCard"] ;
+                if ( isZiMo )
+                {
+                    let huIdx = msg["detail"]["huIdx"] ;
+                    let clientIdx = this.pRoomData.svrIdxToClientIdx(huIdx) ;
+                    this.pLayerPlayerCards.onPlayerHu( clientIdx,huCard);
+                    this.pLayerEffect.playPlayerEffect(clientIdx,eMJActType.eMJAct_Hu) ;
+                }
+                else
+                {
+                    let vHuPlayers : Object[] = msg["detail"]["huPlayers"] ;
+                    for ( let v of vHuPlayers )
+                    {
+                        let idx = v["idx"] ;
+                        let clientIdx = this.pRoomData.svrIdxToClientIdx(idx) ;
+                        this.pLayerPlayerCards.onPlayerHu( clientIdx,huCard);
+                        this.pLayerEffect.playPlayerEffect(clientIdx,eMJActType.eMJAct_Hu) ;
+                    }
+                }
             }
             break;
             case eMsgType.MSG_ROOM_CFMJ_GAME_WILL_START:
             {
+                this.pLocation.closeDlg();
                 this.pRoomData.bankerIdx = msg["bankerIdx"] ;
                 this.pRoomData.curActSvrIdx = this.pRoomData.bankerIdx ;
                 this.pRoomData.leftCircle = msg["leftCircle"] ;
@@ -327,6 +370,7 @@ export default class RoomScene extends cc.Component {
                 //         self.pRoomData.vPlayers[idx].race = o[" race"] ;
                 //     } );
                 // }  
+                this.pLocation.closeDlg();
                 let selfUID = ClientData.getInstance().selfUID ;
                 this.pRoomData.vPlayers.forEach( (p : playerBaseData)=>{
                     if ( p.uid == selfUID )
@@ -601,7 +645,6 @@ export default class RoomScene extends cc.Component {
     onDestroy()
     {
         cc.systemEvent.targetOff(this);
-        VoiceManager.getInstance().unRegisterEvent();
     }
 
     sendRoomMsg( msg : Object , msgID : eMsgType, callBack? : IOneMsgCallback ) : boolean

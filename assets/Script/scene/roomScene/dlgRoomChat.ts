@@ -76,11 +76,13 @@ export default class DlgRoomChat extends DlgBase {
     onClickEmoj( event : cc.Event.EventCustom, idx : string )
     {
         this.sendChatMsg(eChatMsgType.eChatMsg_Emoji ,idx );
+        Utility.audioBtnClick();
     }
 
     onClickText( event : cc.Event.EventCustom, idx : string )
     {
         this.sendChatMsg(eChatMsgType.eChatMsg_SysText ,idx );
+        Utility.audioBtnClick();
     }
 
     onClickSendInputMsg()
@@ -92,6 +94,7 @@ export default class DlgRoomChat extends DlgBase {
         }
 
         this.sendChatMsg(eChatMsgType.eChatMsg_InputText ,this.pEditBoxInputText.string );
+        Utility.audioBtnClick();
     }
 
     onDeskBgChanged()

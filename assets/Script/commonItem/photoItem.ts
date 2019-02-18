@@ -19,6 +19,8 @@ export default class PhotoItem extends cc.Component {
     @property(cc.Sprite)
     pPhotoFrame : cc.Sprite = null ;
 
+    pDefaultFrame : cc.SpriteFrame = null ;
+
     @property
     nLoadFailedRetryDealy : number = 3000; // micro seconds ;
 
@@ -32,6 +34,8 @@ export default class PhotoItem extends cc.Component {
             return ;
         }
         
+        this.pPhotoSprite.spriteFrame = this.pDefaultFrame ;
+        this.imgUrl = "" ;  
         if ( null == strUrl || strUrl == "" )
         {
             cc.error( "url can not be null");
@@ -100,7 +104,7 @@ export default class PhotoItem extends cc.Component {
         //     mask.spriteFrame = this.pPhotoFrame.spriteFrame.clone();
 
         // }while(0);
-
+        this.pDefaultFrame = this.pPhotoSprite.spriteFrame.clone() ;
     }
 
     start () {

@@ -82,11 +82,12 @@ export default class DlgSetting extends DlgBase {
         ClientData.getInstance().clearWhenLogout();
         self.closeDlg();
         cc.director.loadScene(SceneName.Scene_login) ;
+        Utility.audioBtnClick();
     }
 
     onClickApplyDismiss()
     {
-        
+        Utility.audioBtnClick();
     }
 
     onAudioEffectSlider( pSlider : ProgressSlider )
@@ -105,10 +106,12 @@ export default class DlgSetting extends DlgBase {
     {
         let type : eMusicType = parseInt(selIdx) ;
         ClientData.getInstance().musicTypeIdx = type;
+        Utility.bgMusic(type) ;
         /// dispatch event ;
         let pEvent = new cc.Event.EventCustom(clientEvent.setting_upate_Music,true) ;
         pEvent.detail = type ;
         cc.systemEvent.dispatchEvent(pEvent);
+        Utility.audioBtnClick();
     }
 
     onToggleBackgroundType( toggle : cc.Toggle, selIdx : string )
@@ -119,6 +122,7 @@ export default class DlgSetting extends DlgBase {
         let pEvent = new cc.Event.EventCustom(clientEvent.setting_update_deskBg,true) ;
         pEvent.detail = type ;
         cc.systemEvent.dispatchEvent(pEvent);
+        Utility.audioBtnClick();
     }
 
     onToggleMJType( toggle : cc.Toggle, selIdx : string )
@@ -130,6 +134,13 @@ export default class DlgSetting extends DlgBase {
         let pEvent = new cc.Event.EventCustom(clientEvent.setting_update_mjBg,true) ;
         pEvent.detail = type ;
         cc.systemEvent.dispatchEvent(pEvent);
+        Utility.audioBtnClick();
+    }
+
+    showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void )
+    {
+        super.showDlg(pfResult,jsUserData,pfOnClose) ;
+        this.refreshSetingDisplay();
     }
 
     protected refreshSetingDisplay()

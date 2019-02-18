@@ -115,7 +115,7 @@ export default class VoiceManager extends cc.Component {
         {
             case VoiceManager.EVENT_APPLY_KEY:
             {
-                this.onApplyKey( parseInt(jsDetail["code"]) ) ;
+                this.onApplyKey( parseInt(jsDetail["code"]) ) ;  
             }
             break;
             case VoiceManager.EVENT_DOWNLOADED:
@@ -243,6 +243,7 @@ export default class VoiceManager extends cc.Component {
         // first download
         if ( this.downloadFile(fileName) == false )
         {
+            console.log( "下载文件调用返回失败" );
             return false ;
         }
 

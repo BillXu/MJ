@@ -36,7 +36,34 @@ export default class Utility  {
     public static onWaitArrived()
     {
 
+    } 
+    
+    public static audioBtnClick()
+    {
+        let url = "sound/Button32";
+        cc.loader.loadRes(url, cc.AudioClip, function (err, clip) {
+            if ( err )
+            {
+                console.error( "load btn audio error + url = " + url );
+                return ;
+            }
+            cc.audioEngine.playEffect(clip, false);  
+        });
     }
+
+    public static bgMusic( idx : number )
+    {
+        let url = "bgMusic/bg_music1"+idx;
+        cc.loader.loadRes(url, cc.AudioClip, function (err, clip) {
+            if ( err )
+            {
+                console.error( "load btn audio error + url = " + url );
+                return ;
+            }
+            cc.audioEngine.playMusic(clip,true);  
+        });
+    }
+
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}

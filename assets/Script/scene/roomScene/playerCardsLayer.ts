@@ -38,7 +38,7 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
             self.pArrowTargetChuCard.node.position = cc.v2(pos.x,pos.y + chuCardNode.getBoundingBox().height * 0.45) ; ;
             self.pArrowTargetChuCard.play();
         };
-        this.vPlayerCards.forEach( ( pc : PlayerCard)=>{ pc.pfunChuAniFinishCallBack = pchuFunc ;} );   
+        this.vPlayerCards.forEach( ( pc : PlayerCard)=>{ pc.pfunChuAniFinishCallBack = pchuFunc ; pc.pPlayerCardsLayer = self ;} );   
     }
 
     refresh( pdata : RoomData )
@@ -59,7 +59,7 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
 
             let pcards = self.vPlayerCards[p.clientIdx] ;
             let cardsData = p.cards ;
-            pcards.onRefreshCards(cardsData.vHoldCard,cardsData.nHoldCardCnt,cardsData.vMingCards,cardsData.vChuCards,cardsData.nNewFeatchedCard) ;
+            pcards.onRefreshCards(p.isMale(),cardsData.vHoldCard,cardsData.nHoldCardCnt,cardsData.vMingCards,cardsData.vChuCards,cardsData.nNewFeatchedCard) ;
         } ); 
 
         if (  pdata.jsRoomInfoMsg["state"] != eRoomState.eRoomState_AskForHuAndPeng )
@@ -76,6 +76,11 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
                 this.pArrowTargetChuCard.play();
             }
         }
+    }
+
+    refreshPlayerSex( nClientIdx : number , isMale : boolean )
+    {
+        this.vPlayerCards[nClientIdx].isMale = isMale ;
     }
 
     //----state-----
@@ -160,7 +165,7 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
 
     clearAllCards()
     {
-        this.vPlayerCards.forEach( ( v : PlayerCard )=>{ v.onRefreshCards(null,0,null,null,0) ;} ) ; 
+        this.vPlayerCards.forEach( ( v : PlayerCard )=>{ v.onRefreshCards(v.isMale,null,0,null,null,0) ;} ) ; 
         this.hideArrowTargetChuCardAni();
     }
 
@@ -177,4 +182,10 @@ export default class PlayerCardsLayer extends roomSceneLayerBase {
         msg["actType"] = eMJActType.eMJAct_Chu ;
         this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
     }
+
+    highLightChuCard( cardNum : number )
+    {
+        this.vPlayerCards.forEach( ( cards : PlayerCard )=>{ cards.highLightChuCard(cardNum);} ) ;
+    }
+
 }

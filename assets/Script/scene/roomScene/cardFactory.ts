@@ -155,6 +155,7 @@ export default class CardFactory extends cc.Component {
             }
             let nRotation = nArrowDirection + vDirectDegree[nArrowDirection] ;
             pCard.pDirection.node.rotation = nRotation ;
+            pCard.pDirection.node.active = false ;  // disable arrow
         }
         pCardNode.scale = vScale[posIdx][cardType] ;
         return pCardNode ;

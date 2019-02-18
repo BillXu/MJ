@@ -1,5 +1,6 @@
 import DlgBase from "../../../common/DlgBase";
 import { clientEvent } from "../../../common/clientDefine";
+import Utility from "../../../globalModule/Utility";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -46,6 +47,7 @@ export default class DlgShop extends DlgBase {
         {
             this.pFuncResult(nShopItemID);
         }
+        Utility.audioBtnClick();
     }
 
     // update (dt) {}

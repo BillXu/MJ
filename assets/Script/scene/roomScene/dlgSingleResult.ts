@@ -17,6 +17,7 @@ import { playerBaseData } from "./roomInterface";
 import { eMJActType } from "./roomDefine";
 import DlgBase from "../../common/DlgBase"
 import WechatManager, { eWechatShareDestType } from "../../sdk/WechatManager";
+import Utility from "../../globalModule/Utility";
 @ccclass
 export default class dlgSingleResult extends DlgBase {
 
@@ -48,7 +49,7 @@ export default class dlgSingleResult extends DlgBase {
     @property(cc.Node)
     pLiujuTitle : cc.Node = null ;
 
-    nCountDownTimer : number = 15 ;
+    nCountDownTimer : number = 10 ;
 
     @property([cc.Component.EventHandler])
     vReusltHandle : cc.Component.EventHandler[] = [] ;
@@ -140,7 +141,7 @@ export default class dlgSingleResult extends DlgBase {
         // parse huinfo ;
         if ( jsHuDetail != null )
         {
-            let isZiMo : boolean = jsHuDetail["isZiMo"] ;
+            let isZiMo : boolean = jsHuDetail["isZiMo"] == 1 ;
             let huCard : number = jsHuDetail["huCard"];
             if ( isZiMo )
             {
@@ -185,10 +186,10 @@ export default class dlgSingleResult extends DlgBase {
         this.pRoomIDAndCirleState.string = "房间号:" + pdata.roomID + "  " + pdata.playedCircle + "/" + pdata.totalCircleOrRoundCnt ;
 
         // cur time 
-        this.pCurTime.string = (new Date()).toLocaleString();
+        this.pCurTime.string = (new Date()).toLocaleString("zh-CN");
 
         // start count down time 
-        this.nCountDownTimer = 15 ;
+        this.nCountDownTimer = 10 ;
         this.unschedule(this.onCountDownTimer) ;
         this.schedule(this.onCountDownTimer,1,50) ;
         this.pCountDownTime.string = this.nCountDownTimer.toString();
@@ -202,6 +203,7 @@ export default class dlgSingleResult extends DlgBase {
         this.unschedule(this.onCountDownTimer) ;
         cc.Component.EventHandler.emitEvents(this.vReusltHandle,false) ;
         WechatManager.getInstance().shareImageWechat(this.pBgImgArea,eWechatShareDestType.eDest_Firend);
+        Utility.audioBtnClick();
     }
 
     onClickGoOn()

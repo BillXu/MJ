@@ -40,10 +40,11 @@ export default class ProgressSlider extends cc.Component {
     onLoad () 
     {
         this.pProgess.totalLength = this.pProgess.node.getContentSize().width ;
+        this.pProgess.progress = this.pSlider.progress ;
     }
 
     start () {
-        this.pProgess.progress = this.pSlider.progress ;
+        
     }
 
     onSlider( slider : cc.Slider )
@@ -61,6 +62,7 @@ export default class ProgressSlider extends cc.Component {
             nP = 0 ;
         }
         this.progress = nP ;
+        cc.Component.EventHandler.emitEvents(this.slideEvents,this);
     }
 
     onClickRightBtn()
@@ -72,6 +74,7 @@ export default class ProgressSlider extends cc.Component {
             nP = 1 ;
         }
         this.progress = nP ;
+        cc.Component.EventHandler.emitEvents(this.slideEvents,this);
     }
     // update (dt) {}
 }

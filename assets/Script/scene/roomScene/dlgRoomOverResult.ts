@@ -14,6 +14,7 @@ import DlgBase from "../../common/DlgBase"
 import RoomData from "./roomData";
 import { SceneName } from "../../common/clientDefine"
 import WechatManager, { eWechatShareDestType } from "../../sdk/WechatManager";
+import Utility from "../../globalModule/Utility";
 @ccclass
 export default class DlgRoomOverResult extends DlgBase {
 
@@ -80,7 +81,7 @@ export default class DlgRoomOverResult extends DlgBase {
         } );
 
         // cur time 
-        this.pCurTime.string = (new Date()).toLocaleString();
+        this.pCurTime.string = (new Date()).toLocaleString("zh-CN");
 
         // rule
         this.pRule.string = pdata.rule;
@@ -92,11 +93,13 @@ export default class DlgRoomOverResult extends DlgBase {
     onBtnShare()
     {
         WechatManager.getInstance().shareImageWechat(this.pBgImgArea,eWechatShareDestType.eDest_Firend);
+        Utility.audioBtnClick();
     }
 
     onBtnGoOn()
     {
         cc.director.loadScene(SceneName.Scene_Main) ;
+        Utility.audioBtnClick();
     }
     // update (dt) {}
 }

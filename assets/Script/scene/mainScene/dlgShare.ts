@@ -1,6 +1,7 @@
 import DlgBase from "../../common/DlgBase";
 import WechatManager, { eWechatShareDestType } from "../../sdk/WechatManager";
 import { configDef } from "../../common/clientDefine";
+import Utility from "../../globalModule/Utility";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -33,6 +34,7 @@ export default class DlgShare extends DlgBase {
 
     protected share( type : eWechatShareDestType )
     {
+        Utility.audioBtnClick();
         WechatManager.getInstance().shareLinkWechat(configDef.APP_DOWNLOAD_URL,type,"赤峰麻将","我在赤峰麻将等你，快快下载，一起玩耍！") ;
     }
     // update (dt) {}

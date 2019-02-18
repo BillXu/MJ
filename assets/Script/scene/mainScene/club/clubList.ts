@@ -136,12 +136,14 @@ export default class ClubList extends cc.Component {
             v.isSelected = v.id == clubID ;
         }
         this.pList.notifyUpdate();
+        Utility.audioBtnClick();
     }
 
     onClickAddClub()
     {
         // show dlg ;
         this.pOptsJoinOrCreate.showDlg();
+        Utility.audioBtnClick();
     }
 
     onShowJoinClubDlg( btn : cc.Button )

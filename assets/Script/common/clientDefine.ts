@@ -22,6 +22,7 @@ let clientEvent =
 	event_leave_club : "event_leave_club",
 	event_joined_club : "event_joined_club",
 	event_recived_new_clubMessage : "event_recived_new_clubMessage",
+	event_checkUpdateOk : "event_checkUpdateOk",
 } ;
 
 let SceneName =

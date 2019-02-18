@@ -117,6 +117,11 @@ export default class VoicRecorder extends cc.Component {
         {
             this.recordState = eRecordState.eState_Init ;
         }
+        else
+        {
+            cc.audioEngine.pauseMusic();
+        }
+
     }
 
     onTouchMove( touchEvent : cc.Event.EventTouch )
@@ -159,6 +164,7 @@ export default class VoicRecorder extends cc.Component {
             return ;
         }
         this.recordState = eRecordState.eState_Init ;
+        cc.audioEngine.resumeMusic();
     }
 
     onRecordFrame()

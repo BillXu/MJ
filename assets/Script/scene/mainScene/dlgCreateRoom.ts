@@ -12,6 +12,7 @@ const {ccclass, property} = cc._decorator;
 import DlgBase from "../../common/DlgBase"
 import * as _ from "lodash"
 import { eGameType } from "../../common/clientDefine"
+import Utility from "../../globalModule/Utility";
 @ccclass
 export default class DlgCreateRoom extends DlgBase {
 
@@ -91,6 +92,7 @@ export default class DlgCreateRoom extends DlgBase {
 
          this.nCurMJTypeIdx = nMjIdx ;
          this.onRestoreMJOptsDisplay();
+         Utility.audioBtnClick();
     }
 
     onSelectRoundType( event : cc.Toggle, js : string )
@@ -100,6 +102,7 @@ export default class DlgCreateRoom extends DlgBase {
 
         this.updateToggleLabelClr(this.vCircleToggles) ;
         this.updateToggleLabelClr(this.vRoundToggles);
+        Utility.audioBtnClick();
     }
 
     onSelectCircleType( event : cc.Toggle, js : string )
@@ -109,16 +112,19 @@ export default class DlgCreateRoom extends DlgBase {
 
         this.updateToggleLabelClr(this.vCircleToggles) ;
         this.updateToggleLabelClr(this.vRoundToggles);
+        Utility.audioBtnClick();
     }
 
     onSelectPayType( event : cc.Toggle, js : string )
     {
         this.updateToggleLabelClr(this.vPayTypeToggles) ;
+        Utility.audioBtnClick();
     }
 
     onSelectPlayerCnt( event : cc.Toggle, js : string )
     {
          this.updateToggleLabelClr(this.vPlayerCntToggles) ;
+         Utility.audioBtnClick();
     }
 
     onSelectOpt( tog : cc.Toggle, js : string )
@@ -130,6 +136,7 @@ export default class DlgCreateRoom extends DlgBase {
             return ;
         }
         labelNode.color = tog.isChecked ? this.checkedToggleClr : this.defToggleClr ;
+        Utility.audioBtnClick();
     }
 
     onDoCreate( event : cc.Button )
@@ -175,6 +182,8 @@ export default class DlgCreateRoom extends DlgBase {
         createMsg["guapu"] = this.isEnableDuipu.isChecked ? 1 : 0 ;
         createMsg["enableAvoidCheat"] = this.isEnableAvoidCheat.isChecked ? 1 : 0 ;
         this.pFuncResult(createMsg);
+
+        Utility.audioBtnClick();
     }
 
     protected onRestoreMJOptsDisplay()

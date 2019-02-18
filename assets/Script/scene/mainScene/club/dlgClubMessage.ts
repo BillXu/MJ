@@ -104,6 +104,8 @@ export default class dlgClubMessage extends DlgBase {
             }
             return true ;
         }) ;
+
+        Utility.audioBtnClick();
     }
 
     

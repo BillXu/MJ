@@ -1,3 +1,6 @@
+import Utility from "../../globalModule/Utility";
+import ClientData from "../../globalModule/ClientData";
+
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -32,7 +35,13 @@ export default class Bacground extends cc.Component {
     @property(cc.Node)
     settingAndMsgNode: cc.Node = null;
     private ptsettingAndMsgNodePos : cc.Vec2 = null ;
-    // onLoad () {}
+    onLoad () 
+    {
+        if ( cc.audioEngine.isMusicPlaying() == false )
+        {
+            Utility.bgMusic(ClientData.getInstance().musicTypeIdx);
+        }
+    }
 
     start () {
         this.ptSelfInfoPos = this.selfInfoNode.position ;
