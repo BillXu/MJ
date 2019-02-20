@@ -50,7 +50,6 @@ export default class ClubMessageData extends IPannelData {
         msg["clientMaxEventID"] = this.vDatas.length > 0 ? Math.max(this.nClientMaxEventID,this.notOpenMaxEvnetID) : 0 ;
         msg["state"] = eEventState.eEventState_WaitProcesse ; 
         this.sendClubMsg(eMsgType.MSG_CLUB_REQ_EVENTS,msg) ;
-        this.vDatas.length = 0 ;
         console.log( "req client wait process event clubID = " + this.clubID );
     }
 
@@ -138,6 +137,11 @@ export default class ClubMessageData extends IPannelData {
                  if ( eveID > self.notOpenMaxEvnetID )
                  {
                      self.notOpenMaxEvnetID = eveID ;
+                 }
+                 else
+                 {
+                     console.warn( "why have same id  or small id ? " + eveID + "self max id = " + self.notOpenMaxEvnetID   );
+                     return ;
                  }
 
                  let p = new ClubMessageDataItem();

@@ -8,6 +8,7 @@ local/
 /build/*
 !/build/jsb-link/
 /build/jsb-link/*
+!/build/jsb-link/main.js
 !/build/jsb-link/.cocos-project.json
 !/build/jsb-link/.cocos-project.json
 !/build/jsb-link/frameworks/

@@ -333,10 +333,13 @@ export default class ClientData
                     let str = "俱乐部：" + deail["clubName"] + " 的管理员" + (isAgree ? "同意了" : "拒绝了" )+ "您的加入申请。";
                     Utility.showPromptText(str);
 
-                    let ev : any = clientEvent.event_joined_club ;
-                    let pEvent = new cc.Event.EventCustom(ev,true) ;
-                    pEvent.detail = clubID;
-                    cc.systemEvent.dispatchEvent(pEvent);
+                    if ( isAgree )
+                    {
+                        let ev : any = clientEvent.event_joined_club ;
+                        let pEvent = new cc.Event.EventCustom(ev,true) ;
+                        pEvent.detail = clubID;
+                        cc.systemEvent.dispatchEvent(pEvent);
+                    }
                 }
                 break;
                 case eMailType.eMail_ClubBeKick:
