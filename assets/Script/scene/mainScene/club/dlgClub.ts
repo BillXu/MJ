@@ -391,6 +391,7 @@ export default class DlgClub extends DlgBase {
         ClientData.getInstance().onDoLevedClub(this.vClubDatas[this.nCurSelClubIdx].clubID );
         this.vClubDatas.splice(this.nCurSelClubIdx,1) ;
         this.pLeftClubList.refresh(this.vClubDatas);
+        this.pPublicBtns.active = this.vClubDatas.length > 0 ;
     }
 
     closeDlg()

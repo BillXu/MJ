@@ -65,7 +65,7 @@ export default class PannelRoom extends ClubPannel {
         {
             this.pClubRoomData.onLoseFocus();
         }
-        
+        this.pShowDismissBtn.node.active = false ;
         if ( data == null )
         {
             this.pClubRoomData = null ;
@@ -91,6 +91,7 @@ export default class PannelRoom extends ClubPannel {
 
         if ( this.pClubRoomData == null )
         {
+            this.pShowDismissBtn.node.active = false ;
             return ;
         }
 
