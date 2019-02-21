@@ -171,10 +171,12 @@ export default class RoomData extends cc.Component {
             return createDlgOptIdx == 0 ? 8 : 16 ;
         }
         else
-        createDlgOptIdx = level - 2 ;
+        {
+            createDlgOptIdx = level - 2 ;
+        }
 
         let vCircle = [1,2,3,4] ;
-        return vCircle[level] ;
+        return vCircle[createDlgOptIdx] ;
     }
 
     get leftCircle() : number

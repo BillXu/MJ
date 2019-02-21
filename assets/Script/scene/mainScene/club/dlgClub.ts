@@ -64,6 +64,9 @@ export default class DlgClub extends DlgBase {
     @property(cc.Node)
     pMessageBtnRedDot : cc.Node = null ;
 
+    @property(cc.Node)
+    pPublicBtns : cc.Node = null ;
+
     // LIFE-CYCLE CALLBACKS:
     onRecievedBrifdata( event : cc.Event.EventCustom )
     {
@@ -126,6 +129,7 @@ export default class DlgClub extends DlgBase {
             this.onChangeClubInfoTable(null,this.nCurPannelIdx.toString()) ;
         }
 
+        this.pPublicBtns.active = this.vClubDatas.length > 0 ;
         cc.systemEvent.on(clientDefine.netEventMsg,this.onMsg,this) ;
         cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
         cc.systemEvent.on(clientEvent.event_leave_club,this.onEventLeaveClub,this);
@@ -145,6 +149,7 @@ export default class DlgClub extends DlgBase {
         let p = new ClubData();
         p.init(clubID,this.pPlayerDatas);
         this.vClubDatas.push(p);
+        this.pPublicBtns.active = this.vClubDatas.length > 0 ;
     }
 
     onEventLeaveClub( event : cc.Event.EventCustom  )
@@ -157,6 +162,8 @@ export default class DlgClub extends DlgBase {
                 this.vClubDatas.splice(parseInt(idx),1) ;
                 
                 this.pLeftClubList.refresh(this.vClubDatas);
+
+                this.pPublicBtns.active = this.vClubDatas.length > 0 ;
                 return ;
             }
         }
@@ -366,6 +373,7 @@ export default class DlgClub extends DlgBase {
         p.init(nClubID,this.pPlayerDatas);
         this.vClubDatas.push(p);
         ClientData.getInstance().onJoinedNewClubID(nClubID);
+        this.pPublicBtns.active = this.vClubDatas.length > 0 ;
     }
 
     onChangeClubInfoTable( event : cc.Event.EventTouch, nTablIdx : string )
@@ -383,6 +391,7 @@ export default class DlgClub extends DlgBase {
         ClientData.getInstance().onDoLevedClub(this.vClubDatas[this.nCurSelClubIdx].clubID );
         this.vClubDatas.splice(this.nCurSelClubIdx,1) ;
         this.pLeftClubList.refresh(this.vClubDatas);
+        this.pPublicBtns.active = this.vClubDatas.length > 0 ;
     }
 
     closeDlg()

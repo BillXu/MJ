@@ -76,7 +76,7 @@ export default class RecordData extends cc.Component {
         }
         else
         {
-            url = "http://api.youhoox.com/cfmj.new.uid.php?uid=" + this.currentID + "&self=true";
+            url = "http://api.youhoox.com/cfmj.new.uid.php?uid=" + this.currentID + "&self=false";
         }
         var xhr = new XMLHttpRequest();
         let self = this ;
@@ -132,6 +132,7 @@ export default class RecordData extends cc.Component {
                 p.vOffset.push(of);
             }
             this.vRecorder.push(p);
+            this.vRecorder.reverse();
         }
         cc.Component.EventHandler.emitEvents(this.vlpfCallBack,this.vRecorder,false) ;
     }

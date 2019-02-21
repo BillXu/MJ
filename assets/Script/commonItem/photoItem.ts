@@ -34,7 +34,11 @@ export default class PhotoItem extends cc.Component {
             return ;
         }
         
-        this.pPhotoSprite.spriteFrame = this.pDefaultFrame ;
+        if ( this.pDefaultFrame )
+        {
+            this.pPhotoSprite.spriteFrame = this.pDefaultFrame ;
+        }
+        
         this.imgUrl = "" ;  
         if ( null == strUrl || strUrl == "" )
         {
@@ -104,7 +108,10 @@ export default class PhotoItem extends cc.Component {
         //     mask.spriteFrame = this.pPhotoFrame.spriteFrame.clone();
 
         // }while(0);
-        this.pDefaultFrame = this.pPhotoSprite.spriteFrame.clone() ;
+        if ( this.pPhotoSprite.spriteFrame != null )
+        {
+            this.pDefaultFrame = this.pPhotoSprite.spriteFrame.clone() ;
+        }
     }
 
     start () {
