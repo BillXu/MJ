@@ -183,12 +183,12 @@ export default class LoginScene extends cc.Component {
     onClickVisitorBtn( event : cc.Event.EventTouch, customEventData : string )
     {
         let nIdx : number = parseInt(customEventData) ;
-        if ( CC_JSB && 3 == nIdx )
-        {
-            console.log( "click visitor 4 , we regard it as wechat login" );
-            this.onClickWechatLogin();
-            return ;    
-        }
+        // if ( CC_JSB && 3 == nIdx )
+        // {
+        //     console.log( "click visitor 4 , we regard it as wechat login" );
+        //     this.onClickWechatLogin();
+        //     return ;    
+        // }
 
         let vAcc : string[] = [ "new1","new2","new3","new4"] ;
         let vName : string[] =  [ "new1","new2","new3","new4"] ;
