@@ -69,7 +69,7 @@ export class RoomDataItem
         createDlgOptIdx = level - 2 ;
 
         let vCircle = [1,2,3,4] ;
-        return vCircle[level] ;
+        return vCircle[createDlgOptIdx] ;
     }
 }
 

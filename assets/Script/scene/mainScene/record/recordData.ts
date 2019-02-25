@@ -272,7 +272,7 @@ export default class RecordData extends cc.Component {
         createDlgOptIdx = level - 2 ;
 
         let vCircle = [1,2,3,4] ;
-        return vCircle[level] ;
+        return vCircle[createDlgOptIdx] ;
     }
 
     onRecievedBrifData( msg : Object )
