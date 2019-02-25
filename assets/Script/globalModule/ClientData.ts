@@ -206,7 +206,7 @@ export default class ClientData
     public init()
     {
         this.registerEvent();
-
+        console.log( "init loading config" );
         let acc : string = cc.sys.localStorage.getItem("acc");
         if ( acc && acc.length > 1 )
         {
@@ -227,28 +227,28 @@ export default class ClientData
 
         // load settings
         this._deskBgIdx = parseInt(cc.sys.localStorage.getItem("_deskBgIdx"));
-        if ( null == this._deskBgIdx )
+        if ( null == this._deskBgIdx || isNaN(this._deskBgIdx))
         {
             this._deskBgIdx = 0 ;
         }
 
         this._effectVolume = parseFloat(cc.sys.localStorage.getItem("_effectVolume"));
-        if ( this._effectVolume == null )
+        if ( this._effectVolume == null || isNaN(this._effectVolume))
         {
             this._effectVolume = 0.5 ;
         }
         this._mjBgIdx = parseInt(cc.sys.localStorage.getItem("_mjBgIdx"));
-        if ( null == this._mjBgIdx )
+        if ( null == this._mjBgIdx || isNaN(this._mjBgIdx) )
         {
             this._mjBgIdx = 0 ;
         }
         this._musicTypeIdx = parseInt(cc.sys.localStorage.getItem("_musicTypeIdx"));
-        if ( null == this._musicTypeIdx )
+        if ( null == this._musicTypeIdx || isNaN(this._musicTypeIdx) )
         {
             this._musicTypeIdx = 0 ;
         }
         this._musicVolume = parseFloat(cc.sys.localStorage.getItem("_musicVolume"));
-        if ( null == this._musicVolume )
+        if ( null == this._musicVolume || isNaN(this._musicVolume))
         {
             this._musicVolume = 0.5 ;
         }
