@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "ba7a3a58-e66d-49e0-b010-54ecfcdf2cf8",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "biaotidi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "f2c987e4-064e-4c7d-bdde-11c10c5566fb",
       "rawTextureUuid": "ba7a3a58-e66d-49e0-b010-54ecfcdf2cf8",
       "trimType": "auto",

@@ -15,8 +15,8 @@ import RoomData from "./roomData"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import { eMsgType } from "../../common/MessageIdentifer"
 import DlgSetting from "../mainScene/dlgSetting"
-import { eDeskBg, clientEvent, eMJBg, SceneName, eGameType, configDef } from "../../common/clientDefine"
-import ClientData from "../../globalModule/ClientData";
+import { eDeskBg, clientEvent, eMJBg, SceneName, eGameType } from "../../common/clientDefine"
+//import ClientData from "../../globalModule/ClientData";
 import Utility from "../../globalModule/Utility";
 import DlgRoomChat from "./dlgRoomChat";
 import WechatManager, { eWechatShareDestType } from "../../sdk/WechatManager";

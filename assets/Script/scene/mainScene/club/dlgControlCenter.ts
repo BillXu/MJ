@@ -10,13 +10,13 @@
 
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../../common/DlgBase"
-import ClubData from "./clubData"
 import { eGameType } from "../../../common/clientDefine"
 import DlgCreateRoom from "../dlgCreateRoom";
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Network from "../../../common/Network"
 import Utility from "../../../globalModule/Utility";
-import ClientData from "../../../globalModule/ClientData";
+import ClubData from "../../../clientData/clubData/ClubData";
+import ClubDataBase from "../../../clientData/clubData/ClubDataBase";
 @ccclass
 export default class DlgControlCenter extends DlgBase {
 
@@ -80,24 +80,27 @@ export default class DlgControlCenter extends DlgBase {
 
     refresh( pdata : ClubData )
     {
-        if ( (pdata.isSelfMgr() || pdata.isSelfOwner()) == false )
+        let isSelfMgr = pdata.isSelfPlayerMgr();
+        let isSelfOwner = pdata.isSelfPlayerOwner();
+        let clubBaseData : ClubDataBase = pdata.getClubBase();
+        if ( (isSelfMgr || isSelfOwner ) == false )
         {
             this.pRuleToggle.check();
         }
-        this.pBtnModifyRule.active = (pdata.isSelfMgr() || pdata.isSelfOwner());
-        this.pDismissTab.node.active = pdata.isSelfOwner();
-        this.pMgrTab.forEach( ( pNodeToggle : cc.Toggle )=>{ pNodeToggle.node.active = pdata.isSelfMgr() || pdata.isSelfOwner() ;} );
+        this.pBtnModifyRule.active = (isSelfMgr || isSelfOwner);
+        this.pDismissTab.node.active = isSelfOwner;
+        this.pMgrTab.forEach( ( pNodeToggle : cc.Toggle )=>{ pNodeToggle.node.active = isSelfMgr || isSelfOwner ;} );
         this.pRuleToggle.node.active = true ;
         
         this.pClubData = pdata ;
-        this.pCurName.string = pdata.name ;
+        this.pCurName.string = clubBaseData.name ;
         this.pNewName.string = "" ;
         
-        this.pClubState.string = pdata.isStoped ? "俱乐部已经打烊，是否需要营业？" : "俱乐部正在营业，是否要打烊？" ;
-        this.pBtnOpen.active = pdata.isStoped ;
+        this.pClubState.string = clubBaseData.isStoped ? "俱乐部已经打烊，是否需要营业？" : "俱乐部正在营业，是否要打烊？" ;
+        this.pBtnOpen.active = clubBaseData.isStoped;
         this.pBtnStop.active = !this.pBtnOpen.active ;
         // wan fa ;
-        let opts = pdata.opts ;
+        let opts = clubBaseData.clubOpts ;
         let gameType : eGameType = opts["gameType"] ;
         let payType : number = opts["payType"] ;
         let isCirle : boolean = opts["circle"] == 1;
@@ -153,10 +156,9 @@ export default class DlgControlCenter extends DlgBase {
         let self = this ;
         this.pDlgCreateOpts.showDlg(( msgCreateRoom : Object )=>{
             let msg = {} ;
-            msg["clubID"] = self.pClubData.clubID ;
+            msg["clubID"] = self.pClubData.getClubID() ;
             msg["opts"] = msgCreateRoom ;
-            let selfUID = ClientData.getInstance().selfUID;
-            Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_SET_ROOM_OPTS,eMsgPort.ID_MSG_PORT_CLUB,selfUID,( js : Object )=>{
+            Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_SET_ROOM_OPTS,eMsgPort.ID_MSG_PORT_CLUB,self.pClubData.getClubID(),( js : Object )=>{
                 let ret : number = js["ret"] ;
                 let vError = [ "玩法更改成功" , "权限不足","code 2"," code 3","无效玩家对象"] ;
                 if ( ret < vError.length )
@@ -164,7 +166,7 @@ export default class DlgControlCenter extends DlgBase {
                     Utility.showPromptText(vError[ret]) ;
                     if ( 0 == ret )
                     {
-                        self.pClubData.opts = msgCreateRoom ;
+                        self.pClubData.getClubBase().clubOpts = msgCreateRoom ;
                         self.refresh(self.pClubData);
                         self.pDlgCreateOpts.closeDlg();
                     }
@@ -194,12 +196,12 @@ export default class DlgControlCenter extends DlgBase {
             return ;
         }
 
-        let selfUID = ClientData.getInstance().selfUID;
+        let clubID = this.pClubData.getClubID();
         let self = this ;
         let msg = {} ;
-        msg["clubID"] = self.pClubData.clubID ;
+        msg["clubID"] = clubID ;
         msg["name"] = this.pNewName.string ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_UPDATE_NAME,eMsgPort.ID_MSG_PORT_CLUB,selfUID,( js : Object )=>{
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_UPDATE_NAME,eMsgPort.ID_MSG_PORT_CLUB,clubID,( js : Object )=>{
             let ret : number = js["ret"] ;
             let vError = [ "改名字成功" , "权限不足","新名字与旧名字一样了","名字已经被其他俱乐部使用了","无效玩家对象"] ;
             if ( ret < vError.length )
@@ -207,12 +209,8 @@ export default class DlgControlCenter extends DlgBase {
                 Utility.showPromptText(vError[ret]) ;
                 if ( 0 == ret )
                 {
-                    self.pClubData.name = self.pNewName.string ;
+                    self.pClubData.getClubBase().name = self.pNewName.string ;
                     self.refresh(self.pClubData);
-                    if ( self.pFuncResult  )
-                    {
-                        self.pFuncResult({ type : "updateName" } );
-                    }
                 }
             }
             else
@@ -229,10 +227,9 @@ export default class DlgControlCenter extends DlgBase {
     {
         let self = this ;
         let msg = {} ;
-        msg["clubID"] = self.pClubData.clubID ;
-        msg["isPause"] = (!this.pClubData.isStoped) ? 1 : 0 ;
-        let selfUID = ClientData.getInstance().selfUID ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_SET_STATE,eMsgPort.ID_MSG_PORT_CLUB,selfUID,( js : Object )=>{
+        msg["clubID"] = this.pClubData.getClubID() ;
+        msg["isPause"] = (!this.pClubData.getClubBase().isStoped) ? 1 : 0 ;
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_SET_STATE,eMsgPort.ID_MSG_PORT_CLUB,this.pClubData.getClubID(),( js : Object )=>{
             let ret : number = js["ret"] ;
             let vError = [ "操作成功" , "权限不足"] ;
             if ( ret < vError.length )
@@ -240,7 +237,7 @@ export default class DlgControlCenter extends DlgBase {
                 Utility.showPromptText(vError[ret]) ;
                 if ( 0 == ret )
                 {
-                    self.pClubData.isStoped = !self.pClubData.isStoped ;
+                    self.pClubData.getClubBase().isStoped = !self.pClubData.getClubBase().isStoped ;
                     self.refresh(self.pClubData);
                 }
             }
@@ -256,11 +253,10 @@ export default class DlgControlCenter extends DlgBase {
 
     onDissmiss()
     {
-        let selfUID = ClientData.getInstance().selfUID;
         let self = this ;
         let msg = {} ;
-        msg["clubID"] = self.pClubData.clubID ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_DISMISS_CLUB,eMsgPort.ID_MSG_PORT_CLUB,selfUID,( js : Object )=>{
+        msg["clubID"] = this.pClubData.getClubID() ;
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_DISMISS_CLUB,eMsgPort.ID_MSG_PORT_CLUB,this.pClubData.getClubID(),( js : Object )=>{
             let ret : number = js["ret"] ;
             let vError = [ "操作成功" , "权限不足"," code 2 ","有房间牌局没结束，无法解散，请稍后再试","无效玩家"] ;
             if ( ret < vError.length )
@@ -268,11 +264,7 @@ export default class DlgControlCenter extends DlgBase {
                 Utility.showPromptText(vError[ret]) ;
                 if ( 0 == ret )
                 {
-                    self.pClubData.isStoped = !self.pClubData.isStoped ;
-                    if ( self.pFuncResult  )
-                    {
-                        self.pFuncResult({ type : "dissmiss" } );
-                    }
+                    self.pClubData.doDeleteThisClub();
                     self.closeDlg();
                 }
             }

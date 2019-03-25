@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "251711c2-7937-4bb8-9559-9df802c905dd",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "xiaodi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "1f0458a5-3147-4875-b6f4-bbf463f50a3a",
       "rawTextureUuid": "251711c2-7937-4bb8-9559-9df802c905dd",
       "trimType": "auto",

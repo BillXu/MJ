@@ -11,15 +11,14 @@
 const {ccclass, property} = cc._decorator;
 import listView from "../../../commonItem/ListView"
 import { AbsAdapter } from "../../../commonItem/ListView"
-import ClubData from "./clubData" ;
 import ClubPannel from "./clubPannel" ;
-import ClubMemberData, { ClubMember } from "./clubMemberData"
-import { clubMemAct, eClubPrivilige } from "./clubDefine"
 import MemberItem from "./memberItem"
 import Network from "../../../common/Network";
 import { eMsgPort, eMsgType } from "../../../common/MessageIdentifer";
-import ClientData from "../../../globalModule/ClientData";
 import Utility from "../../../globalModule/Utility";
+import ClubDataMembers, { ClubMember } from "../../../clientData/clubData/ClubDataMembers";
+import IClubDataComponent from "../../../clientData/clubData/IClubDataComponent";
+import { clubMemAct, eClubPrivilige } from "../../../clientData/clubData/ClubDefine";
 @ccclass
 export default class PannelMember extends ClubPannel {
 
@@ -28,7 +27,7 @@ export default class PannelMember extends ClubPannel {
 
     pAdapter : listMemViewAdpter = null ;
 
-    pData : ClubMemberData = null ;
+    pData : ClubDataMembers = null ;
     // LIFE-CYCLE CALLBACKS:
     onLoad ()
     {
@@ -39,15 +38,9 @@ export default class PannelMember extends ClubPannel {
 
     }
 
-    show( data : ClubData )
+    show()
     {
-        super.show(data);
-
-        if ( this.pData )
-        {
-            this.pData.onLoseFocus();
-        }
-
+        super.show();
         if ( null == this.pAdapter )
         {
             this.pAdapter = new listMemViewAdpter();
@@ -55,38 +48,32 @@ export default class PannelMember extends ClubPannel {
             this.pMembersView.setAdapter(this.pAdapter) ;
         }
 
-        if ( data == null )
-        {
-            this.pAdapter.setDataSet([]);
-            this.pMembersView.notifyUpdate();
-            return ;
-        }
+        this.pAdapter.setDataSet([]);
+        this.pMembersView.notifyUpdate();
+        return ;
+    }
 
-        this.pData = data.pClubMemberData ;
-        if ( this.pData.isNeedRefreshData() )
-        {
-            this.pData.featchData();
-        }
-        
-        this.pData.lpfCallBack = this.onUpdateMember.bind(this);
+    refresh( data : IClubDataComponent )
+    {
+        this.pData = <ClubDataMembers>data ;
         this.pAdapter.setDataSet(this.pData.vMembers) ;
         this.pMembersView.notifyUpdate();
     }
 
     onClickMemActBtn( mem : ClubMember, opt : clubMemAct )
     {
-        let selfID = ClientData.getInstance().selfUID ;
+        let clubID = this.pData.clubID;
         let self = this ;
         if ( clubMemAct.eAct_Kick_Out == opt )
         {
             let msg = {} ;
-            msg["clubID"] = this.pData.clubID;
+            msg["clubID"] = clubID;
             msg["kickUID"] = mem.uid ; 
-            Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_KICK_PLAYER,eMsgPort.ID_MSG_PORT_CLUB,selfID, ( js : Object )=>{
+            Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_KICK_PLAYER,eMsgPort.ID_MSG_PORT_CLUB,clubID, ( js : Object )=>{
                 let ret = js["ret"] ;
                 if ( 0 == ret )
                 {
-                    self.pData.featchData();
+                    self.pData.fetchData(true);
                     return ;
                 }
     
@@ -109,11 +96,11 @@ export default class PannelMember extends ClubPannel {
         msg["clubID"] = this.pData.clubID;
         msg["playerUID"] = mem.uid ;
         msg["privilige"] = opt == clubMemAct.eAct_Down_Privilige ? eClubPrivilige.eClubPrivilige_Normal : eClubPrivilige.eClubPrivilige_Manager ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_UPDATE_PRIVILIGE,eMsgPort.ID_MSG_PORT_CLUB,selfID, ( js : Object )=>{
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_UPDATE_PRIVILIGE,eMsgPort.ID_MSG_PORT_CLUB,clubID, ( js : Object )=>{
             let ret = js["ret"] ;
             if ( 0 == ret )
             {
-                self.pData.featchData();
+                self.pData.fetchData(true);
                 return ;
             }
 

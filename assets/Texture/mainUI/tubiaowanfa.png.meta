@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "72bc8055-8b59-4c09-8add-e32f353b086b",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "tubiaowanfa": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "89fccdf8-9f86-4d6d-9094-183c49e5c537",
       "rawTextureUuid": "72bc8055-8b59-4c09-8add-e32f353b086b",
       "trimType": "auto",

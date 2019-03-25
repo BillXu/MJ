@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "968b9268-7bfa-41ba-be98-b1f0cc972f58",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "定位效果图": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "a974bd75-eaf3-4b6a-b408-5b6b6b941e3b",
       "rawTextureUuid": "968b9268-7bfa-41ba-be98-b1f0cc972f58",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "b2c111aa-cf35-4429-8bd9-4a0141f82f76",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "weizhi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "fe2836f6-0455-4c4e-bd14-6415ca7da75c",
       "rawTextureUuid": "b2c111aa-cf35-4429-8bd9-4a0141f82f76",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "77667973-0fda-4e40-bb6d-1755813861bb",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "zishengcheng": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "ba38fb5b-77fe-4b31-9fa3-68084e979282",
       "rawTextureUuid": "77667973-0fda-4e40-bb6d-1755813861bb",
       "trimType": "auto",

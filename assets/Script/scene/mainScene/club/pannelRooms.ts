@@ -9,16 +9,16 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import ClubData from "./clubData" ;
 import ClubPannel from "./clubPannel" ;
-import ClubRoomData, { RoomDataItem } from "./clubRoomData"
 import RoomItem from "./roomItem"
 import * as _ from "lodash"
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Network from "../../../common/Network";
-import ClientData from "../../../globalModule/ClientData";
 import Utility from "../../../globalModule/Utility";
 import { SceneName } from "../../../common/clientDefine";
+import IClubDataComponent from "../../../clientData/clubData/IClubDataComponent";
+import ClubDataRooms, { ClubRoomItem } from "../../../clientData/clubData/ClubDataRooms";
+import ClientApp from "../../../globalModule/ClientApp";
 @ccclass
 export default class PannelRoom extends ClubPannel {
 
@@ -35,7 +35,8 @@ export default class PannelRoom extends ClubPannel {
     @property(cc.Toggle)
     pShowDismissBtn : cc.Toggle = null ;
 
-    pClubRoomData : ClubRoomData = null ;
+    pClubDataRooms : ClubDataRooms = null ;
+
     vReserveNode : cc.Node[] = [] ;
     start () {
 
@@ -58,51 +59,31 @@ export default class PannelRoom extends ClubPannel {
         // // test code end 
     }
 
-    show( data : ClubData )
+    refresh( data : IClubDataComponent )
     {
-        super.show(data);
-        if ( this.pClubRoomData )
+        if ( null == data )
         {
-            this.pClubRoomData.onLoseFocus();
-        }
-        this.pShowDismissBtn.node.active = false ;
-        if ( data == null )
-        {
-            this.pClubRoomData = null ;
-            this.refresh();
+            this.hide();
             return ;
         }
-
-        this.pShowDismissBtn.node.active = data.canSelfDismissClubRoom();
-        this.pClubRoomData = data.pClubRoomData ;
-        data.pClubRoomData.lpfCallBack = this.onRoomDataUpdate.bind(this);
-        if ( this.pClubRoomData.isNeedRefreshData() )
-        {
-            this.pClubRoomData.featchData() ;
-        }
-        this.refresh();
-    }
-
-    refresh()
-    {
+        this.show();
+        let club = data.getClub();
+        this.pClubDataRooms = <ClubDataRooms>data;
         // recycle node ;
         this.vReserveNode = this.pLayout.node.children.concat(this.vReserveNode) ;
         this.pLayout.node.removeAllChildren();
 
-        if ( this.pClubRoomData == null )
-        {
-            this.pShowDismissBtn.node.active = false ;
-            return ;
-        }
+ 
+        this.pShowDismissBtn.node.active = club.isSelfPlayerMgr() || club.isSelfPlayerOwner();
 
-        if ( this.pClubRoomData.vRoomDataItems.length <= 0 )
+        if ( this.pClubDataRooms.vRooms.length <= 0 )
         {
             return ;
         }
 
-        let vRooms : RoomDataItem[] = this.pClubRoomData.vRoomDataItems ;
+        let vRooms : ClubRoomItem[] = this.pClubDataRooms.vRooms ;
         let self = this ;
-        vRooms.forEach( ( item : RoomDataItem )=>{
+        vRooms.forEach( ( item : ClubRoomItem )=>{
             let pNode : cc.Node = null ;
             if ( self.vReserveNode.length > 0 )
             {
@@ -133,32 +114,32 @@ export default class PannelRoom extends ClubPannel {
         }, 80);
     }
 
-    onRoomDataUpdate( nRoomID : number )
-    {
-        if ( -1 == nRoomID )
-        {
-            this.refresh();
-            return ;
-        }
+    // onRoomDataUpdate( nRoomID : number )
+    // {
+    //     if ( -1 == nRoomID )
+    //     {
+    //         this.refresh();
+    //         return ;
+    //     }
 
-        let pdata = this.pClubRoomData.getRoomItemByID(nRoomID);
-        this.pLayout.node.children.every(( node : cc.Node )=>{
-            let pRoomItem : RoomItem = node.getComponent(RoomItem);
-            if ( pRoomItem == null )
-            {
-                cc.error( "why do not have room item compment ? " );
-                return true;
-            }
+    //     let pdata = this.pClubRoomData.getRoomItemByID(nRoomID);
+    //     this.pLayout.node.children.every(( node : cc.Node )=>{
+    //         let pRoomItem : RoomItem = node.getComponent(RoomItem);
+    //         if ( pRoomItem == null )
+    //         {
+    //             cc.error( "why do not have room item compment ? " );
+    //             return true;
+    //         }
 
-            if ( pRoomItem.getRoomID() == nRoomID )
-            {
-                pRoomItem.refresh(pdata);
-                return false ;
-            }
+    //         if ( pRoomItem.getRoomID() == nRoomID )
+    //         {
+    //             pRoomItem.refresh(pdata);
+    //             return false ;
+    //         }
 
-            return true ;
-        });
-    }
+    //         return true ;
+    //     });
+    // }
 
     onToggleEvent()
     {
@@ -180,13 +161,12 @@ export default class PannelRoom extends ClubPannel {
         {
             let self = this ;
             let msg = {} ;
-            let port = ClientData.getInstance().getMsgPortByRoomID(nRoomID) ;
+            let port = Utility.getMsgPortByRoomID(nRoomID);
             Network.getInstance().sendMsg(msg,eMsgType.MSG_APPLY_DISMISS_VIP_ROOM,port,nRoomID,( js : Object )=>{
                 let ret = js["ret"] ;
                 if ( ret == 0 )
                 {
-                    self.pClubRoomData.deleteRoomID(nRoomID) ;
-                    self.onReapeat();
+                    self.pClubDataRooms.fetchData(true) ;
                 }
                 else
                 {
@@ -199,8 +179,8 @@ export default class PannelRoom extends ClubPannel {
         {
             let msg = { } ;
             msg["roomID"] = nRoomID;
-            msg["uid"] = ClientData.getInstance().selfUID;
-            let port = ClientData.getInstance().getMsgPortByRoomID(nRoomID);
+            msg["uid"] = ClientApp.getInstance().getClientPlayerData().getSelfUID();//ClientData.getInstance().selfUID;
+            let port = Utility.getMsgPortByRoomID(nRoomID);
             if ( eMsgPort.ID_MSG_PORT_ALL_SERVER <= port || port < eMsgPort.ID_MSG_PORT_LUOMJ  )
             {
                 Utility.showTip( "房间不存在或已经解散 code" + 0 );
@@ -221,16 +201,11 @@ export default class PannelRoom extends ClubPannel {
                     return true;
                 }
                 console.log( "set join room id = " + nRoomID );
-                ClientData.getInstance().stayInRoomID = nRoomID ;
+                ClientApp.getInstance().getClientPlayerData().getBaseData().stayInRoomID = nRoomID ;
                 cc.director.loadScene(SceneName.Scene_Room ) ;
                 return true ;
             } );
         }
-    }
-
-    onReapeat()
-    {
-        this.pClubRoomData.featchData() ;
     }
     // update (dt) {}
 }

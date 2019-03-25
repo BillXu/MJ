@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "7f612381-fb46-450c-b1f3-d8af0b879861",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "duijia (2)": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "6b0a954e-c98d-4bb5-b4fe-c7a400cf737f",
       "rawTextureUuid": "7f612381-fb46-450c-b1f3-d8af0b879861",
       "trimType": "auto",

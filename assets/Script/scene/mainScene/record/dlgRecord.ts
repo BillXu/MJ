@@ -11,12 +11,9 @@
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../../common/DlgBase"
 import RecordView from "./recordView"
-import RecordData from "./recordData"
-import { RecordItem } from "./recordData"
-import { clientEvent } from "../../../common/clientDefine"
 import DlgSingleRoomRecord from "./dlgSingleRoomRecorder";
-import ClientData from "../../../globalModule/ClientData";
 import Utility from "../../../globalModule/Utility";
+import RecorderData, { IRecorderEntry, RecorderRoomEntry } from "../../../clientData/RecorderData";
 @ccclass
 export default class dlgRecord extends DlgBase {
 
@@ -29,50 +26,20 @@ export default class dlgRecord extends DlgBase {
     @property(DlgSingleRoomRecord)
     pDlgSingleRoomRecord : DlgSingleRoomRecord = null ;
  
-    @property(RecordData)
-    pRecordData : RecordData = null ;
-    // LIFE-CYCLE CALLBACKS:
-    onLoad()
-    {
-        super.onLoad();
-        this.pRecordData.currentID = ClientData.getInstance().selfUID ;
-        this.pRecordData.isClub = false ;
-        this.pRecordData.nRefreshRate = 15*60 ; // 15 minite 
-        
-    }
-
-    start () {
-
-    }
-
-    onRecievedBrifdata( event : cc.Event.EventCustom )
-    {
-        this.pRecordData.onRecievedBrifData(event.detail) ;
-
-        let uid = event.detail["uid"] ;
-        let name = event.detail["name"] ;
-        this.pRecorderView.onRecivedName(uid,name) ;
-    }
+    pRecordData : RecorderData = null ;
 
     // update (dt) {}
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void  )
     {
         super.showDlg(pfResult,jsUserData,pfOnClose);
-        this.pEmptyBg.active = this.pRecordData.isDataEmpty() ;
-        if ( this.pRecordData.isDataEmpty() == false )
-        {
-            this.pRecorderView.setRecorderData(this.pRecordData.vRecorder,false) ;
-        }
-        // do request data ;
-        if ( this.pRecordData.isMustFeatchData() )
-        {
-            this.pRecordData.fetchData() ;
-        }
-
-        cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
+        this.pRecordData = <RecorderData>(jsUserData);
+        this.pEmptyBg.active = this.pRecordData.vRecorder.length <= 0 ; ;
+        this.pRecorderView.setRecorderData(this.pRecordData.vRecorder,false) ;
+        let self = this ;
+        this.pRecordData.fetchData( ( data : RecorderData )=>{ self.onRecorderDataCallBack(data.vRecorder,false); } );
     }
 
-    onRecorderDataCallBack( vRecord : RecordItem[], isDetal : boolean )
+    onRecorderDataCallBack( vRecord : IRecorderEntry[], isDetal : boolean )
     {
         if ( isDetal == false )
         {
@@ -91,21 +58,14 @@ export default class dlgRecord extends DlgBase {
         Utility.audioBtnClick();
     }
 
-    onClickLookDetail( record : RecordItem )
+    onClickLookDetail( record : IRecorderEntry )
     {
         Utility.audioBtnClick();
-        if ( record.vSingleDetail.length == 0 )
-        {
-            // go to featch from net ;
-            this.pRecordData.fetchRecordDetail(record.sieralNum) ;
-            return ;
-        }
-
-        // already have data , do show direct ;
-        this.doShowSingleRoomDetail(record.vSingleDetail);
+        let self = this ;
+        (<RecorderRoomEntry>record).fetchSingleRoundRecorders( ( data : RecorderRoomEntry )=>{ self.onRecorderDataCallBack(data.vSingleRoundRecorders,true) ;} ) ;
     }
 
-    private doShowSingleRoomDetail( record : RecordItem[] )
+    private doShowSingleRoomDetail( record : IRecorderEntry[] )
     {
         let self = this ;
         this.pDlgSingleRoomRecord.showDlg(null,record,( dlg : DlgBase )=>{

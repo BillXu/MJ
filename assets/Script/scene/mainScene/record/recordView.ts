@@ -9,11 +9,11 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import { RecordItem ,RecorderOffset } from "./recordData"
 import recordCell from "./recordCell"
 import listView from "../../../commonItem/ListView"
 import { AbsAdapter } from "../../../commonItem/ListView"
 import * as _ from "lodash"
+import { RecorderSinglRoundEntry, RecorderRoomEntry, IRecorderEntry } from "../../../clientData/RecorderData";
 @ccclass
 export default class RecordView extends cc.Component {
 
@@ -23,10 +23,10 @@ export default class RecordView extends cc.Component {
     @property([cc.Component.EventHandler])
     vlpClickCell : cc.Component.EventHandler[] = [] ;
 
-    private vRecorder : RecordItem[] = [] ;
+    
+    private vRecorder : IRecorderEntry[] = [] ;
     private pListAdpter : listviewAdpter = null ;
     // LIFE-CYCLE CALLBACKS:
-
 
     onLoad () 
     {
@@ -36,34 +36,14 @@ export default class RecordView extends cc.Component {
         this.pListView.setAdapter(this.pListAdpter) ;
     }
 
-    start () {
-    
-    }
 
-    setRecorderData( vrecorder : RecordItem[], isReplay : boolean = false )
+    setRecorderData( vrecorder : IRecorderEntry[], isReplay : boolean = false )
     {
         console.log( "setRecorderData = " + vrecorder.length );
         this.vRecorder = vrecorder;
         this.pListAdpter.setDataSet(this.vRecorder);
         this.pListAdpter.isShowReplayBtn = isReplay ;
         this.pListView.notifyUpdate();
-    }
-
-    onRecivedName( uid : number , name : string )
-    {
-        for ( let i = 0 ; i < this.vRecorder.length ; ++i )
-        {
-            let vOffset : RecorderOffset[]  = this.vRecorder[i].vOffset ;
-            let item = _.find(vOffset,( offset : RecorderOffset )=>{ return uid == offset.uid ;} ) ;
-            if ( null == item )
-            {
-                continue ;
-            }
-
-            item.name = name ;
-            //this.pListView.notifyUpdate([i]) ;  // cell already register this event ;
-            break ;
-        }
     }
 
     onClickCell( cel : recordCell )
@@ -83,20 +63,20 @@ class listviewAdpter extends AbsAdapter
         console.log( "update item pos item = " + posIndex );
         let comp = item.getComponent(recordCell);
         if (comp) {
-            let pRecorder : RecordItem = this.getItem(posIndex) ;
+            let pRecorder : IRecorderEntry = this.getItem(posIndex) ;
             comp.isBtnDetail = !this.isShowReplayBtn ; 
-            comp.setOffsetData(pRecorder.vOffset);
+            comp.setOffsetData(pRecorder.vOffsets);
             comp.lpClickCallfunc = this.lpfCellCallBack ;
-            comp.time = pRecorder.time ;
+            comp.time = pRecorder.strTime  ;
             comp.rule = "" ;
             if ( this.isShowReplayBtn ) // single room detail
             {
-                comp.roomID = "回放码: " + pRecorder.replayID ;
+                comp.roomID = "回放码: " + (<RecorderSinglRoundEntry>pRecorder).replayID ;
                 comp.rule = "第" + (posIndex + 1 ) + "局" ;
             }
             else
             {
-                comp.roomID = "房号: " + pRecorder.roomID ;
+                comp.roomID = "房号: " + (<RecorderRoomEntry>pRecorder).roomID ;
             }
         
             comp.idx = posIndex ;

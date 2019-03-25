@@ -365,7 +365,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "persisteNode",
+    "_name": "persisteNodeClientApp",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -389,6 +389,9 @@
       },
       {
         "__id__": 82
+      },
+      {
+        "__id__": 83
       }
     ],
     "_prefab": null,
@@ -439,7 +442,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "ClientNetwork",
+    "_name": "LayerNetstate",
     "_objFlags": 0,
     "_parent": {
       "__id__": 10
@@ -592,23 +595,6 @@
     "_id": "e6pts1CwdDMqGq+Z4siCXR"
   },
   {
-    "__type__": "ada68wwqaZNf7PofE0RhyAF",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 11
-    },
-    "_enabled": true,
-    "pTip": {
-      "__id__": 13
-    },
-    "pRootNode": {
-      "__id__": 11
-    },
-    "strDefaultPort": "40012",
-    "_id": "95TZxu/bxEU4wZO9O8AjU/"
-  },
-  {
     "__type__": "cc.Widget",
     "_name": "",
     "_objFlags": 0,
@@ -634,6 +620,19 @@
     "_originalWidth": 0,
     "_originalHeight": 0,
     "_id": "27WuzeiYFEw53FS2Beplr1"
+  },
+  {
+    "__type__": "aab295GOGdKw6wOPVvWj7t4",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 11
+    },
+    "_enabled": true,
+    "label": {
+      "__id__": 13
+    },
+    "_id": "66MJOdNXZJL6YjB1qp4Y/8"
   },
   {
     "__type__": "cc.Node",
@@ -3141,5 +3140,18 @@
       "__uuid__": "a5a7bd9d-2cca-40fc-94ee-e3eaded0c62e"
     },
     "_id": "09P++tK6JLSLOZ1DIVS4OQ"
+  },
+  {
+    "__type__": "ada68wwqaZNf7PofE0RhyAF",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 10
+    },
+    "_enabled": true,
+    "pLayerNetState": {
+      "__id__": 15
+    },
+    "_id": "fb/HEcReRDBbVCjpyKHI7T"
   }
 ]

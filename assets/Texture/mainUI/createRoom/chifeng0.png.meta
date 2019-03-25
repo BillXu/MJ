@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "84587816-cc72-44f1-bd32-034bbedab51d",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "chifeng0": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "815affeb-3b61-4d76-9745-bcca4c1c0ef7",
       "rawTextureUuid": "84587816-cc72-44f1-bd32-034bbedab51d",
       "trimType": "auto",

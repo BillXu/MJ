@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "2177306f-5139-4df8-9b77-8fc343f8f0c2",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "gengxindi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "84481279-2e06-47a6-b33c-ade83a43425a",
       "rawTextureUuid": "2177306f-5139-4df8-9b77-8fc343f8f0c2",
       "trimType": "auto",

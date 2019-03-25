@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "0d3944ac-adb7-41f4-b581-fe7fdc89a5c4",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "guanbi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "6b62501e-a1fe-40dc-a167-44b0406cd07e",
       "rawTextureUuid": "0d3944ac-adb7-41f4-b581-fe7fdc89a5c4",
       "trimType": "auto",

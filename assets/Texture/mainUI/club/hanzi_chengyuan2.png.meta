@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "ad0ab8bb-ffed-4794-a847-cc99df51ab0b",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "hanzi_chengyuan2": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "b4527086-4777-415f-bdb4-bcb626d9653e",
       "rawTextureUuid": "ad0ab8bb-ffed-4794-a847-cc99df51ab0b",
       "trimType": "auto",

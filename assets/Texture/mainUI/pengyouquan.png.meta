@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "0a5d2205-bc37-49f7-bf49-4099bb89b5dd",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "pengyouquan": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "2d77ad88-2aca-4d3e-b9b1-d4a3c3cd14e8",
       "rawTextureUuid": "0a5d2205-bc37-49f7-bf49-4099bb89b5dd",
       "trimType": "auto",

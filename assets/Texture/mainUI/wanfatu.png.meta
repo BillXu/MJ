@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "8adaa016-81ab-4279-98dd-f165671a6417",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "wanfatu": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "2eed4eab-6be3-4f45-9dd4-854f5f992668",
       "rawTextureUuid": "8adaa016-81ab-4279-98dd-f165671a6417",
       "trimType": "auto",

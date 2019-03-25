@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "13d393fd-41b0-4c12-b01c-ef788db41186",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "wanfadi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "09401891-99bc-4d83-9852-2246fbbf002f",
       "rawTextureUuid": "13d393fd-41b0-4c12-b01c-ef788db41186",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "1de83ff1-33d9-4c15-8ca1-aec11e14bae8",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "zifangjianhao": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "103a0c7e-c43b-4083-9e4d-83d2e109a764",
       "rawTextureUuid": "1de83ff1-33d9-4c15-8ca1-aec11e14bae8",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "6513f95d-69f3-43d7-bbee-e1bdb2cd15e6",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "zuan1": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "544decc8-ae5b-44c3-ab1f-3dd50a2407c1",
       "rawTextureUuid": "6513f95d-69f3-43d7-bbee-e1bdb2cd15e6",
       "trimType": "auto",

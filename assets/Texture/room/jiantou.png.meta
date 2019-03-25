@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "da218407-19e8-4339-9d38-9db55f58ba4b",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "jiantou": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "ad79b642-40a7-4571-aa0e-4a0034f08e93",
       "rawTextureUuid": "da218407-19e8-4339-9d38-9db55f58ba4b",
       "trimType": "auto",

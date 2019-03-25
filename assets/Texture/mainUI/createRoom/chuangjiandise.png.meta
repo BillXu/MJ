@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "c735cc21-117b-499a-bc4c-9717dc125585",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "chuangjiandise": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "a62082cd-7b7d-4e61-982f-f662aec0d740",
       "rawTextureUuid": "c735cc21-117b-499a-bc4c-9717dc125585",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "a9d1f53f-e493-4deb-b36a-3ac2342a2c3f",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "quxiao": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "797c2178-3a1a-4754-9cf2-3888b9a89682",
       "rawTextureUuid": "a9d1f53f-e493-4deb-b36a-3ac2342a2c3f",
       "trimType": "auto",

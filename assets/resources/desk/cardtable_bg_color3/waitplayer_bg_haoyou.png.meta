@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "661ed990-42fc-47fa-90ef-df408c22c4bf",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "waitplayer_bg_haoyou": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "27268152-21c9-46d8-aa88-666c2b2baf28",
       "rawTextureUuid": "661ed990-42fc-47fa-90ef-df408c22c4bf",
       "trimType": "auto",

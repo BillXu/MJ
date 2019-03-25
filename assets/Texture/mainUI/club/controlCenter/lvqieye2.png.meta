@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "5092fce2-1927-4006-96c5-f789691c6f39",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "lvqieye2": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "842c6cd2-d480-4c53-b0e1-b0ca70b4e654",
       "rawTextureUuid": "5092fce2-1927-4006-96c5-f789691c6f39",
       "trimType": "auto",

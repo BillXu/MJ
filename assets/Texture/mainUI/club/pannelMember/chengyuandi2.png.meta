@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "a61853b8-c184-49f0-809c-663a79dcbb8c",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "chengyuandi2": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "63c7c727-6b92-4583-8d65-141f89726860",
       "rawTextureUuid": "a61853b8-c184-49f0-809c-663a79dcbb8c",
       "trimType": "auto",

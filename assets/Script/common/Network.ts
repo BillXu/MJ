@@ -4,6 +4,18 @@ import { eMsgPort, eMsgType } from "./MessageIdentifer"
 import { IOneMsgCallback } from "./NetworkInterface"
 @ccclass
 export default class Network{
+
+    static EVENT_OPEN : string = "open";
+    static EVENT_FAILED : string = "failed";
+    static EVENT_MSG : string = "msg";
+    static EVENT_CLOSED : string = "close";
+    static EVENT_RECONNECT : string = "reconnect";
+    static EVENT_RECONNECTED_FAILED : string = "reconnectFailed" ;
+
+    static TIME_HEAT_BEAT : number = 3 ; 
+    static MSG_ID : string = "msgID" ;
+    static MSG_DATA : string = "msgData" ;
+
     private static s_pNetwork : Network = null ;
     protected mWebSocket : WebSocket = null;
     protected mDstIP : string ;
@@ -51,7 +63,7 @@ export default class Network{
             return false;
         }
         let jsPacket = { } ;
-        jsMsg[clientDefine.msgKey] = msgID ;
+        jsMsg[Network.MSG_ID] = msgID ;
 
         jsPacket["cSysIdentifer"] = targetPort ;
         jsPacket["nTargetID"] = targetID ;
@@ -132,7 +144,7 @@ export default class Network{
         this.nTimeoutHandleNum = -1 ;
 
         // dispatch event ;
-        let pEvent = new cc.Event.EventCustom(clientDefine.netEventClose,true) ;
+        let pEvent = new cc.Event.EventCustom(Network.EVENT_CLOSED,true) ;
         cc.systemEvent.dispatchEvent(pEvent);
         if ( -1 == this.nReconnectInterval )
         {
@@ -174,19 +186,19 @@ export default class Network{
             if ( jsm["nRet"] != 0 )
             {
                 cc.error("can not verify this client ret :" + jsm["nRet"] );
-                pEvent = new cc.Event.EventCustom(clientDefine.netEventFialed,true) ;
+                pEvent = new cc.Event.EventCustom(Network.EVENT_FAILED,true) ;
                 cc.systemEvent.dispatchEvent(pEvent);
                 return ;
             }
 
+            pEvent = new cc.Event.EventCustom( Network.EVENT_OPEN,true) ;
+            pEvent.detail = self.getSessionID();
+            cc.systemEvent.dispatchEvent(pEvent);
+            cc.log("verifyed session id = " + jsm["nSessionID"] + " ret =" + jsm["nRet"] );
             // decide if need reconnect 
             if ( self.getSessionID() == 0 ) // we need not reconnect 
             {
                 self.setSessionID( jsm["nSessionID"] );
-                pEvent = new cc.Event.EventCustom(clientDefine.netEventOpen,true) ;
-                pEvent.detail = self.getSessionID();
-                cc.systemEvent.dispatchEvent(pEvent);
-                cc.log("verifyed session id = " + jsm["nSessionID"] + " ret =" + jsm["nRet"] );
                 return ;
             }
             
@@ -196,10 +208,10 @@ export default class Network{
             self.sendMsg(jsRec,eMsgType.MSG_RECONNECT,eMsgPort.ID_MSG_PORT_GATE,0,( jsRet : any)=>{
                 let ret : number = jsRet["nRet"];
                 self.setSessionID(jsRet["sessionID"]);
-                let ev : any = clientDefine.netEventReconnectd ;
+                let ev : any = Network.EVENT_RECONNECT ;
                 if ( 0 != ret ) // reconnect ok 
                 {
-                    ev = clientDefine.netEventReconnectdFailed ;
+                    ev = Network.EVENT_RECONNECTED_FAILED ;
                 }
                 let pEvent = new cc.Event.EventCustom(ev,true) ;
                 pEvent.detail = self.getSessionID();
@@ -230,7 +242,7 @@ export default class Network{
             return ;
         }
 
-        let nMsgID : number = msg[clientDefine.msgKey];
+        let nMsgID : number = msg[Network.MSG_ID];
         // check call back 
         for ( let idx = 0 ; idx < this.vMsgCallBack.length; ++idx )
         {
@@ -247,10 +259,10 @@ export default class Network{
         }
        //console.log("dispath msg id " + msg );
         /// dispatch event ;
-        let pEvent = new cc.Event.EventCustom(clientDefine.netEventMsg,true) ;
+        let pEvent = new cc.Event.EventCustom(Network.EVENT_MSG,true) ;
         pEvent.detail = {};
-        pEvent.detail[clientDefine.msgKey] = nMsgID ;
-        pEvent.detail[clientDefine.msg] = msg ;
+        pEvent.detail[Network.MSG_ID] = nMsgID ;
+        pEvent.detail[Network.MSG_DATA] = msg ;
         cc.systemEvent.dispatchEvent(pEvent);
     }
 
@@ -277,7 +289,7 @@ export default class Network{
         //     self.doConnect();
         // }, 1000);
         
-        let pEvent = new cc.Event.EventCustom(clientDefine.netEventFialed,true) ;
+        let pEvent = new cc.Event.EventCustom(Network.EVENT_FAILED,true) ;
         cc.systemEvent.dispatchEvent(pEvent);
         if ( -1 == this.nReconnectInterval )
         {
@@ -317,7 +329,7 @@ export default class Network{
             {
                 self.doSendHeatBet();
             }
-        }, clientDefine.time_heat_bet * 1000 );
+        }, Network.TIME_HEAT_BEAT * 1000 );
     }
 
     protected doTryReconnect()

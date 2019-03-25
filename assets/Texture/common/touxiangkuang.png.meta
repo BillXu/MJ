@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "d18aab4f-c16f-430c-b67f-8d2cdf8e1186",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "touxiangkuang": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "529059e2-c969-46cb-b2e0-adbaad38ed39",
       "rawTextureUuid": "d18aab4f-c16f-430c-b67f-8d2cdf8e1186",
       "trimType": "auto",

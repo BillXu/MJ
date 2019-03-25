@@ -9,7 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import { ClubMessageDataItem } from "./clubMessageData"
+import { ClubEvent } from "../../../clientData/clubData/ClubDataEvent";
 @ccclass
 export default class dlgMessageItem extends cc.Component {
 
@@ -27,11 +27,10 @@ export default class dlgMessageItem extends cc.Component {
 
     }
 
-    refresh( item : ClubMessageDataItem )
+    refresh( item : ClubEvent )
     {
         this.eventID = item.eventID ;
-        let name = item.name.length < 1 ? "default" : item.name ;
-        this.label.string = name + "( ID:"+ item.uid + ")申请加入俱乐部.";
+        this.label.string = item.eventString;
     }
 
     onAgree()

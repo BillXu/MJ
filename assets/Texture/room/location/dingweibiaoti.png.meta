@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "9d94a1d7-94ac-4ef6-8ab7-75e4c453b62a",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "dingweibiaoti": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "da71e184-a5ad-4e36-aede-e19e15cea004",
       "rawTextureUuid": "9d94a1d7-94ac-4ef6-8ab7-75e4c453b62a",
       "trimType": "auto",

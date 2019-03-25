@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "d6ccb978-b377-43b3-9c8d-d0eadaef1de8",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "julebuzudi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "48446e25-9a16-436f-a7be-addd28e76781",
       "rawTextureUuid": "d6ccb978-b377-43b3-9c8d-d0eadaef1de8",
       "trimType": "auto",

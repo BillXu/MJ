@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "d7b9425c-65fc-4623-9571-3e49a905e424",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "biaoti_gonggao ": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "31eb7184-0f37-452b-b820-b6de86b6ded0",
       "rawTextureUuid": "d7b9425c-65fc-4623-9571-3e49a905e424",
       "trimType": "auto",

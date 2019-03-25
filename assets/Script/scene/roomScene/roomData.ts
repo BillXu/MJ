@@ -15,7 +15,6 @@ import { eRoomState,eGameType } from "../../common/clientDefine"
 import { eMsgPort , eMsgType } from "../../common/MessageIdentifer"
 import Network from "../../common/Network"
 import * as _ from "lodash"
-import ClientData from "../../globalModule/ClientData";
 @ccclass
 export default class RoomData extends cc.Component {
 

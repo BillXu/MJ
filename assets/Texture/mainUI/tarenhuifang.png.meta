@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "2200288f-ab78-4900-be15-d42bd92d0177",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "tarenhuifang": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "6e8ee947-3b44-4b7f-9eae-4e3d6040313c",
       "rawTextureUuid": "2200288f-ab78-4900-be15-d42bd92d0177",
       "trimType": "auto",

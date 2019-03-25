@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "25c5a3aa-a77f-4b43-ab2b-3e1828c109a9",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "tianjiadi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "f628ba2a-70bb-4746-89db-23027b84f71b",
       "rawTextureUuid": "25c5a3aa-a77f-4b43-ab2b-3e1828c109a9",
       "trimType": "auto",

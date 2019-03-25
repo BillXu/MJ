@@ -11,7 +11,7 @@
 const {ccclass, property} = cc._decorator;
 import {eCardSate, eArrowDirect, RoomEvent } from "./roomDefine"
 import Card from "./card" 
-import ClientData from "../../globalModule/ClientData";
+//import ClientData from "../../globalModule/ClientData";
 import { eMJBg, clientEvent } from "../../common/clientDefine"
 @ccclass
 export default class CardFactory extends cc.Component {

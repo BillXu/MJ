@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "f93c715d-5004-40e8-b20d-a3bbe4e880e3",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "tubiaoxiaoxi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "6fb6054a-f3fc-4b2e-902d-7d17f0f15d21",
       "rawTextureUuid": "f93c715d-5004-40e8-b20d-a3bbe4e880e3",
       "trimType": "auto",

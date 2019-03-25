@@ -10,7 +10,7 @@
 
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../../common/DlgBase"
-import ClubData from "./clubData";
+import ClubData from "../../../clientData/clubData/ClubData";
 export enum eClubSettingBtn
 {
     Btn_ControlCenter ,
@@ -43,9 +43,9 @@ export default class DlgClubSetting extends DlgBase {
     {
         super.showDlg(pfResult,jsUserData,pfOnClose);
         let pdata : ClubData = jsUserData ;
-        this.pClubMessage.active = pdata.isSelfMgr() || pdata.isSelfOwner();
+        this.pClubMessage.active = pdata.isSelfPlayerMgr() || pdata.isSelfPlayerOwner();
         this.pNotice.active = this.pClubMessage.active ;
-        this.pLeaveClub.active = !pdata.isSelfOwner();
+        this.pLeaveClub.active = !pdata.isSelfPlayerOwner();
     }
 
     onClickBtnControlCenter()

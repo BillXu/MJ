@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "bb5b0735-2083-45ec-862e-1ecc08896e2b",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "mingzidi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "e36b12c4-ff26-40c5-97b9-4ca8e5d1499b",
       "rawTextureUuid": "bb5b0735-2083-45ec-862e-1ecc08896e2b",
       "trimType": "auto",

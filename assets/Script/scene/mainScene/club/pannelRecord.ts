@@ -9,12 +9,12 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import ClubData from "./clubData" ;
 import ClubPannel from "./clubPannel" ;
 import RecordView from "../record/recordView";
-import RecordData from "../record/recordData" ;
-import { RecordItem } from "../record/recordData" ;
 import DlgSingleRoomRecord from "../record/dlgSingleRoomRecorder";
+import ClubDataRecorder from "../../../clientData/clubData/ClubDataRecorders";
+import IClubDataComponent from "../../../clientData/clubData/IClubDataComponent";
+import { IRecorderEntry, RecorderRoomEntry } from "../../../clientData/RecorderData";
 @ccclass
 export default class PannelRecord extends ClubPannel {
 
@@ -27,41 +27,12 @@ export default class PannelRecord extends ClubPannel {
     @property(DlgSingleRoomRecord)
     pDlgSingleRoomRecord : DlgSingleRoomRecord = null ;
 
-    pRecordData : RecordData = null ;
+    pRecordData : ClubDataRecorder = null ;
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
-
-    show( data : ClubData )
+    onLoad () 
     {
-        super.show(data);
-        if ( null == data )
-        {
-            this.pRecordView.setRecorderData([],false);
-            return ;
-        }
-        this.pRecordData = data.pRecordData ;
-        this.pRecordData.isClub = true ;
-        this.pRecordData.currentID = data.clubID;
-        this.pEmptyBg.active = this.pRecordData.isDataEmpty() ;
-        if ( this.pRecordData.isDataEmpty() == false )
-        {
-            this.pRecordView.setRecorderData(this.pRecordData.vRecorder,false ) ;
-        }
-
-        if ( this.pRecordData.isMustFeatchData() )
-        {
-            this.pRecordData.fetchData();
-        }
-        
-        let p = new cc.Component.EventHandler();
-        p.handler = "onRecorderDataCallBack" ;
-        p.target = this.node ;
-        p.component = "pannelRecord";
-        this.pRecordData.vlpfCallBack.length = 0 ;
-        this.pRecordData.vlpfCallBack.push(p);
-
         let pClick = new cc.Component.EventHandler();
         pClick.handler = "onClickLookDetail" ;
         pClick.target = this.node ;
@@ -70,33 +41,27 @@ export default class PannelRecord extends ClubPannel {
         this.pRecordView.vlpClickCell.push(pClick);
     }
 
-    onRecorderDataCallBack( vRecord : RecordItem[], isDetal : boolean )
+    show()
     {
-        if ( isDetal == false )
-        {
-            this.pRecordView.setRecorderData(vRecord,false) ;
-            this.pEmptyBg.active = false ;
-        }
-        else
-        {
-            this.doShowSingleRoomDetail(vRecord) ;
-        }
+        super.show();
+        this.pEmptyBg.active = true ;
+        this.pRecordView.setRecorderData([],false);
+        return ;
     }
 
-    onClickLookDetail( record : RecordItem )
+    refresh( data : IClubDataComponent )
     {
-        if ( record.vSingleDetail.length == 0 )
-        {
-            // go to featch from net ;
-            this.pRecordData.fetchRecordDetail(record.sieralNum) ;
-            return ;
-        }
-
-        // already have data , do show direct ;
-        this.doShowSingleRoomDetail(record.vSingleDetail);
+        this.pRecordData = <ClubDataRecorder>data ;
+        this.pRecordView.setRecorderData(this.pRecordData.vRecorder.vRecorder,false ) ;
     }
 
-    private doShowSingleRoomDetail( record : RecordItem[] )
+    onClickLookDetail( record : IRecorderEntry )
+    {
+        let self = this ;
+        (<RecorderRoomEntry>record).fetchSingleRoundRecorders( ( data : RecorderRoomEntry )=>{ self.doShowSingleRoomDetail(data.vSingleRoundRecorders) ;} ) ;
+    }
+
+    private doShowSingleRoomDetail( record : IRecorderEntry[] )
     {
         this.pDlgSingleRoomRecord.showDlg(null,record) ;
     }

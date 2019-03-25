@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "93e1c6e3-1348-4c14-8570-61dc9b5ca94e",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "shangjia (2)": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "2cb3cbb2-665d-4876-87ab-2c26b8ae7fdf",
       "rawTextureUuid": "93e1c6e3-1348-4c14-8570-61dc9b5ca94e",
       "trimType": "auto",

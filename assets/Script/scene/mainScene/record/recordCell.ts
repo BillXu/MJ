@@ -9,9 +9,10 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import { RecorderOffset }  from "./recordData"
-import { clientEvent } from "../../../common/clientDefine"
 import * as _ from "lodash"
+import { PlayerOffsetItem } from "../../../clientData/RecorderData";
+import PlayerInfoDataCacher from "../../../clientData/PlayerInfoDataCacher";
+import PlayerInfoData from "../../../clientData/playerInfoData";
 @ccclass
 export default class recordCell extends cc.Component {
 
@@ -66,7 +67,7 @@ export default class recordCell extends cc.Component {
 
     onLoad () 
     {
-        cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
+        cc.systemEvent.on(PlayerInfoDataCacher.EVENT_RECIEVED_PLAYER_INFO_DATA,this.onRecievedBrifdata,this);
     }
 
     onDestroy()
@@ -76,9 +77,9 @@ export default class recordCell extends cc.Component {
 
     onRecievedBrifdata( event : cc.Event.EventCustom )
     {
-        let msgObj : Object = event.detail ;
-        let uid : number = msgObj["uid"] ;
-        let name : string = msgObj["name"] ;
+        let p : PlayerInfoData = event.detail ;
+        let uid : number = p.uid;
+        let name : string = p.name;
         let idx = _.findIndex(this.vIDs,( id : number )=>{ return uid == id ;} ) ;
         if ( -1 == idx )
         {
@@ -91,14 +92,14 @@ export default class recordCell extends cc.Component {
 
     }
 
-    setOffsetData( vOffset : RecorderOffset[] )
+    setOffsetData( vOffset : PlayerOffsetItem[] )
     {
         this.vName.forEach( ( l : cc.Label )=>{ l.node.active = false ;} );
         this.vOffset.forEach( ( l : cc.Label )=>{ l.node.active = false ;} );
         this.vIDs.length = 0 ;
 
         let self = this ;
-        vOffset.forEach( ( d : RecorderOffset, idx : number  )=>{
+        vOffset.forEach( ( d : PlayerOffsetItem, idx : number  )=>{
             if ( self.name.length <= idx )
             {
                 cc.error( "invalid idx too many players  idx = " + idx );
@@ -107,7 +108,16 @@ export default class recordCell extends cc.Component {
 
             this.vName[idx].node.active = true ;
             this.vOffset[idx].node.active = true ;
-            this.vName[idx].string = d.name ;
+            let p = PlayerInfoDataCacher.getInstance().getPlayerInfoByID(d.uid);
+            if ( p )
+            {
+                this.vName[idx].string = p.name ;
+            }
+            else
+            {
+                this.vName[idx].string =  "" + d.uid ;
+            }
+            
             this.vIDs[idx] = d.uid ;
             this.vOffset[idx].string = d.offset.toString() ;
             this.vOffset[idx].node.color = d.offset > 0 ? cc.color().fromHEX("#D15900") : cc.color().fromHEX("#127EC9");

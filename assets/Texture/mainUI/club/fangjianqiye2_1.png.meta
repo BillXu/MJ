@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "d820d861-9799-4952-a459-eeb91adc7cf6",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "fangjianqiye2_1": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "86780826-eaa0-44b5-8aa3-ba2dc823a05d",
       "rawTextureUuid": "d820d861-9799-4952-a459-eeb91adc7cf6",
       "trimType": "auto",

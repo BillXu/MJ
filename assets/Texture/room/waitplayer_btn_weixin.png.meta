@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "de782213-69af-475e-b165-a5944b001671",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "waitplayer_btn_weixin": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "314a8c99-895f-4ecd-84ba-f641f5febc5c",
       "rawTextureUuid": "de782213-69af-475e-b165-a5944b001671",
       "trimType": "auto",

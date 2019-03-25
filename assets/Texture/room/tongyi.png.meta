@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "ce050cdb-7691-44a3-9f59-d4420f41ca92",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "tongyi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "dc7937ae-7bf6-4e30-919f-874984120013",
       "rawTextureUuid": "ce050cdb-7691-44a3-9f59-d4420f41ca92",
       "trimType": "auto",

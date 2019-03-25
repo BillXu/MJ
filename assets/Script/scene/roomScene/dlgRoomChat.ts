@@ -1,6 +1,6 @@
 import DlgBase from "../../common/DlgBase";
 import { clientEvent, eDeskBg } from "../../common/clientDefine";
-import ClientData from "../../globalModule/ClientData";
+//import ClientData from "../../globalModule/ClientData";
 import roomSceneLayerBase from "./roomSceneLayerBase";
 import Utility from "../../globalModule/Utility";
 import { eMsgType } from "../../common/MessageIdentifer";

@@ -1,15 +1,8 @@
 let clientDefine = 
 {
-    time_heat_bet : 3,
-    netEventOpen : "open",
-    netEventFialed : "failed",
-    netEventMsg : "msg",
-    netEventClose : "close",
-    netEventReconnectd : "reconnect",
-    netEventReconnectdFailed : "reconnectFailed",
-    netEventRecievedBaseData : "recievedBaseData",
-    msgKey : "msgID",
-	msg : "msg"
+    //netEventRecievedBaseData : "recievedBaseData",
+    // msgKey : "msgID",
+	// msg : "msg"
 } ;
 
 let clientEvent = 
@@ -34,9 +27,10 @@ let SceneName =
     Scene_Replay : "replay",
 }
 
-let configDef = 
-{ 
-	APP_DOWNLOAD_URL : "http://qq.com",
+ export enum eGender
+{
+	eGender_Male,
+	eGender_Femal,
 };
 
 export enum eMusicType
@@ -180,4 +174,4 @@ export enum eMailState
 	eMailState_Max,
 };
 
-export { clientDefine , SceneName,clientEvent,configDef }  ;
+export { clientDefine , SceneName,clientEvent }  ;

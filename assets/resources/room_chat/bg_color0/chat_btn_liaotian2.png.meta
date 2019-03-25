@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "abc3fd95-3056-4784-aaca-f94f47314d8a",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "chat_btn_liaotian2": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "39dc0792-0a22-412a-85ec-b418cbe15b11",
       "rawTextureUuid": "abc3fd95-3056-4784-aaca-f94f47314d8a",
       "trimType": "auto",

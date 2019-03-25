@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "a3f9f08c-a6ce-4cb5-bb30-e7c39584f243",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "benjia (2)": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "cfb71cc6-611e-48fa-8544-65ade1a75dcf",
       "rawTextureUuid": "a3f9f08c-a6ce-4cb5-bb30-e7c39584f243",
       "trimType": "auto",

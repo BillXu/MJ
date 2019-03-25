@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "0a0e3865-c212-4d0d-80a6-f510ae577cb0",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "chat_btn_biaoqing2": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "d04415e1-e442-4230-a226-2537400e997f",
       "rawTextureUuid": "0a0e3865-c212-4d0d-80a6-f510ae577cb0",
       "trimType": "auto",

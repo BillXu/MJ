@@ -11,19 +11,21 @@
 const {ccclass, property} = cc._decorator;
 import Prompt from "./Prompt"
 import DlgBase from "../common/DlgBase"
+import { eGameType } from "../common/clientDefine";
+import { eMsgPort } from "../common/MessageIdentifer";
 @ccclass
 export default class Utility  {
 
     public static showTip( strDesc : string, isOneBtn? : boolean, pfResult? : ( jsResult : Object ) => void , pfOnClose? : ( pTargetDlg : DlgBase ) => void )
     {
-        let node = cc.find("persisteNode");
+        let node = cc.find("persisteNodeClientApp");
         let pompt = node.getComponent(Prompt);
         pompt.showDlg(strDesc,isOneBtn,pfResult,pfOnClose ) ;
     }
 
     public static showPromptText( strDesc : string , nDisplayTime : number = 2 )
     {
-        let node = cc.find("persisteNode");
+        let node = cc.find("persisteNodeClientApp");
         let pompt = node.getComponent(Prompt);
         pompt.showPromptText(strDesc,nDisplayTime) ;
     }
@@ -64,6 +66,40 @@ export default class Utility  {
         });
     }
 
+    public static getMsgPortByGameType( game : eGameType ) : eMsgPort
+    {
+        switch( game )
+        {
+            case eGameType.eGame_CFMJ:
+            {
+                return eMsgPort.ID_MSG_PORT_CFMJ;
+            }
+            break;
+            case eGameType.eGame_NCMJ:
+            {
+                return eMsgPort.ID_MSG_PORT_NCMJ;
+            }
+            break ;
+            case eGameType.eGame_AHMJ:
+            {
+                return eMsgPort.ID_MSG_PORT_AHMJ;
+            }
+            break ;
+        }
+        return undefined ;
+    }
+
+    public static getMsgPortByRoomID( nRoomID : number ) {
+        // begin(2) , portTypeCrypt (2),commonNum(2)
+        let nComNum = nRoomID % 100;
+        let portTypeCrypt = (Math.floor(nRoomID / 100)) % 100;
+        if (nComNum >= 50) {
+            portTypeCrypt = portTypeCrypt + 100 - nComNum;
+        } else {
+            portTypeCrypt = portTypeCrypt + 100 + nComNum;
+        }
+        return (portTypeCrypt %= 100);
+    }
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}

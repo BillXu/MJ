@@ -15,7 +15,7 @@ import { eClientRoomState, eChatMsgType } from "./roomDefine"
 import roomSceneLayerBase from "./roomSceneLayerBase"
 import RoomData from "./roomData"
 import { eMsgType } from "../../common/MessageIdentifer"
-import ClientData from "../../globalModule/ClientData";
+//import ClientData from "../../globalModule/ClientData";
 import { eDeskBg, clientEvent } from "../../common/clientDefine"
 import DlgRoomChat from "./dlgRoomChat";
 import VoiceManager from "../../sdk/VoiceManager";

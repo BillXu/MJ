@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "9d33242b-90c2-43cf-bf60-491583abb63d",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "CFGoldMJ": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "5d1f4b94-8844-4f85-a938-ddc219a05af8",
       "rawTextureUuid": "9d33242b-90c2-43cf-bf60-491583abb63d",
       "trimType": "auto",

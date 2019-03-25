@@ -12,7 +12,6 @@ const {ccclass, property} = cc._decorator;
 import listView from "../../../commonItem/ListView"
 import { AbsAdapter } from "../../../commonItem/ListView"
 import ClubListItem from "./clubListItem"
-import ClubData from "./clubData"
 import OptsJoinOrCreate from "./dlgJoinOrCreate"
 import DlgJoinRoomOrClub from "../dlgJoinRoomOrClub"
 import DlgCreateClubTip from "./dlgCreateClubTip";
@@ -21,7 +20,8 @@ import DlgCreateRoom from "../dlgCreateRoom";
 import Network from "../../../common/Network";
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Utility from "../../../globalModule/Utility";
-import ClientData from "../../../globalModule/ClientData";
+import ClubData from "../../../clientData/clubData/ClubData";
+import ClientApp from "../../../globalModule/ClientApp";
 class clubItemData
 {
     name : string = "" ;
@@ -105,8 +105,13 @@ export default class ClubList extends cc.Component {
         this.vClubs.length = 0 ;
         vClubs.forEach( ( d : ClubData,idx : number )=>{
             let p = new clubItemData();
-            p.id = d.clubID ;
-            p.name = d.name ;
+            p.id = d.getClubID() ;
+            p.name = "" ;
+            if ( d.getClubBase()._dataJs )
+            {
+                p.name = d.getClubBase().name ;
+            }
+            
             if ( selectedClubID == -1 )
             {
                 p.isSelected = idx == 0 ;
@@ -159,9 +164,8 @@ export default class ClubList extends cc.Component {
         let applyClubID : number = parseInt(nJoinRoomID);
         let msg = { } ;
         msg["clubID"] = applyClubID;
-        let selfID = ClientData.getInstance().selfUID ;
         let self = this ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_APPLY_JOIN,eMsgPort.ID_MSG_PORT_CLUB,selfID,( msg : Object)=>
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_APPLY_JOIN,eMsgPort.ID_MSG_PORT_CLUB,applyClubID,( msg : Object)=>
         {
             let ret = msg["ret"] ;
             let vError = [ "加入申请已经提交，请耐心等待管理员审批","您已经在该俱乐部里","您已经申请了，请勿重复申请，耐心等待管理员审批","俱乐部成员数量已达上限","玩家对象为空"] ;
@@ -214,7 +218,7 @@ export default class ClubList extends cc.Component {
          let msg = { } ;
          msg["name"] = this.strCreateRoomName ;
          msg["opts"] = msgCreateRoom ;
-         let selfUID = ClientData.getInstance().selfUID ;
+         let selfUID = ClientApp.getInstance().getClientPlayerData().getSelfUID() ;
          Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_CREATE_CLUB,eMsgPort.ID_MSG_PORT_CLUB,selfUID ,( msg : Object )=>{
             let ret : number = msg["ret"] ;
             let vError = ["ok","条件不满足","名字重复"] ;

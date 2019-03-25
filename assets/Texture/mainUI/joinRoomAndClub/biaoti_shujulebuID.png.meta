@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "e4ab4347-5ea9-4ec0-baa1-57c9e5c38c7c",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "biaoti_shujulebuID": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "3e6dc416-3ad1-479f-8484-7131dc5e7649",
       "rawTextureUuid": "e4ab4347-5ea9-4ec0-baa1-57c9e5c38c7c",
       "trimType": "auto",

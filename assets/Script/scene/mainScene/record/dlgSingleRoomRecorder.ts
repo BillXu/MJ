@@ -11,9 +11,9 @@
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../../common/DlgBase"
 import RecordView from "./recordView"
-import {RecordItem} from "./recordData"
 import { clientEvent } from "../../../common/clientDefine"
 import Utility from "../../../globalModule/Utility";
+import { IRecorderEntry, RecorderSinglRoundEntry } from "../../../clientData/RecorderData";
 @ccclass
 export default class DlgSingleRoomRecord extends DlgBase {
 
@@ -33,26 +33,18 @@ export default class DlgSingleRoomRecord extends DlgBase {
 
     }
 
-    onRecievedBrifdata( event : cc.Event.EventCustom )
-    {
-        let uid = event.detail["uid"] ;
-        let name = event.detail["name"] ;
-        this.pRecorderView.onRecivedName(uid,name) ;
-    }
-
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void  )
     {
         super.showDlg(pfResult,jsUserData,pfOnClose);
-        let vRecorderData : RecordItem[] = jsUserData ;
-        let firstRecorder : RecordItem = vRecorderData[0] ;
-        this.pRule.string = firstRecorder.rule ; 
+        let vRecorderData : IRecorderEntry[] = jsUserData ;
+        let firstRecorder : RecorderSinglRoundEntry = <RecorderSinglRoundEntry>vRecorderData[0] ;
+        //this.pRule.string = firstRecorder.rule ; 
         this.pRecorderView.setRecorderData(vRecorderData,true) ;
-        cc.systemEvent.on(clientEvent.event_recieved_brifData,this.onRecievedBrifdata,this);
     }
 
-    onClickReplay( record : RecordItem  )
+    onClickReplay( record : RecorderSinglRoundEntry  )
     {
-        console.warn( "jump to replay scene");
+        console.warn( "jump to replay scene replay id = " + record.replayID );
         Utility.audioBtnClick();
     }
 

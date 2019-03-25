@@ -10,35 +10,49 @@
 
 const {ccclass, property} = cc._decorator;
 import {SceneName, clientEvent} from "../common/clientDefine" 
+import IModule from "../common/IModule";
 @ccclass
-export default class InitScene extends cc.Component {
+export default class InitScene extends IModule {
 
     @property(cc.Node)
     pNodePersite: cc.Node = null;
 
+    isCheckUpdateOk : boolean = false ;
+    isConnectedSvr : boolean = false ;
     // LIFE-CYCLE CALLBACKS:
 
     onLoad ()
     {
+        super.init();
         cc.game.addPersistRootNode(this.pNodePersite);
         cc.systemEvent.on(clientEvent.event_checkUpdateOk,this.onCheckupdateOk,this) ;
     }
 
-    start () {
-        
-    }
-
-    onDestroy()
-    {
-        cc.systemEvent.targetOff(this);
-    }
-
     onCheckupdateOk()
     {
-        setTimeout(() => {
+        this.isCheckUpdateOk = true ;
+        console.log( "check update ok" );
+        this.tryLoadLoginScene();
+    }
+
+    onConnectOpen()
+    {
+        this.isConnectedSvr = true ;
+        console.log( "cannect to svr " );
+        this.tryLoadLoginScene();
+    }
+
+    private canLoadLoginScene() : boolean 
+    {
+        return cc.sys.isNative == false || ( this.isCheckUpdateOk && this.isConnectedSvr )  ;
+    }
+
+    private tryLoadLoginScene()
+    {
+        if ( this.canLoadLoginScene() )
+        {
             cc.director.loadScene(SceneName.Scene_login);
-        }, 5000);
-        
+        }
     }
 
     // update (dt) {}

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "eead922b-a697-4900-b464-eb6c0ce1dcd9",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "战绩": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "0227a512-f893-4296-b3b7-73378456bcb8",
       "rawTextureUuid": "eead922b-a697-4900-b464-eb6c0ce1dcd9",
       "trimType": "auto",

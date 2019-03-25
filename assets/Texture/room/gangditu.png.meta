@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "2c51ccc4-5182-49cb-847b-ccf5a85feb21",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "gangditu": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "f37ec0ff-3abf-48a5-9604-1dc4f490ba1a",
       "rawTextureUuid": "2c51ccc4-5182-49cb-847b-ccf5a85feb21",
       "trimType": "auto",

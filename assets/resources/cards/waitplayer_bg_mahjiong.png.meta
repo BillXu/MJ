@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "bf81063f-8e2e-46d7-b37a-d81d2688d6d4",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "waitplayer_bg_mahjiong": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "9fc1e0cb-176d-4a94-9dad-84a697e12580",
       "rawTextureUuid": "bf81063f-8e2e-46d7-b37a-d81d2688d6d4",
       "trimType": "auto",

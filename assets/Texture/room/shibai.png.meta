@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "c6d8b258-cc45-4796-bd0a-c592107a332d",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "shibai": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "6d9f1ce9-ecc7-48e0-89b3-5490df70154b",
       "rawTextureUuid": "c6d8b258-cc45-4796-bd0a-c592107a332d",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "b7e961da-7fe6-4f32-b755-a3842215cae8",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "zjsdi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "410c0a89-44fa-4904-bfb1-1873ad4addac",
       "rawTextureUuid": "b7e961da-7fe6-4f32-b755-a3842215cae8",
       "trimType": "auto",

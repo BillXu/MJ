@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "2220ba7d-1ce4-4679-8a92-bda4273528bf",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "hongdian": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "3daa910f-fcc2-4c49-b270-f01b7f6b18ab",
       "rawTextureUuid": "2220ba7d-1ce4-4679-8a92-bda4273528bf",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "44e33654-7b9e-47db-b271-4dc1968c142f",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "dengdaizhong": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "9be96b13-b9e8-4c2a-b064-7bd3e500e74b",
       "rawTextureUuid": "44e33654-7b9e-47db-b271-4dc1968c142f",
       "trimType": "auto",

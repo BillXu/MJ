@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "21fa33ba-bde1-4047-8834-c51b5781cde1",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "俱乐部战绩": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "0cd1ce54-6113-4d1b-85fd-d946d47b8b8c",
       "rawTextureUuid": "21fa33ba-bde1-4047-8834-c51b5781cde1",
       "trimType": "auto",

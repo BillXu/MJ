@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "71c19d14-1e94-49d3-9cac-23efa09603c3",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "renshudi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "fc6f6d71-3086-4955-b9fc-86834cf9202c",
       "rawTextureUuid": "71c19d14-1e94-49d3-9cac-23efa09603c3",
       "trimType": "auto",

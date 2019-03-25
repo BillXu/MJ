@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "cf989726-e6ad-4ea7-bf1c-509c63853741",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "anniutu_tianjiajulebu": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "b3a09acf-041e-4882-939a-b23c9c401650",
       "rawTextureUuid": "cf989726-e6ad-4ea7-bf1c-509c63853741",
       "trimType": "auto",

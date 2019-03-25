@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "4af7b92a-651c-4b8e-9578-4f90a9b62719",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "gouxuan": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "e2630a62-985b-476e-aa63-ff3faf0359e3",
       "rawTextureUuid": "4af7b92a-651c-4b8e-9578-4f90a9b62719",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "611cc934-868d-4860-9df6-ec27b8db4f55",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "ccmjdh_dihu_1_tex": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "d268e0ea-437b-48b3-b922-706c72f3b137",
       "rawTextureUuid": "611cc934-868d-4860-9df6-ec27b8db4f55",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "e6cf1ca2-64c5-49e7-a64f-06a63c20feeb",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "waitplayer_bg_mahjiong_gold": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "ad2f624b-c72f-4a3f-9d98-55de4c8221f6",
       "rawTextureUuid": "e6cf1ca2-64c5-49e7-a64f-06a63c20feeb",
       "trimType": "auto",

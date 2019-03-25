@@ -9,23 +9,14 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import PhotoItem from "../../../commonItem/photoItem"
-import { ClubMember } from "./clubMemberData"
-import { clubMemAct } from "./clubDefine"
+import { ClubMember } from "../../../clientData/clubData/ClubDataMembers";
+import { clubMemAct } from "../../../clientData/clubData/ClubDefine";
+import PlayerInfoItem from "../../../commonItem/PlayerInfoItem";
 @ccclass
 export default class MemberItem extends cc.Component {
 
-    @property(PhotoItem)
-    pHeadIcon : PhotoItem = null ;
-
-    @property(cc.Label)
-    pName: cc.Label = null;
-
-    @property(cc.Label)
-    pUID: cc.Label = null;
-
-    @property(cc.Label)
-    pOnlineState: cc.Label = null;
+    @property(PlayerInfoItem)
+    pHeadIcon : PlayerInfoItem = null ;
 
     @property(cc.Label)
     pPriviliage: cc.Label = null;
@@ -51,18 +42,8 @@ export default class MemberItem extends cc.Component {
     refresh( mem : ClubMember )
     {
         this.pData = mem ;
-        if ( mem.msgBrefData )
-        {
-            this.pHeadIcon.photoURL = mem.msgBrefData["headIcon"] ;
-            this.pName.string = mem.msgBrefData["name"] ;
-        }
-        else
-        {
-            this.pName.string = "" ;
-        }
+        this.pHeadIcon.refreshInfo(mem.uid) ;
 
-        this.pUID.string = mem.uid + "" ;
-        this.pOnlineState.string = mem.isOnline ? "在线" : "离线" ;
         let vPriv = ["禁止进入","会员","管理员","会长"] ;
         if ( mem.privliage < vPriv.length )
         {

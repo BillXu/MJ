@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "13575010-ee73-463e-8df6-f558a4a193e0",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "俱乐部牌桌": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "9e107f1f-ee8c-4f90-b2de-70586e7e2271",
       "rawTextureUuid": "13575010-ee73-463e-8df6-f558a4a193e0",
       "trimType": "auto",

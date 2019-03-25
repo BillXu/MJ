@@ -16,7 +16,7 @@ import PlayerCardsLayer from "./playerCardsLayer"
 import { eMsgPort , eMsgType } from "../../common/MessageIdentifer"
 import Network from "../../common/Network"
 import { clientDefine , SceneName, eRoomState } from "../../common/clientDefine"
-import ClientData from "../../globalModule/ClientData"
+//import ClientData from "../../globalModule/ClientData"
 import { IOneMsgCallback } from "../../common/NetworkInterface"
 import { eMJActType,eEatType, eClientRoomState, eChatMsgType } from "./roomDefine";
 import DlgActList from "./dlgActList"

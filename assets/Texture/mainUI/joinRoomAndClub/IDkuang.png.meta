@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "27fc7dcb-3494-45b9-b5b8-fba3ca1213e9",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "IDkuang": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "96b3c3b8-ae42-4030-bdfe-0e16c1779004",
       "rawTextureUuid": "27fc7dcb-3494-45b9-b5b8-fba3ca1213e9",
       "trimType": "auto",

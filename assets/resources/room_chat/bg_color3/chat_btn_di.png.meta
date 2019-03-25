@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "9ef5db6b-67b5-4a00-96f4-20e62b96ce05",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "chat_btn_di": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "52344f33-279f-43a1-b22f-2eb473e9ad0f",
       "rawTextureUuid": "9ef5db6b-67b5-4a00-96f4-20e62b96ce05",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "254f33bc-ab0f-4c63-912c-7f6229ddcd11",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "kefuweixin": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "2357bcb5-cdb7-40c7-b47b-5a139a42ede0",
       "rawTextureUuid": "254f33bc-ab0f-4c63-912c-7f6229ddcd11",
       "trimType": "auto",

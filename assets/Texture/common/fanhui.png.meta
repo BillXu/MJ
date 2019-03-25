@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "2a9d8338-b113-4780-8d7c-da3568c3a83d",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "fanhui": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "21c6af6f-9e2e-47f7-8705-c53e99bd4658",
       "rawTextureUuid": "2a9d8338-b113-4780-8d7c-da3568c3a83d",
       "trimType": "auto",

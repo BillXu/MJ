@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "4dbe3e25-8615-47c3-a3f2-2982eedf4fbf",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "lixian": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "28990ae5-3ec1-4401-bf52-45e0ddb214a6",
       "rawTextureUuid": "4dbe3e25-8615-47c3-a3f2-2982eedf4fbf",
       "trimType": "auto",

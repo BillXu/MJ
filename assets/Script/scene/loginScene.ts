@@ -11,13 +11,15 @@
 const {ccclass, property} = cc._decorator;
 import {clientDefine,SceneName} from "../common/clientDefine"
 import { eMsgPort,eMsgType } from "../common/MessageIdentifer"
-import clientData from "../globalModule/ClientData"
 import Network from "../common/Network"
 import Utilty from "../globalModule/Utility"
 import WechatManager from "../sdk/WechatManager";
 import Utility from "../globalModule/Utility";
+import IModule from "../common/IModule";
+import ClientPlayerData from "../clientData/ClientPlayerData";
+import ClientApp from "../globalModule/ClientApp";
 @ccclass
-export default class LoginScene extends cc.Component {
+export default class LoginScene extends IModule {
 
     @property(cc.Node)
     pTipMask : cc.Node = null ;
@@ -29,13 +31,11 @@ export default class LoginScene extends cc.Component {
     strWechatName : string = "";
     strWechatHeadUrl : string = "" ;
     nWechatSex : number = 1 ;
-    isClickWechat : boolean = false ;
+    isNeedUpdatePlayerInfo : boolean = false ;
     
 
     onLoad () {
-        cc.systemEvent.on(clientDefine.netEventRecievedBaseData,this.onRecievedBaseData,this);
-        cc.systemEvent.on(clientDefine.netEventOpen,this.onConnectedToSvr,this);
-        cc.systemEvent.on(clientDefine.netEventReconnectd,this.onConnectedToSvr,this);
+        cc.systemEvent.on(ClientPlayerData.EVENT_RECIEVED_BASE_DATA,this.onRecievedBaseData,this);
         cc.systemEvent.on(WechatManager.EVENT_RECIEVED_WECHAT_INFO,this.onRecivedWechatInfo , this);
         this.pTipMask.active = false ;
     }
@@ -47,11 +47,13 @@ export default class LoginScene extends cc.Component {
             return ;
         }
 
-        if ( clientData.getInstance().curAccount.length > 1 && clientData.getInstance().curPwd.length > 1 )
+        let client = ClientApp.getInstance().getConfigMgr().getClientConfig();
+        if ( client.isHaveValidAccount() )
         {
-            this.strAccount = clientData.getInstance().curAccount ;
-            this.strPassword = clientData.getInstance().curPwd ;
-            this.isClickWechat = false ;
+            this.strAccount = client.validAccount ;
+            this.strPassword = client.validPassword ;
+            this.isNeedUpdatePlayerInfo = false ;
+            console.log( "auto login with stored account" );
             this.doLogin();
         }
     }
@@ -72,7 +74,7 @@ export default class LoginScene extends cc.Component {
             return ;
         }
 
-        this.isClickWechat = true ;
+        this.isNeedUpdatePlayerInfo = true ;
         this.strAccount = detail["unionid"] ;
         this.strPassword = "mjdsl" ;
         this.strWechatName = detail["nickname"] ;
@@ -85,19 +87,20 @@ export default class LoginScene extends cc.Component {
     // clientData will recieved base data , and invoke loading scene ;
     onRecievedBaseData()
     {
-        if ( this.isClickWechat )
+        let baseData = ClientApp.getInstance().getClientPlayerData().getBaseData();
+        if ( this.isNeedUpdatePlayerInfo )  // if click wechat login , we need update payer display info , name , head icon 
         {
             let msgupdateinfo = {} ;
             msgupdateinfo["name"] = this.strWechatName ;
             msgupdateinfo["headIcon"] = this.strWechatHeadUrl;
             msgupdateinfo["sex"] = this.nWechatSex;
-            clientData.getInstance().jsSelfBaseDataMsg["name"] = this.strWechatName ;
-            clientData.getInstance().jsSelfBaseDataMsg["headIcon"] = this.strWechatHeadUrl ;
-            clientData.getInstance().jsSelfBaseDataMsg["sex"] = this.nWechatSex ;
-            Network.getInstance().sendMsg(msgupdateinfo,eMsgType.MSG_PLAYER_UPDATE_INFO,eMsgPort.ID_MSG_PORT_DATA,clientData.getInstance().selfUID);
+            baseData.name = this.strWechatName ;
+            baseData.headUrl = this.strWechatHeadUrl ;
+            baseData.gender = this.nWechatSex ;
+            Network.getInstance().sendMsg(msgupdateinfo,eMsgType.MSG_PLAYER_UPDATE_INFO,eMsgPort.ID_MSG_PORT_DATA,baseData.uid);
         }
         
-        if ( clientData.getInstance().stayInRoomID && clientData.getInstance().stayInRoomID > 0 )
+        if ( baseData.stayInRoomID && baseData.stayInRoomID > 0 )
         {
             cc.director.loadScene(SceneName.Scene_Room) ; 
         }
@@ -107,8 +110,9 @@ export default class LoginScene extends cc.Component {
         }
     }
 
-    onConnectedToSvr()
+    onReconectedResult( isOk : boolean ) // not mater if we reconnect sucess  , we just login ;
     {
+        super.onConnectOpen();
         console.log("login scene recived connected to svr event");
         if ( this.strAccount != "" && "" != this.strPassword )
         {
@@ -131,12 +135,11 @@ export default class LoginScene extends cc.Component {
         Network.getInstance().sendMsg(msgLogin,eMsgType.MSG_PLAYER_LOGIN,eMsgPort.ID_MSG_PORT_GATE,1,
             ( jsmg : Object )=>{
                 let ret : number = jsmg["nRet"] ;
-                self.pTipMask.active = ret == 0 ;
+                //self.pTipMask.active = ret == 0 ;
                 if ( ret == 0 )  // clientData will recieved base data , and invoke loading scene ;
                 {
                     // save a valid account , most used when developing state ;
-                    clientData.getInstance().curAccount = this.strAccount;
-                    clientData.getInstance().curPwd = this.strPassword ;
+                    ClientApp.getInstance().getConfigMgr().getClientConfig().storeValidAccound(self.strAccount,self.strPassword);
                     console.log("login scene login ok");
                     return true ;
                 } 
@@ -166,21 +169,13 @@ export default class LoginScene extends cc.Component {
                 // register ok , then save account info to local ;
                 this.strAccount = jsmg["cAccount"] ;
                 this.strPassword = jsmg["cPassword"] ;
-                clientData.getInstance().curAccount = this.strAccount;
-                clientData.getInstance().curPwd = this.strPassword ;
-
                 console.log("login scene register ok : " + this.strAccount );
                 self.doLogin();
                 return true ;
             });
     }
 
-    onDestroy()
-    {
-        cc.systemEvent.targetOff(this);
-    }
-
-    onClickVisitorBtn( event : cc.Event.EventTouch, customEventData : string )
+    onClickVisitorBtn( event : cc.Event.EventTouch, btn : cc.Button , customEventData : string )
     {
         let nIdx : number = parseInt(customEventData) ;
         // if ( CC_JSB && 3 == nIdx )
@@ -206,7 +201,10 @@ export default class LoginScene extends cc.Component {
         this.strAccount = vAcc[nIdx] ;
         this.strWechatHeadUrl = vHeadIcon[nIdx] ;
         this.strPassword = "v1";
+        this.isNeedUpdatePlayerInfo = true ;
         console.log( "visitor " + nIdx + " click login" );
         this.doLogin();
+
+        let v = this.pTipMask.position ;
     }
 }

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "cf6dd8a6-e121-4fe8-bc17-3233c4dd6a85",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "zanwuzhanji": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "6bf8855c-7ff7-4546-ab4b-7b1eb884225a",
       "rawTextureUuid": "cf6dd8a6-e121-4fe8-bc17-3233c4dd6a85",
       "trimType": "auto",

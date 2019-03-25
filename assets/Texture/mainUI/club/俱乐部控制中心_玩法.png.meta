@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "5d1b3fed-5edf-47a9-8c80-81c55377ed1c",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "俱乐部控制中心_玩法": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "15ca5590-abb3-4327-97cd-ad3ec1a4da3f",
       "rawTextureUuid": "5d1b3fed-5edf-47a9-8c80-81c55377ed1c",
       "trimType": "auto",

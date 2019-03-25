@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "17b6c4f2-9e03-4a94-9d63-d39d12a68d76",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "ziyouxiwanfa_1": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "ff4b330c-c5b6-456f-b65f-d0d8e91d400d",
       "rawTextureUuid": "17b6c4f2-9e03-4a94-9d63-d39d12a68d76",
       "trimType": "auto",

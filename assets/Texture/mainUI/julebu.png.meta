@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "53a1d0d2-dd45-4210-8d52-d0e33fbbb1fe",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "julebu": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "634d5312-ed58-456b-b59f-65030dc09376",
       "rawTextureUuid": "53a1d0d2-dd45-4210-8d52-d0e33fbbb1fe",
       "trimType": "auto",

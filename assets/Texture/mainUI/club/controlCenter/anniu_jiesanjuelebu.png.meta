@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "4c01f603-3a01-4dae-986d-eae29667edfe",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "anniu_jiesanjuelebu": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "db10b0f1-e0f5-4cd2-af1b-0b126cdbf6ec",
       "rawTextureUuid": "4c01f603-3a01-4dae-986d-eae29667edfe",
       "trimType": "auto",

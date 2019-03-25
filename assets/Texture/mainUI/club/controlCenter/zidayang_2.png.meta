@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "2d949cf2-092d-41d5-9c3a-8e1f4a418319",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "zidayang_2": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "57ab0214-b564-419b-b59e-aa2ec63272f3",
       "rawTextureUuid": "2d949cf2-092d-41d5-9c3a-8e1f4a418319",
       "trimType": "auto",

@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "dfa7f112-3f8f-4ee5-bb4d-e181cf066210",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "julik": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "772343a2-b6e8-4589-a982-36042a05dd94",
       "rawTextureUuid": "dfa7f112-3f8f-4ee5-bb4d-e181cf066210",
       "trimType": "auto",

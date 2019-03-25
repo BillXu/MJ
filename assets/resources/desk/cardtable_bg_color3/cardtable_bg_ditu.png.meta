@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "b747397a-1b6b-4dc6-9aa3-21d0ebf3ff54",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "cardtable_bg_ditu": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "d95958e0-8d26-49f3-a375-afc66bc3d8d4",
       "rawTextureUuid": "b747397a-1b6b-4dc6-9aa3-21d0ebf3ff54",
       "trimType": "auto",

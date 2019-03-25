@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "2cf3102e-8cf9-4819-9e92-37e2718587c3",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "zitishi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "07d0ad3a-3003-46bf-8431-f4d2a4922df6",
       "rawTextureUuid": "2cf3102e-8cf9-4819-9e92-37e2718587c3",
       "trimType": "auto",

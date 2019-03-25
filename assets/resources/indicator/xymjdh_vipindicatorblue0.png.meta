@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "bd2d5584-a0da-47fd-a9e4-b153b00ddba7",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "xymjdh_vipindicatorblue0": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "3d2558c3-6c49-4856-b7fc-304c16aaaa31",
       "rawTextureUuid": "bd2d5584-a0da-47fd-a9e4-b153b00ddba7",
       "trimType": "auto",

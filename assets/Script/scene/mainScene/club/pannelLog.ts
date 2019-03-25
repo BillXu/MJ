@@ -9,13 +9,12 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import ClubData from "./clubData" ;
 import ClubPannel from "./clubPannel" ;
 import listView from "../../../commonItem/ListView"
 import { AbsAdapter } from "../../../commonItem/ListView"
-import ClubLogData from "./clubLogData"
-import { LogDataItem } from "./clubLogData"
 import LogItem from "./logItem";
+import ClubDataEvent, { ClubEvent } from "../../../clientData/clubData/ClubDataEvent";
+import IClubDataComponent from "../../../clientData/clubData/IClubDataComponent";
 @ccclass
 export default class PannelLog extends ClubPannel {
 
@@ -24,20 +23,14 @@ export default class PannelLog extends ClubPannel {
 
     pAdapter : listLogViewAdpter = null ;
 
-    pData : ClubLogData = null ;
+    pData : ClubDataEvent = null ;
     // LIFE-CYCLE CALLBACKS:
-
-    onLoad ()
-    {
-
-    }
-
     start () {
     }
 
-    show( data : ClubData )
+    show()
     {
-        super.show(data);
+        super.show();
 
         if ( null == this.pAdapter )
         {
@@ -45,29 +38,15 @@ export default class PannelLog extends ClubPannel {
             this.pLogList.setAdapter(this.pAdapter);
         }
 
-        if ( this.pData )
-        {
-            this.pData.onLoseFocus();
-        }
-
-        if ( data == null )
-        {
-            this.pAdapter.setDataSet([]);
-            this.pLogList.notifyUpdate();
-            return ;
-        }
-        this.pData = data.pClubLogData ;
-        data.pClubLogData.lpfCallBack = this.doRefreshView.bind(this);
-        if ( this.pData.isNeedRefreshData() )
-        {
-            this.pData.featchData();
-        }
-        this.doRefreshView();
+        this.pAdapter.setDataSet([]);
+        this.pLogList.notifyUpdate();
+        return ;
     }
 
-    doRefreshView()
+    refresh( data : IClubDataComponent )
     {
-        this.pAdapter.setDataSet(this.pData.vLogs) ;
+        this.pData = <ClubDataEvent>data ;
+        this.pAdapter.setDataSet(this.pData.vEventLog) ;
         this.pLogList.notifyUpdate();
     }
 
@@ -80,7 +59,7 @@ class listLogViewAdpter extends AbsAdapter
     {
         let comp = item.getComponent(LogItem);
         if (comp) {
-            let pInfo : LogDataItem = this.getItem(posIndex) ;
+            let pInfo : ClubEvent = this.getItem(posIndex) ;
             comp.refresh(pInfo) ;
         }
     }

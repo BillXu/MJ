@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "10213c39-3f4a-4d67-837b-2471a0ca648a",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "tubiaoshezhi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "1fd04423-f35d-436b-9454-5b004f154113",
       "rawTextureUuid": "10213c39-3f4a-4d67-837b-2471a0ca648a",
       "trimType": "auto",

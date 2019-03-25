@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "9bb26c5e-40f3-48f9-a491-7b9992635425",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "xymjdh_gang_tex": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "5269b637-6d03-4d23-9a93-e5cfc367ed78",
       "rawTextureUuid": "9bb26c5e-40f3-48f9-a491-7b9992635425",
       "trimType": "auto",

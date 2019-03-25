@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "6aaebdcd-4f50-4d49-b454-99740bf45ffb",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "chat_bg_lian14": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "98b62aad-ec26-4cbb-b75e-08af8f33b8c0",
       "rawTextureUuid": "6aaebdcd-4f50-4d49-b454-99740bf45ffb",
       "trimType": "auto",

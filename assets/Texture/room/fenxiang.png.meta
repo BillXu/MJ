@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "9260d831-300e-4371-81ad-a3c33030a88d",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "fenxiang": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "2cbd9d45-980d-433f-9cff-b73ee6bf8ae5",
       "rawTextureUuid": "9260d831-300e-4371-81ad-a3c33030a88d",
       "trimType": "auto",

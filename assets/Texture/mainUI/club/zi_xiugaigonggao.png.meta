@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "c3a51dc8-5c52-4f1a-8cbc-3d163c2526fb",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "zi_xiugaigonggao": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "52a3ebc2-cc7f-445b-88df-a3fc4b9ce57c",
       "rawTextureUuid": "c3a51dc8-5c52-4f1a-8cbc-3d163c2526fb",
       "trimType": "auto",

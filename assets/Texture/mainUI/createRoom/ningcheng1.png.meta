@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "2313db61-98ec-40b0-b4cf-37b8c222ba94",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "ningcheng1": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "e766e81d-1d0e-48ed-874f-a6b6cc080d75",
       "rawTextureUuid": "2313db61-98ec-40b0-b4cf-37b8c222ba94",
       "trimType": "auto",

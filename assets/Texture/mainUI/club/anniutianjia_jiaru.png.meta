@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "6607c39d-39db-4680-a9e8-4dccc654ac98",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "anniutianjia_jiaru": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "ae6c2810-d52e-4db9-b5a3-37a5f6022262",
       "rawTextureUuid": "6607c39d-39db-4680-a9e8-4dccc654ac98",
       "trimType": "auto",

@@ -1,3 +1,5 @@
+import IClubDataComponent from "../../../clientData/clubData/IClubDataComponent";
+
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -9,29 +11,26 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import ClubData from "./clubData"
+
 @ccclass
 export default class ClubPannel extends cc.Component {
+    @property(cc.Node)
+    pContentRoot : cc.Node = null ;
 
-    show( data : ClubData ) : void 
+    show() : void 
     {
-        this.node.active = true ;
-        this.unschedule(this.onReapeat) ;
-        if ( data != null )
-        {
-            this.schedule(this.onReapeat,30,100);
-        }
+        this.pContentRoot.active = true ;
+    }
+
+    refresh( data : IClubDataComponent )
+    {
+
     }
 
     hide()
     {
-        //this.node.active = false ;
-        this.unschedule(this.onReapeat) ;
+        this.pContentRoot.active = false ;
     }
 
-    onReapeat()
-    {
-
-    }
     // update (dt) {}
 }

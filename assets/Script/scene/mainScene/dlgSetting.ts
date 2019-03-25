@@ -11,7 +11,7 @@
 const {ccclass, property} = cc._decorator;
 import ProgressSlider from "../../commonItem/progressSlider"
 import DlgBase from "../../common/DlgBase"
-import ClientData from "../../globalModule/ClientData"
+//import ClientData from "../../globalModule/ClientData"
 import Network from "../../common/Network"
 import { eMsgPort, eMsgType } from "../../common/MessageIdentifer"
 import Utility from "../../globalModule/Utility"

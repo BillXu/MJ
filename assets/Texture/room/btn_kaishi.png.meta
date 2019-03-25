@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "ea64dfa4-84c6-4c64-a0b3-b54a22dd9fae",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "btn_kaishi": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "170ceca9-faf2-41f5-ba3b-824f39aa2bc2",
       "rawTextureUuid": "ea64dfa4-84c6-4c64-a0b3-b54a22dd9fae",
       "trimType": "auto",

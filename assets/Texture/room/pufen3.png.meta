@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "7409d27f-a86f-4927-9187-bea7f611b587",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "pufen3": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "9d7ce2f1-429a-413e-98a6-fa7bba0474a3",
       "rawTextureUuid": "7409d27f-a86f-4927-9187-bea7f611b587",
       "trimType": "auto",

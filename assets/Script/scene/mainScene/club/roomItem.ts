@@ -9,8 +9,8 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import PhotoItem from "../../../commonItem/photoItem";
-import { RoomDataItem } from "./clubRoomData"
+import { ClubRoomItem, RoomPeer } from "../../../clientData/clubData/ClubDataRooms";
+import PlayerInfoItem from "../../../commonItem/PlayerInfoItem";
 @ccclass
 export default class RoomItem extends cc.Component {
 
@@ -26,11 +26,8 @@ export default class RoomItem extends cc.Component {
     @property(cc.Node)
     pBtnCover : cc.Node = null ;
 
-    @property([cc.Label])
-    vNames : cc.Label[] = [] ;
-
-    @property([PhotoItem])
-    vHeadIcon : PhotoItem[] = [] ;
+    @property([PlayerInfoItem])
+    vHeadIcon : PlayerInfoItem[] = [] ;
 
     @property(cc.Node)
     pWaiting : cc.Node = null ;
@@ -54,10 +51,10 @@ export default class RoomItem extends cc.Component {
         this.isShowDissmissBtn = false ;
     }
 
-    refresh( pdata : RoomDataItem )
+    refresh( pdata : ClubRoomItem )
     {
-        this.roomID = pdata.roomID ;
-        this.pRoomID.string = pdata.roomID.toString();
+        this.roomID = pdata.nRoomID ;
+        this.pRoomID.string = pdata.nRoomID.toString();
         this.pWaiting.active = pdata.isOpen == false ;
         this.pRoundState.node.active = pdata.isOpen ;
         for ( let idx in this.vSeats )
@@ -73,15 +70,11 @@ export default class RoomItem extends cc.Component {
         for ( let idx = 0 ; idx < this.vHeadIcon.length ; ++idx )
         {
             this.vHeadIcon[idx].node.active = false ;
-            this.vNames[idx].node.active = false ;
         }
 
         let self = this ;
-        pdata.vPlayers.forEach( ( pd : Object,idx : number )=>{
-            self.vHeadIcon[idx].photoURL = pd["headIcon"] || "" ;
-            self.vNames[idx].string = pd["name"] || "loading" ;
-            self.vHeadIcon[idx].node.active = true ;
-            self.vNames[idx].node.active = true ;
+        pdata.vRoomPeers.forEach( ( pd : RoomPeer,idx : number )=>{
+            self.vHeadIcon[idx].refreshInfo( pd.nUID) ;
         } );
     }
 

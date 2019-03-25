@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "266c420a-3066-4e6d-90b7-4275194d98fa",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "zizhunbei": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "433a7446-ad59-4f78-8c45-53408d163c9e",
       "rawTextureUuid": "266c420a-3066-4e6d-90b7-4275194d98fa",
       "trimType": "auto",

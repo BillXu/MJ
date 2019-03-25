@@ -1,13 +1,14 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.0",
   "uuid": "cd7a7fee-808b-4226-a72f-91a6aa4a63a6",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "platformSettings": {},
   "subMetas": {
     "CFBlueMJ": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "796f9862-ca1c-4ca1-b841-83b5981db3f1",
       "rawTextureUuid": "cd7a7fee-808b-4226-a72f-91a6aa4a63a6",
       "trimType": "auto",
