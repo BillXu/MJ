@@ -120,7 +120,7 @@ export default class PlayerInfoDataCacher {
                 event.detail = self.vPlayerInfos[readUID] ;
                 cc.systemEvent.dispatchEvent(event);
 
-                if ( this.vRequestingUIDs[uid] == null )
+                if ( self.vRequestingUIDs[uid] == null )
                 {
                     console.error( "request player info data , but do not put it in requesting UID = " + readUID );
                     return false ;

@@ -54,14 +54,6 @@ export default class WechatManager  {
 
         sendRequestToPlatform(WechatManager.SDK_WECHAT_INIT,{ appID : this.APP_ID } ) ;
         return ;
-        if ( CC_JSB && cc.sys.ANDROID )
-        {
-            jsb.reflection.callStaticMethod( SDK_DEF.PACKAGE_NAME_PATH + "WechatManager", "JSinit", "(Ljava/lang/String;)V",this.APP_ID );
-        }
-        else
-        {
-            console.warn( "other platform not implement init " );
-        }
     }
 
     private registerEvent()

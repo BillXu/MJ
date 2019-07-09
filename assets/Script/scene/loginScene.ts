@@ -154,7 +154,7 @@ export default class LoginScene extends IModule {
         let msgReg = {}; // cName
         msgReg["cAccount"] = this.strAccount ;
         msgReg["cPassword"] = this.strPassword ;
-        msgReg["cRegisterType"] = this.strWechatName.length > 0 ;
+        msgReg["cRegisterType"] = this.strWechatName.length > 0  ;
         msgReg["nChannel"] = 0 ;
         let self = this ;
         Network.getInstance().sendMsg(msgReg,eMsgType.MSG_PLAYER_REGISTER,eMsgPort.ID_MSG_PORT_GATE,1,
@@ -169,7 +169,7 @@ export default class LoginScene extends IModule {
                 // register ok , then save account info to local ;
                 this.strAccount = jsmg["cAccount"] ;
                 this.strPassword = jsmg["cPassword"] ;
-                console.log("login scene register ok : " + this.strAccount );
+                console.log("login scene register ok : " + self.strAccount );
                 self.doLogin();
                 return true ;
             });
