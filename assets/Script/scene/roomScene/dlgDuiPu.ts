@@ -24,10 +24,6 @@ export default class DlgDuiPu extends DlgBase {
 
     // onLoad () {}
 
-    start () {
-
-    }
-
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void )
     {
         this.pSelOpt.active = true ;

@@ -27,6 +27,7 @@ export default class RoomData extends cc.Component {
 
     getMaxTableSeat() : number
     {
+        
         return 4 ;
     }
 
@@ -343,10 +344,10 @@ export default class RoomData extends cc.Component {
 
     svrIdxToClientIdx( svrIdx : number ) : number
     {
-        let self = this.getPlayerDataByUID(ClientData.getInstance().selfUID);
+        let self = null ; //this.getPlayerDataByUID(ClientData.getInstance().selfUID);
         if ( self == null )
         {
-            cc.warn( "why self don't sitdown ? uid = " + ClientData.getInstance().selfUID );
+            //cc.warn( "why self don't sitdown ? uid = " + ClientData.getInstance().selfUID );
             return svrIdx ;
         }
 
@@ -367,10 +368,10 @@ export default class RoomData extends cc.Component {
 
     clientIdxToSvrIdx( cliendIdx : number ) : number
     {
-        let self = this.getPlayerDataByUID(ClientData.getInstance().selfUID);
+        let self = null;//this.getPlayerDataByUID(ClientData.getInstance().selfUID); // temp commemt
         if ( self == null )
         {
-            cc.warn( "why self don't sitdown ? uid = " + ClientData.getInstance().selfUID );
+            //cc.warn( "why self don't sitdown ? uid = " + ClientData.getInstance().selfUID );
             return cliendIdx ;
         }
 
