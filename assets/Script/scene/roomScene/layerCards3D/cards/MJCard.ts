@@ -1,4 +1,4 @@
-import { eMJCardType } from "../roomDefine";
+import { eMJCardType } from "../../roomDefine";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html

@@ -1,6 +1,6 @@
 import MJCard, { MJCardState } from "./MJCard";
 import MJFactory from "./MJFactory";
-import { eArrowDirect, eMJActType } from "../roomDefine";
+import { eArrowDirect, eMJActType } from "../../roomDefine";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -33,19 +33,43 @@ export default class PlayerMJCard extends cc.Component {
     protected mMingCards : MingCardGroup[] = [] ;
 
     protected mCurSelectHoldMJ : MJCard = null ;
-    protected holdCardPosZ : number = 100 ;
+
+    @property
+    holdCardPosZ : number = 684 ;
+    @property
+    chuCardStartX : number = 100 ;
+    @property
+    chuCardStartZ : number = 100 ;
+
+    @property([cc.Component.EventHandler])
+    mHandleChuPai : cc.Component.EventHandler[] = [] ;
     
     protected mIsReplayState = false ;
     protected _isSelf : boolean = false ;
     set isSelf( self : boolean )
     {
-
+        this._isSelf = self ;
+        var canvas = cc.find('Canvas');
+        if ( self )
+        {
+            canvas.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
+            canvas.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
+            canvas.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        }
+        else
+        {
+            canvas.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
+            canvas.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
+            canvas.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        }
     }
 
     get isSelf()
     {
         return this._isSelf ;
     }
+    protected mSelfCamera : cc.Camera = null ;
+    protected mClickDownCard : MJCard = null ;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -77,7 +101,7 @@ export default class PlayerMJCard extends cc.Component {
                 self.mFacotry.recycleMJ( iterator.gangUpCards );
             }
         }
-        
+
         this.mMingCards.length = 0 ;
         this.mCurSelectHoldMJ = null ;
     }
@@ -217,9 +241,9 @@ export default class PlayerMJCard extends cc.Component {
         let mj = this.mFacotry.getMJ(newCard, this.mIsReplayState ? MJCardState.FACE_UP : MJCardState.FACE_USER,this.node ) ;
         mj.isSelf = this.isSelf ;
         this.mHoldCards.push(mj);
-        
-        let pos = this.mHoldCards[this.mHoldCards.length -1 ].node.position;
-        pos.x += mj.world_x_Size * 0.5 ;
+
+        let pos = this.mHoldCards[this.mHoldCards.length -2 ].node.position;
+        pos.x += mj.world_x_Size * 1.5 ;
         if ( null == cardWallPos )
         {
             mj.node.position = pos ;
@@ -233,12 +257,34 @@ export default class PlayerMJCard extends cc.Component {
         cc.tween(mj.node).to( 0.15, { position: pos} ) ;
     }
 
+    onDistribute( newCards : number[] )
+    {
+        for (const iterator of newCards ) 
+        {
+            let mj = this.mFacotry.getMJ(iterator, this.mIsReplayState ? MJCardState.FACE_UP : MJCardState.FACE_USER,this.node ) ;
+            if ( mj == null )
+            {
+                cc.error( "get mj failed = " + iterator );
+                continue ;
+            }
+
+            mj.isSelf = this.isSelf ;
+            this.mHoldCards.push(mj);
+        }
+
+        if ( this.mHoldCards.length == 0 )
+        {
+            return ;
+        }
+        this.relayoutHoldCards();
+    }
+
     onChu( chuCard : number )
     {
         let pos = this.removeHold(chuCard);
         let chuMJ = this.mFacotry.getMJ(chuCard,MJCardState.FACE_UP,this.node ) ;
         chuMJ.node.position = pos ;
-        cc.tween(chuMJ.node).to( 0.15, { position: this.getChuCardPos( this.mChuCards.length ) } ) ;
+        cc.tween(chuMJ.node).to( 0.15, { position: this.getChuCardPos( this.mChuCards.length ) } ).start() ;
         this.mChuCards.push(chuMJ);
         this.relayoutHoldCards();
     }
@@ -326,7 +372,7 @@ export default class PlayerMJCard extends cc.Component {
     protected relayoutHoldCards()
     {
         let xMargin = 10 ;
-        let xAnHoldMargin = 2 ;
+        let xAnHoldMargin = 0 ;
         let startX = -0.5 * ( this.mMingCards.length * 3 * ( MJCard.MODEL_X_SIZE + xMargin ) + this.mHoldCards.length * ( this.mHoldCards[0].world_x_Size + xAnHoldMargin ) ); 
      
         // layout ming cards ;
@@ -358,8 +404,9 @@ export default class PlayerMJCard extends cc.Component {
         startX += this.mHoldCards[0].world_x_Size * 0.5 ;
         for ( const hmj of this.mHoldCards )
         {
-             hmj.node.position = new cc.Vec3( startX,hmj.world_y_Size * 0.5,this.holdCardPosZ );
+             hmj.node.position = new cc.Vec3( startX, 0 * hmj.world_y_Size * 0.5,this.holdCardPosZ );
              startX += ( xAnHoldMargin + hmj.world_x_Size );
+             cc.log( "hold pos = " + hmj.node.position );
         }
     }
 
@@ -375,7 +422,7 @@ export default class PlayerMJCard extends cc.Component {
         if ( dir == eArrowDirect.eDirect_Left )
         {
             let v = card.node.eulerAngles ;
-            v.y += 90 ;
+            v.y = 270 ;
             card.node.eulerAngles = v ;
 
             x += card.world_z_Size * 0.5 ;
@@ -400,7 +447,7 @@ export default class PlayerMJCard extends cc.Component {
         if ( dir == eArrowDirect.eDirect_Righ )
         {
             let v = card.node.eulerAngles ;
-            v.y -= 90 ;
+            v.y = 90 ;
             card.node.eulerAngles = v ;
 
             x += card.world_z_Size * 0.5 ;
@@ -419,15 +466,103 @@ export default class PlayerMJCard extends cc.Component {
     protected getChuCardPos( idx : number ) : cc.Vec3
     {
         let nCntPerRow = 6 ;
-        let startX = -1 * nCntPerRow * 0.5 * MJCard.MODEL_X_SIZE ;
-        let startZ = MJCard.MODEL_Z_SIZE ;
-        let xMargin = 2;
+        let xMargin = 1;
         let zMargin = 2 ;
 
-        var rowIdx = (idx + nCntPerRow ) / nCntPerRow - 1;
-        var colIdx = idx % nCntPerRow ;
+        let startX = this.chuCardStartX ;//-1 * nCntPerRow * 0.5 * ( MJCard.MODEL_X_SIZE + xMargin ) + 0.5 * MJCard.MODEL_X_SIZE ;
+        let startZ = this.chuCardStartZ ;
+
+
+        var rowIdx = (idx + nCntPerRow ) / nCntPerRow -1;
+        rowIdx = Math.floor(rowIdx);
+        var colIdx = Math.floor( idx % nCntPerRow ) ;
         var posTarget = new cc.Vec3( startX + colIdx * ( MJCard.MODEL_X_SIZE + xMargin ), MJCard.MODEL_Y_SIZE * 0.5, startZ + ( MJCard.MODEL_Z_SIZE + zMargin ) * rowIdx ) ;
+        cc.log( "chu target card = " + posTarget );
         return posTarget;
+    }
+
+    // self player card module 
+    onTouchStart( event : cc.Event.EventTouch )
+    {
+        if ( event.touch.getLocation().y > 120 )
+        {
+            this.mClickDownCard = null ;
+            return ;
+        }
+
+        cc.log( "onTouchStart of touch pos : " + event.touch.getLocation() );
+        this.mClickDownCard = this.rayCastCard( event.touch.getLocation() );
+        if ( this.mClickDownCard == null )
+        {
+            return ;
+        }
+    }
+
+    onTouchMove( event : cc.Event.EventTouch )
+    {
+
+    }
+
+    onTouchEnd( event : cc.Event.EventTouch )
+    {
+        if ( this.mClickDownCard == null )
+        {
+            cc.log( "no click card" );
+            return ;
+        }
+
+        let pc = this.rayCastCard( event.touch.getLocation() );
+        if ( pc != this.mClickDownCard )
+        {
+            cc.log( "not the same card , so skip it" );
+            return ;
+        }
+
+        if ( null != this.mCurSelectHoldMJ && this.mCurSelectHoldMJ != this.mClickDownCard )
+        {
+            let pos = this.mCurSelectHoldMJ.node.position ;
+            pos.y = 0 ;
+            this.mCurSelectHoldMJ.node.position = pos ;
+        }
+
+        let isInvokeChuCallBack = this.mCurSelectHoldMJ == this.mClickDownCard;
+
+        this.mCurSelectHoldMJ = this.mClickDownCard ;
+        this.mClickDownCard = null ;
+        let pos = this.mCurSelectHoldMJ.node.position ;
+        pos.y = this.mCurSelectHoldMJ.world_y_Size * 0.2;
+        this.mCurSelectHoldMJ.node.position = pos ;
+
+        if ( isInvokeChuCallBack ) // double clicked ;
+        {
+            this.mClickDownCard = null ;
+            cc.Component.EventHandler.emitEvents(this.mHandleChuPai,this.mCurSelectHoldMJ );
+            return ;
+        }
+    }
+
+    protected rayCastCard( pos : cc.Vec2 ) : MJCard
+    {
+        if ( this.mSelfCamera == null )
+        {
+            this.mSelfCamera = cc.find("3D/layerPlayerCards/playerCard_0/SelfCamera").getComponent(cc.Camera);
+        }
+
+        let ray = this.mSelfCamera.getRay(pos) ;
+        let results = cc.geomUtils.intersect.raycast(this.node, ray);
+        	
+        if ( results.length > 0 ) 
+        {
+            // results[0].node.opacity = 100;
+ 
+            return results[0].node.getComponent(MJCard);
+            //let distance = results[0].distance;
+            
+            // let d = cc.vmath.vec3.normalize(cc.v3(), ray.d);
+            // let p = cc.vmath.vec3.scaleAndAdd(cc.v3(), ray.o, d, distance);
+            // this.mesh.position = p;
+        }
+        return null ;
     }
     // update (dt) {}
 }

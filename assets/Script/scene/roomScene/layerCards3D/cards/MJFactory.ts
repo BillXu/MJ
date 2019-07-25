@@ -1,4 +1,4 @@
-import { eMJCardType, eMJActType, eCardSate } from "../roomDefine";
+import { eMJCardType, eMJActType, eCardSate } from "../../roomDefine";
 import MJCard, { MJCardState } from "./MJCard";
 
 // Learn TypeScript:
@@ -31,6 +31,7 @@ export default class MJFactory extends cc.Component {
     onLoad ()
     {
         this.loadMJPrefabs();
+        cc.log( "loadMJPrefabs" );
     }
 
     start () {
@@ -82,7 +83,6 @@ export default class MJFactory extends cc.Component {
                     cc.error( "load mj prefab: MJPrefab/mj/" + typeResName + "_" + v + " failed, result :" + err.message );
                     return ;
                 }
-
                 self.mPrefabs[num] = prefab ;
             });
         }

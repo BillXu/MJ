@@ -910,7 +910,7 @@
     "01 - Default.mtl": {
       "ver": "1.0.2",
       "uuid": "1874041e-529f-445c-a86a-df5365d43a12",
-      "dataAsSubAsset": null,
+      "dataAsSubAsset": "{\n  \"__type__\": \"cc.Material\",\n  \"_name\": \"\",\n  \"_objFlags\": 0,\n  \"_native\": \"\",\n  \"_effectAsset\": {\n    \"__uuid__\": \"abc2cb62-7852-4525-a90d-d474487b88f2\"\n  },\n  \"_defines\": {\n    \"USE_DIFFUSE_TEXTURE\": true\n  },\n  \"_props\": {\n    \"diffuseColor\": {\n      \"__type__\": \"cc.Color\",\n      \"r\": 255,\n      \"g\": 255,\n      \"b\": 255,\n      \"a\": 255\n    },\n    \"diffuseTexture\": {\n      \"__uuid__\": \"985a717e-8b02-44ee-b42d-1341a0f9c7f0\"\n    }\n  }\n}",
       "name": "01 - Default.mtl",
       "subMetas": {}
     }

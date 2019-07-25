@@ -1532,7 +1532,6 @@ declare namespace cc {
 	``` 
 	*/
 	export function v2(x?: number|any, y?: number): Vec2;	
-	export function tween( t : any ) : Tween ;
 	/**
 	!#en This function is deprecated since v2.0, please use {{#crossLink "v2"}}cc.v2{{/crossLink}}.
 	!#zh 这个函数从 v2.0 开始被废弃，请使用 {{#crossLink "v2"}}cc.v2{{/crossLink}}。
@@ -1864,7 +1863,6 @@ declare namespace cc {
 		@param opts opts 
 		*/
 		to(duration: number, props: any, opts: {progress: Function; easing: Function|string; }): Tween;		
-		to(duration: number, props: any): Tween;	
 		/**
 		!#en
 		Add an action which calculate with relative value
@@ -3262,7 +3260,7 @@ declare namespace cc {
 		group: string;		
 		/** !#en The position (x, y) of the node in its parent's coordinates.
 		!#zh 节点在父节点坐标系中的位置（x, y）。 */
-		position: Vec3;		
+		position: Vec3|Vec2;		
 		/** !#en x axis position of node.
 		!#zh 节点 X 轴坐标。 */
 		x: number;		
@@ -3775,10 +3773,7 @@ declare namespace cc {
 		node.getLocalMatrix(mat4);
 		``` 
 		*/
-		getLocalMatrix(out: Mat4): Mat4;	
-
-		_invTransformPoint (out : cc.Vec3, pos : cc.Vec3 ) : cc.Vec3 ;	
-		getWorldPos( out : cc.Vec3 ) : cc.Vec3 ;
+		getLocalMatrix(out: Mat4): Mat4;		
 		/**
 		!#en
 		Get the world transform matrix (4x4)

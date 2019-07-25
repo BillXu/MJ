@@ -40,51 +40,6 @@ export default class PlayerInfoDataCacher {
         cc.game.on(cc.game.EVENT_HIDE,()=>{ self.vPlayerInfos = {} ;}) ; // when hide app, we clean the cacher ;
     }
 
-    // getPlayerInfo( uid : number ) : Promise<PlayerInfoData>
-    // {
-    //     let self = this ;
-    //     let pro = new Promise( ( resolve : ( p : PlayerInfoData)=>void , reject )=>{
-    //         if ( self.vPlayerInfos[uid] )
-    //         {
-    //             resolve(self.vPlayerInfos[uid]);
-    //             return ;
-    //         }
-
-    //         let js = {} ;
-    //         js["nReqID"] = uid ;
-    //         js["isDetail"] = 1 ;
-    //         let ret = Network.getInstance().sendMsg(js,eMsgType.MSG_REQUEST_PLAYER_DATA,eMsgPort.ID_MSG_PORT_DATA,uid,( jsmsg : Object )=>{
-    //             let readUID = jsmsg["uid"] ;
-    //             if ( readUID == null )
-    //             {
-    //                 reject( "can not find data for uid = " + uid );
-    //                 return ;
-    //             }
-
-    //             if ( self.vPlayerInfos[readUID] == null )
-    //             {
-    //                 self.vPlayerInfos[readUID] = new PlayerInfoData();
-    //             }
-    //             self.vPlayerInfos[readUID].initByMsg(jsmsg) ;
-
-    //             if ( readUID != uid )
-    //             {
-    //                 return false;
-    //             }
-
-    //             resolve(self.vPlayerInfos[uid]);
-    //             return false ;
-    //         } ) ;
-
-    //         if ( ret == false )
-    //         {
-    //             reject( "network is disconnect" );
-    //             return ;
-    //         }
-    //     } );
-    //     return pro ;
-    // }
-
     getPlayerInfoByID( uid : number, isForceReq : boolean = false ) : PlayerInfoData
     {
         if ( this.vPlayerInfos[uid] == null || isForceReq )

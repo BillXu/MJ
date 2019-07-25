@@ -1,3 +1,5 @@
+import IOpts from "./IOpts";
+
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -8,27 +10,11 @@
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
- export default class ChiFengOpts implements IOpts
+ export default class ChiFengOpts extends IOpts
 {   
-    jsOpts : Object = {} ;
-    get payType() : number
+    get isDuipu() : boolean 
     {
-        return this.jsOpts["payType"] ;
-    }
-
-    set payType( type : number ) 
-    {
-        this.jsOpts["payType"] = type ;
-    } 
-
-    get gameType() : number
-    {
-        return this.jsOpts["gameType"] ;
-    }
-
-    set gameType( type : number )
-    {
-        this.jsOpts["gameType"] = type ;
+        return this.jsOpts["guapu"] == 1 ;
     }
 
     set level( le : number )
@@ -39,26 +25,6 @@
     get level() : number
     {
        return this.jsOpts["level"] ;
-    }
-
-    get seatCnt() : number
-    {
-        return this.jsOpts["seatCnt"] ;
-    }
-
-    set seatCnt( cnt : number )
-    {
-        this.jsOpts["seatCnt"] = cnt ;
-    }
-
-    get isCircle() : boolean
-    {
-        return this.jsOpts["circle"] == 1;
-    }
-
-    set isCircle( is : boolean )
-    {
-        this.jsOpts["circle"] = is ? 1 : 0 ;
     }
 
     get roundCnt() : number
@@ -93,16 +59,6 @@
         this.jsOpts["guapu"] = is ? 1 : 0 ;
     }
 
-    get isAvoidCheat() : boolean
-    {
-        return this.jsOpts["enableAvoidCheat"] == 1;
-    }
-
-    set isAvoidCheat( is : boolean )
-    {
-        this.jsOpts["enableAvoidCheat"] = is ? 1 : 0 ;
-    }
-
     getRuleDesc() : string 
     {
         return "" ;
@@ -112,4 +68,5 @@
     {
         return 0 ;
     }
+
 }

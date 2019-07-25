@@ -87,4 +87,9 @@ export default class ClientPlayerBaseData extends PlayerInfoData {
         }
         return this.playerBrifeDataMsg["clubs"] ;
     }
+
+    haveGPSInfo() : boolean
+    {
+        return this.GPS_J > 10 && this.GPS_W > 0 ;
+    }
 }

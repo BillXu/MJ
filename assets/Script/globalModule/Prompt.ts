@@ -83,5 +83,19 @@ export default class Prompt extends cc.Component {
         this.pPromptDlg.isOneBtn = isOneBtn ;
         this.pPromptDlg.showDlg(pfResult,{ text : dlgText },pfOnClose ) ;
     }
+
+    public static promptDlg( strDesc : string, isOneBtn? : boolean, pfResult? : ( jsResult : Object ) => void , pfOnClose? : ( pTargetDlg : DlgBase ) => void )
+    {
+        let node = cc.find("persisteNodeClientApp");
+        let pompt = node.getComponent(Prompt);
+        pompt.showDlg(strDesc,isOneBtn,pfResult,pfOnClose ) ;
+    }
+
+    public static promptText( strDesc : string , nDisplayTime : number = 2 )
+    {
+        let node = cc.find("persisteNodeClientApp");
+        let pompt = node.getComponent(Prompt);
+        pompt.showPromptText(strDesc,nDisplayTime) ;
+    }
     // update (dt) {}
 }

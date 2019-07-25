@@ -1,0 +1,7 @@
+{
+  "ver": "1.0.0",
+  "uuid": "94101c77-26e1-454e-848f-08d5e9f3ca29",
+  "atlasJson": "{\"width\":32,\"imagePath\":\"shengyinjieshou_tex.png\",\"height\":32,\"name\":\"shengyinjieshou\",\"SubTexture\":[{\"frameHeight\":28,\"y\":1,\"frameX\":-11,\"width\":9,\"frameY\":0,\"height\":28,\"name\":\"shuo3\",\"frameWidth\":22,\"x\":1},{\"frameHeight\":28,\"y\":1,\"frameX\":-7,\"width\":7,\"frameY\":-5,\"height\":19,\"name\":\"shuo2\",\"frameWidth\":22,\"x\":12},{\"frameHeight\":28,\"y\":22,\"frameX\":-1,\"width\":7,\"frameY\":-11,\"height\":7,\"name\":\"shuo1\",\"frameWidth\":22,\"x\":12}]}",
+  "texture": "e4da5a63-dca8-4c27-82c6-1017911f3d4e",
+  "subMetas": {}
+}
