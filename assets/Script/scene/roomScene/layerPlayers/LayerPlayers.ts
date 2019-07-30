@@ -103,7 +103,7 @@ export default class LayerPlayers extends cc.Component implements ILayer {
     {
         let clientIdx = this.mRoomData.svrIdxToClientIdx(svrIdx);
         let targetPos = this.mBankIcon.parent.convertToNodeSpaceAR( this.mPlayers[clientIdx].bankIconWorldPos ) ; 
-        cc.tween(this.mBankIcon).to(0.3, { position: targetPos }, { easing: 'sineOut'}) ;
+        cc.tween(this.mBankIcon).to(0.3, { position: targetPos }, { easing: 'sineOut'}).start() ;
     }
 
     onPlayerStandUp( idx : number ) : void

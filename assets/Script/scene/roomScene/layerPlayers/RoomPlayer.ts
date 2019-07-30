@@ -57,7 +57,12 @@ export default class RoomPlayer extends cc.Component {
     lpfPlayerCallBack : cc.Component.EventHandler[] = [] ;  // ( isSitDown : boolean , uid : number | null )
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
+    onLoad ()
+    {
+        this.mBankIconPos.active = false ;
+        this.state = eRoomPlayerState.RPS_Empty ;
+    }
+
     protected mWorlPosOfBankIcon : cc.Vec2 = null ;
     get bankIconWorldPos() : cc.Vec2
     {
