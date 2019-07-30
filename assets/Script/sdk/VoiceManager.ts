@@ -34,22 +34,37 @@ enum GCloudVoiceErrno
     GCLOUD_VOICE_AUTHING = 12298,
 } ;
 
+class VoiceItem
+{
+    fileID : string = "" ;
+    playerUID : number = 0 ;
+}
+
 @ccclass
 export default class VoiceManager extends cc.Component {
 
     private static s_voiceMgr : VoiceManager = null ;
+    private mDownloadVoiceList : VoiceItem[] = [] ;
+    private mPlayerVoiceList : VoiceItem[] = [] ;
+    private mPlayersLastVoice : { [key : number] : VoiceItem  } = {} ;
 
     private APP_ID : string = "1123375188" ;
     private APP_KEY : string = "fecbbfdd3174e7d3493583a413b4da1c" ;
     private isInit : boolean = false ;
     private TEMP_PATH : string = "" ;
-    private isPlayVoiceChannelIdle : boolean = true ;
+    get isPlayVoiceChannelIdle() : boolean
+    {
+        return this.mPlayerVoiceList.length == 0 ;
+    }
     private isApplyedKey : boolean = false ;
 
     static EVENT_UPLOAED : string = "VOICE_EVENT_UPLOAED"; // { code : 2, isOk : false , fileName : "" }
     static EVENT_PLAY_FINISH : string = "VOICE_EVENT_PLAY_FINISH"; // { code : 2 , fileName : "" }
     static EVENT_APPLY_KEY : string  = "VOICE_EVENT_APPLY_KEY" ;  // { code : 2 }
     static EVENT_DOWNLOADED : string  = "VOICE_EVENT_DOWNLOADED" ; // { code : 2 , fileName : "" }
+
+    static EVENT_QUEUE_START_PLAY : string = "EVENT_QUEUE_START_PLAY" ; // { uid : 1 }
+    static EVENT_QUEUE_PLAY_FINISH : string = "EVENT_QUEUE_START_PLAY" ; // { uid : 1 }
 
     static SDK_VOICE_INIT : string = "SDK_VOICE_INIT" ; // { appID : "adf", appKey : "adf", playerTag : "uid" }
     static SDK_VOICE_RECORD : string = "SDK_VOICE_RECORD"; // { fullPathFile : "c://music/r.mp3" }
@@ -209,18 +224,25 @@ export default class VoiceManager extends cc.Component {
 
     protected onDownloadedFile( code : number , fileName : string )
     {
-        if ( GCloudVoiceCompleteCode.GV_ON_DOWNLOAD_RECORD_DONE == code && this.doPlayFile(fileName) )
+        let downloaded = this.mDownloadVoiceList.shift();
+        if ( GCloudVoiceCompleteCode.GV_ON_DOWNLOAD_RECORD_DONE == code && this.doPlayFile(downloaded) )
         {
+            
 
         }
         else
         {
             console.error( "down load file failed = " + fileName + "code = " + code );
-            this.onPlayedFiled( code,fileName);
+            //this.onPlayedFiled( code,fileName);
+        }
+
+        if ( this.mDownloadVoiceList.length > 0 )
+        {
+            this.downloadFile(this.mDownloadVoiceList[0].fileID ) ;
         }
     }
 
-    playVoice( fileName : string ) : boolean
+    playVoice( fileName : string , playerUID : number ) : boolean
     {
         if ( this.isInit == false )
         {
@@ -240,38 +262,97 @@ export default class VoiceManager extends cc.Component {
             return false ;
         }
         
-        // first download
-        if ( this.downloadFile(fileName) == false )
+        let vi = new VoiceItem();
+        vi.fileID = fileName ;
+        vi.playerUID = playerUID ;
+        this.mDownloadVoiceList.push( vi );
+        if ( this.mDownloadVoiceList.length == 1 )
         {
-            console.log( "下载文件调用返回失败" );
-            return false ;
+            if ( this.downloadFile(vi.fileID) == false )
+            {
+                console.log( "下载文件调用返回失败" );
+                this.mDownloadVoiceList.shift();
+                return false ;
+            }
         }
-
-        this.isPlayVoiceChannelIdle = false ;
         return true ;
     }
 
-    private doPlayFile( fileName : string ) : boolean
+    playLastVoice( playerUID : number ) : boolean
     {
-        let nRet : number = sendRequestToPlatform(VoiceManager.SDK_VOICE_PLAY_FILE,{ fullPathFile : this.TEMP_PATH + fileName }) ;
-        if ( nRet != GCloudVoiceErrno.GCLOUD_VOICE_SUCC )
+        let v = this.mPlayersLastVoice[playerUID] ;
+        if ( v == null )
         {
-            Utility.showPromptText( "播放录音错误code " + nRet );
-            return false;
+            return false ;
+        }
+        
+        if ( this.doPlayFile(v) == false )
+        {
+            this.mPlayersLastVoice[playerUID] = null ;
+            return false ;
+        }
+        return true ;
+    }
+
+    private doPlayFile( voice : VoiceItem ) : boolean
+    {
+        this.mPlayerVoiceList.push( voice );
+        if ( this.mPlayerVoiceList.length == 1 )
+        {
+            let nRet : number = sendRequestToPlatform(VoiceManager.SDK_VOICE_PLAY_FILE,{ fullPathFile : this.TEMP_PATH + voice.fileID }) ;
+            if ( nRet != GCloudVoiceErrno.GCLOUD_VOICE_SUCC )
+            {
+                Utility.showPromptText( "播放录音错误code " + nRet );
+                this.mPlayerVoiceList.shift();
+                return false;
+            }
+
+            let pEvent = new cc.Event.EventCustom(VoiceManager.EVENT_QUEUE_START_PLAY,true) ;
+            pEvent.detail = {} ;
+            pEvent.detail["uid"] = voice.playerUID ;
+            cc.systemEvent.dispatchEvent(pEvent);
         }
         return true ;
     }
 
     protected onPlayedFiled( code : number , fileName : string )
     {
-        this.isPlayVoiceChannelIdle = true ;
+        let fok = this.mPlayerVoiceList.shift();
+
         if ( GCloudVoiceCompleteCode.GV_ON_PLAYFILE_DONE != code )
         {
             console.error( "played voice failed code = " + code + " file = " + fileName );
         }
+        else
+        {
+            this.mPlayersLastVoice[fok.playerUID] = fok ;
+        }
+        
+        let pEvent = new cc.Event.EventCustom(VoiceManager.EVENT_QUEUE_PLAY_FINISH,true) ;
+        pEvent.detail = {} ;
+        pEvent.detail["uid"] = fok.playerUID ;
+        cc.systemEvent.dispatchEvent(pEvent);
+
+        // check have more file to player ;
+        while ( this.mPlayerVoiceList.length > 0 )
+        {
+            let nRet : number = sendRequestToPlatform(VoiceManager.SDK_VOICE_PLAY_FILE,{ fullPathFile : this.TEMP_PATH + this.mPlayerVoiceList[0].fileID }) ;
+            if ( nRet != GCloudVoiceErrno.GCLOUD_VOICE_SUCC )
+            {
+                Utility.showPromptText( "播放录音错误code " + nRet );
+                this.mPlayerVoiceList.shift();
+                continue;
+            }
+
+            let pEvent = new cc.Event.EventCustom(VoiceManager.EVENT_QUEUE_START_PLAY,true) ;
+            pEvent.detail = {} ;
+            pEvent.detail["uid"] = this.mPlayerVoiceList[0].playerUID ;
+            cc.systemEvent.dispatchEvent(pEvent);
+            break ;
+        }
     }
 
-    onApplyKey( code : number )
+    protected onApplyKey( code : number )
     {
         if ( code != GCloudVoiceCompleteCode.GV_ON_MESSAGE_KEY_APPLIED_SUCC )
         {

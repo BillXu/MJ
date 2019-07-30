@@ -87,7 +87,7 @@
     "_level": 0,
     "_components": [
       {
-        "__id__": 335
+        "__id__": 336
       }
     ],
     "_prefab": null,
@@ -5164,6 +5164,9 @@
     "_components": [
       {
         "__id__": 334
+      },
+      {
+        "__id__": 335
       }
     ],
     "_prefab": null,
@@ -15505,6 +15508,33 @@
     "_originalWidth": 0,
     "_originalHeight": 0,
     "_id": "46T2qLs0lG953O3JJX5sCd"
+  },
+  {
+    "__type__": "96528+6oP1LK4USD5YUkh8J",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 115
+    },
+    "_enabled": true,
+    "mPlayers": [
+      {
+        "__id__": 169
+      },
+      {
+        "__id__": 223
+      },
+      {
+        "__id__": 277
+      },
+      {
+        "__id__": 331
+      }
+    ],
+    "mBankIcon": {
+      "__id__": 332
+    },
+    "_id": "47FwvQaGRAy4MwV5tLI878"
   },
   {
     "__type__": "cc.Canvas",

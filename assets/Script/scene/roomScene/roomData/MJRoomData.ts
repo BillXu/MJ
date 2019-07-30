@@ -538,7 +538,7 @@ export default abstract class MJRoomData extends IModule {
         return -1 ;
     }
 
-    protected getPlayerDataByUID( uid : number ) : MJPlayerData
+    getPlayerDataByUID( uid : number ) : MJPlayerData
     {
         for ( const item of this.mPlayers )
         {

@@ -4,6 +4,7 @@ import RoomPlayer, { eRoomPlayerState } from "./RoomPlayer";
 import { eChatMsgType } from "../roomDefine";
 import MJPlayerData from "../roomData/MJPlayerData";
 import Prompt from "../../../globalModule/Prompt";
+import VoiceManager from "../../../sdk/VoiceManager";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -29,7 +30,49 @@ export default class LayerPlayers extends cc.Component implements ILayer {
     protected mRoomData : MJRoomData = null ;
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
+    onLoad () 
+    {
+        cc.systemEvent.on(VoiceManager.EVENT_QUEUE_START_PLAY,this.onEvent,this) ;
+        cc.systemEvent.on(VoiceManager.EVENT_QUEUE_PLAY_FINISH,this.onEvent,this) ;
+    }
+
+    onDestroy()
+    {
+        cc.systemEvent.targetOff(this);
+    }
+
+    protected onEvent( event : cc.Event.EventCustom )
+    {
+        let eventID = event.getEventName();
+        let jsDetail = event.detail ;
+        switch (eventID )
+        {
+            case VoiceManager.EVENT_QUEUE_START_PLAY:
+            case VoiceManager.EVENT_QUEUE_PLAY_FINISH:
+            {
+                let uid : number = jsDetail["uid"] ;
+                let p = this.mRoomData.getPlayerDataByUID( uid );
+                if ( p == null )
+                {
+                    cc.error( "player is null , how to play voice" );
+                    return ;
+                }
+                let clientIdx = this.mRoomData.svrIdxToClientIdx(p.mPlayerBaseData.svrIdx);
+
+                if ( eventID == VoiceManager.EVENT_QUEUE_START_PLAY )
+                {
+                    this.mPlayers[clientIdx].startChatVoice();
+                }
+                else
+                {
+                    this.mPlayers[clientIdx].stopChatVoice();
+                }
+                
+            }
+            default:
+            console.error( "unknown event voice = " + eventID );
+        }
+    }
 
     start () {
 
@@ -54,6 +97,13 @@ export default class LayerPlayers extends cc.Component implements ILayer {
                 this.mPlayers[clientIdx].isReady = data.mBaseData.isInGamingState() && data.mPlayers[svrIdx].mPlayerBaseData.isReady ;
             }
         }
+    }
+
+    setBankerIdx( svrIdx : number )
+    {
+        let clientIdx = this.mRoomData.svrIdxToClientIdx(svrIdx);
+        let targetPos = this.mBankIcon.parent.convertToNodeSpaceAR( this.mPlayers[clientIdx].bankIconWorldPos ) ; 
+        cc.tween(this.mBankIcon).to(0.3, { position: targetPos }, { easing: 'sineOut'}) ;
     }
 
     onPlayerStandUp( idx : number ) : void

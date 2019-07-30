@@ -148,7 +148,7 @@ export default class RoomPlayer extends cc.Component {
         .start();
     }
 
-    setChatVoice()
+    startChatVoice()
     {
         this.mVoiceChat.node.parent.active = true ;
         this.mVoiceChat.playAnimation(null,-1) ;
