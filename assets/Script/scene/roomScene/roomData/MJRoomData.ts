@@ -850,4 +850,15 @@ export default abstract class MJRoomData extends IModule {
         }
         return true ;
     }
+
+    svrIdxToClientIdx( svrIdx : number ) : number 
+    {
+        let selfIdx = this.getSelfIdx() ;
+        if ( -1 == selfIdx )
+        {
+            return svrIdx ;
+        }
+
+        return ( this.mBaseData.getMaxTableSeat() + svrIdx - selfIdx ) % this.mBaseData.getMaxTableSeat() ;
+    }
 }
