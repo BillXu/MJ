@@ -86,7 +86,14 @@ export default class LayerPlayers extends cc.Component implements ILayer {
         for ( let svrIdx = 0 ; svrIdx < data.mOpts.seatCnt ; ++svrIdx )
         {
             let clientIdx = data.svrIdxToClientIdx(svrIdx);
-            if ( data.mPlayers[svrIdx] == null || data.mPlayers[svrIdx].isEmpty() )
+            if ( clientIdx >= this.mPlayers.length )
+            {
+                cc.error( "invlid svridx and client idx " + svrIdx + " c = " + clientIdx );
+                continue ;
+            }
+            
+            this.mPlayers[clientIdx].mSvrIdx = svrIdx;
+            if ( data.mPlayers[svrIdx].isEmpty() )
             {
                 this.mPlayers[clientIdx].state = isSelfSitDown == false ? eRoomPlayerState.RPS_WaitSitDown : eRoomPlayerState.RPS_Empty ;
             }
@@ -186,6 +193,19 @@ export default class LayerPlayers extends cc.Component implements ILayer {
         for ( let p of this.mPlayers )
         {
             p.isReady = false ;
+        }
+    }
+
+    onClickPlayer( isSitDown : boolean , arg : number )
+    {
+        if ( isSitDown )
+        {
+            this.mRoomData.doClickedSitDown(arg) ;
+        }
+        else
+        {
+            //layer dlg show player info ;
+            cc.log( "clicked player uid = " + arg );
         }
     }
     // update (dt) {}

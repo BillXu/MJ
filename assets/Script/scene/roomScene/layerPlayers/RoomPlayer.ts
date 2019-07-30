@@ -54,13 +54,14 @@ export default class RoomPlayer extends cc.Component {
     mBankIconPos : cc.Node = null ;
 
     @property([cc.Component.EventHandler])
-    lpfPlayerCallBack : cc.Component.EventHandler[] = [] ;  // ( isSitDown : boolean , uid : number | null )
+    lpfPlayerCallBack : cc.Component.EventHandler[] = [] ;  // ( isSitDown : boolean , uid : number | mSvrIdx )
+
+    mSvrIdx : number = -1 ;
     // LIFE-CYCLE CALLBACKS:
 
     onLoad ()
     {
         this.mBankIconPos.active = false ;
-        this.state = eRoomPlayerState.RPS_Empty ;
     }
 
     protected mWorlPosOfBankIcon : cc.Vec2 = null ;
@@ -176,7 +177,7 @@ export default class RoomPlayer extends cc.Component {
 
     onClickBtnSitdown( c : Object , a : string )
     {
-        cc.Component.EventHandler.emitEvents(this.lpfPlayerCallBack,true,null);
+        cc.Component.EventHandler.emitEvents(this.lpfPlayerCallBack,true,this.mSvrIdx );
     }
 
     onClickHeadIcon( c : Object , b : string )
