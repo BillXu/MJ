@@ -576,7 +576,7 @@ export default abstract class MJRoomData extends IModule {
         }
     }
 
-    protected doChoseActAboutRecievedCard( act : eMJActType , targetCard : number ) : boolean
+    protected doChoseActAboutRecievedCard( act : eMJActType ) : boolean
     {
         let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
         switch ( act )
@@ -600,7 +600,7 @@ export default abstract class MJRoomData extends IModule {
             case eMJActType.eMJAct_Hu:
             case eMJActType.eMJAct_Pass:
             {
-                targetCard = playerCard.nNewFeatchedCard ;
+
             }
             break;
             case eMJActType.eMJAct_Chu:
@@ -612,16 +612,16 @@ export default abstract class MJRoomData extends IModule {
 
         let msg = {} ;
         msg["actType"] = act ;
-        msg["card"] = targetCard ;
+        msg["card"] = playerCard.nNewFeatchedCard ;
         this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
     }
 
-    doChosedAct( act : eMJActType , targetCard : number ) : boolean
+    doChosedAct( act : eMJActType ) : boolean
     {
         let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
         if ( act == eMJActType.eMJAct_Chu || playerCard.vHoldCard.length % 3 == 2 )
         {
-            return this.doChoseActAboutRecievedCard(act,targetCard);
+            return this.doChoseActAboutRecievedCard(act);
         }
         else
         {

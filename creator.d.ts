@@ -1532,6 +1532,7 @@ declare namespace cc {
 	``` 
 	*/
 	export function v2(x?: number|any, y?: number): Vec2;	
+	export function tween(x?: cc.Node ): Tween;	
 	/**
 	!#en This function is deprecated since v2.0, please use {{#crossLink "v2"}}cc.v2{{/crossLink}}.
 	!#zh 这个函数从 v2.0 开始被废弃，请使用 {{#crossLink "v2"}}cc.v2{{/crossLink}}。
