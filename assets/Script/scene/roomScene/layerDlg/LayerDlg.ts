@@ -47,6 +47,15 @@ export default class LayerDlg extends cc.Component implements ILayer {
     refresh( data : MJRoomData ) : void
     {
         this.mRoomData = data ;
+        if ( this.mDlgDismiss.isShow() )
+        {
+            this.mDlgDismiss.closeDlg();
+        }
+
+        if ( data.mBaseData.applyDismissIdx >= 0 && data.mBaseData.applyDismissIdx < data.mOpts.seatCnt )
+        {
+            this.showDlgDismiss(data);
+        }
     }
 
     // dlg act opts 

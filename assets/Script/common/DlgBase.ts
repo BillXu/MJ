@@ -117,6 +117,11 @@ export default class DlgBase extends cc.Component {
             cc.audioEngine.playEffect(clip, false);  
         });
     }
+
+    isShow() : boolean
+    {
+        return this.pRootNode.active ;
+    }
     
     // update (dt) {}
 }
