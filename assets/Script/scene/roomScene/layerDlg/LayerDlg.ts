@@ -4,6 +4,9 @@ import DlgActOpts from "./DlgActOpts/DlgActOpts";
 import { eMJActType, eEatType } from "../roomDefine";
 import DlgEatOpts from "./DlgEatOpts";
 import DlgGangOpts from "./DlgGangOpts";
+import DlgDismiss from "./DlgDimiss";
+import PlayerInfoDataCacher from "../../../clientData/PlayerInfoDataCacher";
+import Prompt from "../../../globalModule/Prompt";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -28,6 +31,9 @@ export default class LayerDlg extends cc.Component implements ILayer {
 
     @property(DlgGangOpts)
     mDlgGangOpts : DlgGangOpts = null ;
+
+    @property(DlgDismiss)
+    mDlgDismiss : DlgDismiss = null ;
 
     protected mRoomData : MJRoomData = null ;
     // LIFE-CYCLE CALLBACKS:
@@ -74,5 +80,39 @@ export default class LayerDlg extends cc.Component implements ILayer {
     onDlgGangOptsResult( gangCard : number )
     {
         this.mRoomData.doChosedGangCard( gangCard ) ;
+    }
+
+    // dlg dimisss 
+    showDlgDismiss( data : MJRoomData )
+    {
+        this.mDlgDismiss.showDlgDismiss(data);
+    }
+
+    onDlgDismissResult( isAgree : boolean )
+    {
+        this.mRoomData.doReplyDismiss( isAgree ) ;
+    }
+
+    onReplayDismissRoom( idx : number , isAgree : boolean ) : void
+    {
+        this.mDlgDismiss.onPlayerRespone(idx,isAgree) ;
+        if ( isAgree == false )
+        {
+            let p = this.mRoomData.mPlayers[idx];
+            if ( p == null )
+            {
+                cc.error( "player is null ? idx = " + idx );
+                return ;
+            }
+            
+            let pd = PlayerInfoDataCacher.getInstance().getPlayerInfoByID( p.mPlayerBaseData.uid ) ;
+            let name = " uid = " + p.mPlayerBaseData.uid ;
+            if ( pd != null )
+            {
+                name = pd.name ;
+            }
+
+            Prompt.promptText( "玩家【"+ name + "】拒绝解散房间" );
+        }
     }
 }
