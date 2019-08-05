@@ -40,10 +40,8 @@ export default class DlgResultTotal extends DlgBase {
 
     }
 
-    showResultDlg( data : MJRoomData , result : ResultTotalData )
+    refreshDlg( data : MJRoomData , result : ResultTotalData )
     {
-        super.showDlg(null,null,null) ;
-
         this.mRoomID.string = "房间号：" + data.mBaseData.roomID ;
         this.mDateTime.string = (new Date()).toLocaleString("zh-CN") ;
         this.mRule.string = data.mOpts.ruleDesc ;

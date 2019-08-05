@@ -9,6 +9,8 @@ import PlayerInfoDataCacher from "../../../clientData/PlayerInfoDataCacher";
 import Prompt from "../../../globalModule/Prompt";
 import DlgResultTotal from "./DlgResultTotal/DlgResultTotal";
 import ResultTotalData from "../roomData/ResultTotalData";
+import DlgResultSingle from "./DlgResultSingle/DlgResultSingle";
+import ResultSingleData from "../roomData/ResultSingleData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -39,6 +41,9 @@ export default class LayerDlg extends cc.Component implements ILayer {
 
     @property(DlgResultTotal)
     mDlgResultTotal : DlgResultTotal = null ;
+
+    @property(DlgResultSingle)
+    mDlgResultSingle : DlgResultSingle = null ;
 
     protected mRoomData : MJRoomData = null ;
     // LIFE-CYCLE CALLBACKS:
@@ -133,6 +138,25 @@ export default class LayerDlg extends cc.Component implements ILayer {
     // dlg total result
     showDlgResultTotal( result : ResultTotalData, data : MJRoomData )
     {
-        this.mDlgResultTotal.showResultDlg(data,result) ;
+        this.mDlgResultTotal.refreshDlg(data,result) ;
+        this.mDlgResultSingle.setBtn(true);
+    }
+
+    // dlg result single 
+    showDlgResultSingle( result : ResultSingleData )
+    {
+        this.mDlgResultSingle.showDlg(this.mRoomData.getSelfIdx(),result ) ;
+    }
+
+    onDlgResultSingleResult( isAllBtn : boolean )
+    {
+        if ( isAllBtn )
+        {
+            this.mDlgResultTotal.showDlg(null) ;
+        }
+        else
+        {
+            this.mRoomData.doReady();
+        }
     }
 }
