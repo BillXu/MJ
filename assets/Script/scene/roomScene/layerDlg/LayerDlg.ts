@@ -7,6 +7,8 @@ import DlgGangOpts from "./DlgGangOpts";
 import DlgDismiss from "./DlgDimiss";
 import PlayerInfoDataCacher from "../../../clientData/PlayerInfoDataCacher";
 import Prompt from "../../../globalModule/Prompt";
+import DlgResultTotal from "./DlgResultTotal/DlgResultTotal";
+import ResultTotalData from "../roomData/ResultTotalData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -34,6 +36,9 @@ export default class LayerDlg extends cc.Component implements ILayer {
 
     @property(DlgDismiss)
     mDlgDismiss : DlgDismiss = null ;
+
+    @property(DlgResultTotal)
+    mDlgResultTotal : DlgResultTotal = null ;
 
     protected mRoomData : MJRoomData = null ;
     // LIFE-CYCLE CALLBACKS:
@@ -123,5 +128,11 @@ export default class LayerDlg extends cc.Component implements ILayer {
 
             Prompt.promptText( "玩家【"+ name + "】拒绝解散房间" );
         }
+    }
+
+    // dlg total result
+    showDlgResultTotal( result : ResultTotalData, data : MJRoomData )
+    {
+        this.mDlgResultTotal.showResultDlg(data,result) ;
     }
 }

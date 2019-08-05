@@ -2,7 +2,7 @@
 import { eMJCardType, eArrowDirect } from "./scene/roomScene/roomDefine";
 import PlayerMJCard from "./scene/roomScene/layerCards3D/cards/PlayerMJCard";
 import MJCard from "./scene/roomScene/layerCards3D/cards/MJCard";
-
+import * as _ from "lodash"
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html

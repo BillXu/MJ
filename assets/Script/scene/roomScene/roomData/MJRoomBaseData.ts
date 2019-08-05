@@ -31,6 +31,7 @@ export default class MJRoomBaseData {
     leftMJCnt : number = 0 ;
     bankerIdx : number = -1 ;
     state : eRoomState = eRoomState.eRoomSate_WaitReady ;
+    ownerID : number = 0 ;
 
     parseInfo( msg : Object )
     {
