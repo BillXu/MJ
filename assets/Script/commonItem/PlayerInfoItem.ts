@@ -110,6 +110,11 @@ export default class PlayerInfoItem extends cc.Component {
         }
     }
 
+    clear()
+    {
+        cc.error( "not implete" );
+    }
+
     protected setHeadUrl( strUrl : string )
     {
         if ( this.imgUrl == strUrl )

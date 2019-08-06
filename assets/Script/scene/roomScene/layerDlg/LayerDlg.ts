@@ -12,6 +12,7 @@ import ResultTotalData from "../roomData/ResultTotalData";
 import DlgResultSingle from "./DlgResultSingle/DlgResultSingle";
 import ResultSingleData from "../roomData/ResultSingleData";
 import DlgChat from "./DlgChat";
+import DlgLocation from "./DlgLocation";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -49,6 +50,9 @@ export default class LayerDlg extends cc.Component implements ILayer {
     @property(DlgChat)
     mDlgChat : DlgChat = null ;
 
+    @property(DlgLocation)
+    mDlgLocation : DlgLocation = null ;
+
     protected mRoomData : MJRoomData = null ;
     // LIFE-CYCLE CALLBACKS:
 
@@ -70,6 +74,8 @@ export default class LayerDlg extends cc.Component implements ILayer {
         {
             this.showDlgDismiss(data);
         }
+
+        this.mDlgLocation.closeDlg();
     }
 
     // dlg act opts 
@@ -173,5 +179,11 @@ export default class LayerDlg extends cc.Component implements ILayer {
     onDlgChatResult( isEmoji : boolean , strContent : string )
     {
         this.mRoomData.doSendPlayerChat( isEmoji ? eChatMsgType.eChatMsg_Emoji : eChatMsgType.eChatMsg_SysText, strContent ) ;
+    }
+
+    // dlg localtion 
+    showDlgLocaltion()
+    {
+        this.mDlgLocation.showDlg(null,this.mRoomData);
     }
 }
