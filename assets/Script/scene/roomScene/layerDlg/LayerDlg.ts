@@ -1,7 +1,7 @@
 import ILayer from "../ILayer";
 import MJRoomData from "../roomData/MJRoomData";
 import DlgActOpts from "./DlgActOpts/DlgActOpts";
-import { eMJActType, eEatType } from "../roomDefine";
+import { eMJActType, eEatType, eChatMsgType } from "../roomDefine";
 import DlgEatOpts from "./DlgEatOpts";
 import DlgGangOpts from "./DlgGangOpts";
 import DlgDismiss from "./DlgDimiss";
@@ -11,6 +11,7 @@ import DlgResultTotal from "./DlgResultTotal/DlgResultTotal";
 import ResultTotalData from "../roomData/ResultTotalData";
 import DlgResultSingle from "./DlgResultSingle/DlgResultSingle";
 import ResultSingleData from "../roomData/ResultSingleData";
+import DlgChat from "./DlgChat";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -44,6 +45,9 @@ export default class LayerDlg extends cc.Component implements ILayer {
 
     @property(DlgResultSingle)
     mDlgResultSingle : DlgResultSingle = null ;
+
+    @property(DlgChat)
+    mDlgChat : DlgChat = null ;
 
     protected mRoomData : MJRoomData = null ;
     // LIFE-CYCLE CALLBACKS:
@@ -158,5 +162,16 @@ export default class LayerDlg extends cc.Component implements ILayer {
         {
             this.mRoomData.doReady();
         }
+    }
+
+    // dlg chat 
+    showDlgChat()
+    {
+        this.mDlgChat.showDlg(null) ;
+    }
+
+    onDlgChatResult( isEmoji : boolean , strContent : string )
+    {
+        this.mRoomData.doSendPlayerChat( isEmoji ? eChatMsgType.eChatMsg_Emoji : eChatMsgType.eChatMsg_SysText, strContent ) ;
     }
 }
