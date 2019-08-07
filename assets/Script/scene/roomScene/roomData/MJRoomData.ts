@@ -774,7 +774,7 @@ export default abstract class MJRoomData extends IModule {
         this.sendRoomMsg( msg,eMsgType.MSG_PLAYER_CHAT_MSG ) ;
     }
 
-    doSendPlayerInteractEmoji( targetIdx : number , emojiIdx : number )
+    doSendPlayerInteractEmoji( targetIdx : number , emojiName : string )
     {
         var self = this.getSelfIdx();
         if ( self == -1 )
@@ -791,7 +791,7 @@ export default abstract class MJRoomData extends IModule {
         
         let msg = {};
         msg["targetIdx"] = targetIdx ;
-        msg["emoji"] = emojiIdx ;
+        msg["emoji"] = emojiName ;
         this.sendRoomMsg( msg,eMsgType.MSG_PLAYER_INTERACT_EMOJI ) ;
     }
 

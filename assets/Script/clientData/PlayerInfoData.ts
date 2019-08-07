@@ -59,4 +59,13 @@ export default class PlayerInfoData {
     {
         return this.playerBrifeDataMsg["W"] ;
     }
+
+    get address() : string
+    {
+        if ( this.playerBrifeDataMsg["addre"] == null )
+        {
+            return "china";
+        }
+        return this.playerBrifeDataMsg["addre"] ;
+    }
 }
