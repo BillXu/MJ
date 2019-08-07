@@ -1,0 +1,7 @@
+{
+  "ver": "1.0.0",
+  "uuid": "5ddbd0d8-7535-4528-a0ee-305f28f70168",
+  "atlasJson": "{\"width\":64,\"imagePath\":\"shengyinfachu_tex.png\",\"height\":64,\"name\":\"shengyinfachu\",\"SubTexture\":[{\"width\":24,\"y\":28,\"height\":7,\"name\":\"yin1\",\"x\":34},{\"width\":31,\"y\":28,\"height\":7,\"name\":\"yin2\",\"x\":1},{\"width\":37,\"y\":19,\"height\":7,\"name\":\"yin3\",\"x\":1},{\"width\":42,\"y\":10,\"height\":7,\"name\":\"yin4\",\"x\":1},{\"width\":48,\"y\":1,\"height\":7,\"name\":\"yin5\",\"x\":1}]}",
+  "texture": "fbaf31ff-d1ff-4b70-bdd3-aaadba76684c",
+  "subMetas": {}
+}

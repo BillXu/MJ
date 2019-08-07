@@ -13,6 +13,7 @@ import DlgResultSingle from "./DlgResultSingle/DlgResultSingle";
 import ResultSingleData from "../roomData/ResultSingleData";
 import DlgChat from "./DlgChat";
 import DlgLocation from "./DlgLocation";
+import DlgVoice from "./DlgVoice/DlgVoice";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -52,6 +53,11 @@ export default class LayerDlg extends cc.Component implements ILayer {
 
     @property(DlgLocation)
     mDlgLocation : DlgLocation = null ;
+
+    //----important
+    // dlg voice root node can not hide , beacuase some work need be done when dlg was not dispaly 
+    @property(DlgVoice)
+    mDlgVoice : DlgVoice = null ;
 
     protected mRoomData : MJRoomData = null ;
     // LIFE-CYCLE CALLBACKS:
@@ -185,5 +191,18 @@ export default class LayerDlg extends cc.Component implements ILayer {
     showDlgLocaltion()
     {
         this.mDlgLocation.showDlg(null,this.mRoomData);
+    }
+
+    // dlg voice 
+    //----important
+    // dlg voice root node can not hide , beacuase some work need be done when dlg was not dispaly 
+    onButtonVoiceEvent( event : string )
+    {
+        this.mDlgVoice.onVoiceButtonCallBack(event);
+    }
+
+    onDlgVoiceResult( strFileID : string )
+    {
+        this.mRoomData.doSendPlayerChat(eChatMsgType.eChatMsg_Voice,strFileID) ;
     }
 }
