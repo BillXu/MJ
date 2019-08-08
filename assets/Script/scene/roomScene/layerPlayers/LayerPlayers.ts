@@ -6,6 +6,7 @@ import MJPlayerData from "../roomData/MJPlayerData";
 import Prompt from "../../../globalModule/Prompt";
 import VoiceManager from "../../../sdk/VoiceManager";
 import PlayerInteractEmoji from "./PlayerInteractEmoji";
+import MJRoomScene from "../MJRoomScene";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -32,6 +33,7 @@ export default class LayerPlayers extends cc.Component implements ILayer {
     mInteractEmoji : PlayerInteractEmoji = null ;
     
     protected mRoomData : MJRoomData = null ;
+    mScene : MJRoomScene = null ;
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () 
@@ -173,7 +175,7 @@ export default class LayerPlayers extends cc.Component implements ILayer {
         }
     }
 
-    onInteractEmoji( InvokeIdx : number , targetIdx : number , emoji : string ) : void 
+    onPlayerInteractEmoji( InvokeIdx : number , targetIdx : number , emoji : string ) : void 
     {
         let orgPos : cc.Vec2 = null ;
         let dstPos : cc.Vec2 = null ;
@@ -197,7 +199,7 @@ export default class LayerPlayers extends cc.Component implements ILayer {
             cc.error( "some pos is null" );
             return ;
         }
-        
+
         this.mInteractEmoji.playInteractEmoji(emoji,orgPos,dstPos) ;
     }
 
@@ -227,12 +229,16 @@ export default class LayerPlayers extends cc.Component implements ILayer {
     {
         if ( isSitDown )
         {
-            this.mRoomData.doClickedSitDown(arg) ;
+            if ( this.mRoomData.getSelfIdx() == -1 )
+            {
+                this.mRoomData.doClickedSitDown(arg) ;
+            }
         }
         else
         {
             //layer dlg show player info ;
-            cc.log( "clicked player uid = " + arg );
+            //cc.log( "clicked player uid = " + arg );
+            this.mScene.showDlgPlayerInfo( arg ) ;
         }
     }
     // update (dt) {}

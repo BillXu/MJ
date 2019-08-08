@@ -1,4 +1,4 @@
-import MJRoomData from "./roomData/MJRoomData";
+import DlgBase from "../../../common/DlgBase";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -10,8 +10,21 @@ import MJRoomData from "./roomData/MJRoomData";
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-export default interface ILayer
-{
-    refresh( data : MJRoomData ) : void ;
-    onGameStart() : void;
+const {ccclass, property} = cc._decorator;
+
+@ccclass
+export default class DlgShowMore extends DlgBase {
+
+    static BTN_LEAVE : string = "BTN_LEAVE" ;
+    static BTN_DISMISS : string = "BTN_DISMISS" ;
+    static BTN_SETTING : string = "BTN_SETTING" ;
+
+    @property([cc.Component.EventHandler])
+    mOnDlgResult : cc.Component.EventHandler[] = [] ;  // ( btnType : string )
+
+    protected onClickButton( ent : cc.Event.EventTouch , strBtnType : string )
+    {
+        cc.Component.EventHandler.emitEvents( this.mOnDlgResult,strBtnType );
+        this.closeDlg();
+    }
 }

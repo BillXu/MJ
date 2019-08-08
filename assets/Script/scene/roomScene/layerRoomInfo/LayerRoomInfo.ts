@@ -74,6 +74,11 @@ export default class LayerRoomInfo extends cc.Component implements ILayer {
         this.schedule(this.refreshBatteryLevel,300,cc.macro.REPEAT_FOREVER,0);
     }
 
+    onGameStart() : void 
+    {
+
+    }
+
     protected refreshTime()
     {
         let dt = new Date();

@@ -15,6 +15,7 @@ import DlgChat from "./DlgChat";
 import DlgLocation from "./DlgLocation";
 import DlgVoice from "./DlgVoice/DlgVoice";
 import DlgPlayerInfo from "./DlgPlayerInfo";
+import DlgShowMore from "./DlgShowMore";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -63,6 +64,18 @@ export default class LayerDlg extends cc.Component implements ILayer {
     @property( DlgPlayerInfo )
     mDlgPlayerInfo : DlgPlayerInfo = null ;
 
+    @property(cc.Node)
+    mBtnCopyRoomNum : cc.Node = null ;
+
+    @property(cc.Node)
+    mBtnInvite : cc.Node = null ;
+
+    @property(cc.Toggle)
+    mBtnShowMore : cc.Toggle = null ;
+
+    @property(DlgShowMore)
+    mDlgShowMore : DlgShowMore = null ;
+
     protected mRoomData : MJRoomData = null ;
     // LIFE-CYCLE CALLBACKS:
 
@@ -86,6 +99,13 @@ export default class LayerDlg extends cc.Component implements ILayer {
         }
 
         this.mDlgLocation.closeDlg();
+
+        this.mBtnCopyRoomNum.active = this.mBtnInvite.active = data.mBaseData.isRoomOpened == false ;
+    }
+
+    onGameStart()
+    {
+        this.mBtnCopyRoomNum.active = this.mBtnInvite.active = false ;
     }
 
     // dlg act opts 
@@ -94,7 +114,7 @@ export default class LayerDlg extends cc.Component implements ILayer {
         this.mDlgActOpts.showDlg(actOpts);
     }
 
-    onDlgActOptsResult( act : eMJActType )
+    protected onDlgActOptsResult( act : eMJActType )
     {
         this.mRoomData.doChosedAct(act) ;
     }
@@ -105,7 +125,7 @@ export default class LayerDlg extends cc.Component implements ILayer {
         this.mDlgEatOpts.showDlg(vEatOpts,nTargetCard) ;
     }
 
-    onDlgEatOptsResult( type : eEatType, nTargetCard : number )
+    protected onDlgEatOptsResult( type : eEatType, nTargetCard : number )
     {
         this.mRoomData.doChoseEatType(type) ;
     }
@@ -116,7 +136,7 @@ export default class LayerDlg extends cc.Component implements ILayer {
         this.mDlgGangOpts.showDlg( gangOpts );
     }
 
-    onDlgGangOptsResult( gangCard : number )
+    protected onDlgGangOptsResult( gangCard : number )
     {
         this.mRoomData.doChosedGangCard( gangCard ) ;
     }
@@ -127,7 +147,7 @@ export default class LayerDlg extends cc.Component implements ILayer {
         this.mDlgDismiss.showDlgDismiss(data);
     }
 
-    onDlgDismissResult( isAgree : boolean )
+    protected onDlgDismissResult( isAgree : boolean )
     {
         this.mRoomData.doReplyDismiss( isAgree ) ;
     }
@@ -168,7 +188,7 @@ export default class LayerDlg extends cc.Component implements ILayer {
         this.mDlgResultSingle.showDlg(this.mRoomData.getSelfIdx(),result ) ;
     }
 
-    onDlgResultSingleResult( isAllBtn : boolean )
+    protected onDlgResultSingleResult( isAllBtn : boolean )
     {
         if ( isAllBtn )
         {
@@ -181,18 +201,18 @@ export default class LayerDlg extends cc.Component implements ILayer {
     }
 
     // dlg chat 
-    showDlgChat()
+    protected showDlgChat()
     {
         this.mDlgChat.showDlg(null) ;
     }
 
-    onDlgChatResult( isEmoji : boolean , strContent : string )
+    protected onDlgChatResult( isEmoji : boolean , strContent : string )
     {
         this.mRoomData.doSendPlayerChat( isEmoji ? eChatMsgType.eChatMsg_Emoji : eChatMsgType.eChatMsg_SysText, strContent ) ;
     }
 
     // dlg localtion 
-    showDlgLocaltion()
+    protected showDlgLocaltion()
     {
         this.mDlgLocation.showDlg(null,this.mRoomData);
     }
@@ -200,12 +220,12 @@ export default class LayerDlg extends cc.Component implements ILayer {
     // dlg voice 
     //----important
     // dlg voice root node can not hide , beacuase some work need be done when dlg was not dispaly 
-    onButtonVoiceEvent( event : string )
+    protected onButtonVoiceEvent( event : string )
     {
         this.mDlgVoice.onVoiceButtonCallBack(event);
     }
 
-    onDlgVoiceResult( strFileID : string )
+    protected onDlgVoiceResult( strFileID : string )
     {
         this.mRoomData.doSendPlayerChat(eChatMsgType.eChatMsg_Voice,strFileID) ;
     }
@@ -216,7 +236,7 @@ export default class LayerDlg extends cc.Component implements ILayer {
         this.mDlgPlayerInfo.showDlg( null , nTargetPlayerID );
     }
 
-    onDlgPlayerInfoResult( uid : number, emoji : string )
+    protected onDlgPlayerInfoResult( uid : number, emoji : string )
     {
         let pp = this.mRoomData.getPlayerDataByUID(uid);
         if ( pp == null )
@@ -225,5 +245,56 @@ export default class LayerDlg extends cc.Component implements ILayer {
         }
 
         this.mRoomData.doSendPlayerInteractEmoji( pp.mPlayerBaseData.svrIdx,emoji )
+    }
+
+    protected onBtnCopyRoomID()
+    {
+        cc.log( "copy room id " );
+    }
+
+    protected onBtnInvite()
+    {
+        cc.log( "invite" );
+    }
+
+    // dlg show more 
+    protected showDlgShowMore( toggle : cc.Toggle )
+    {
+        if ( toggle.isChecked )
+        {
+            let self = this ;
+            this.mDlgShowMore.showDlg(null,null,()=>{ self.mBtnShowMore.isChecked = false ;});
+        }
+        else
+        {
+            if ( this.mDlgShowMore.isShow() )
+            {
+                this.mDlgShowMore.closeDlg();
+            }
+            
+        }
+    }
+
+    protected onDlgShowMoreResult( btnType : string )
+    {
+        cc.log( "dlg show more type = " + btnType );
+        switch ( btnType )
+        {
+            case DlgShowMore.BTN_DISMISS:
+            {
+                this.mRoomData.doApplyDismissRoom();
+            }
+            break ;
+            case DlgShowMore.BTN_LEAVE:
+            {
+                this.mRoomData.doApplyLeave();
+            }
+            break;
+            case DlgShowMore.BTN_SETTING:
+            {
+                Prompt.promptDlg( "setting dlg" );
+            }
+            break ;
+        }
     }
 }
