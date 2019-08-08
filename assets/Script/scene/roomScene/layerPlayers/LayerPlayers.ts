@@ -5,6 +5,7 @@ import { eChatMsgType } from "../roomDefine";
 import MJPlayerData from "../roomData/MJPlayerData";
 import Prompt from "../../../globalModule/Prompt";
 import VoiceManager from "../../../sdk/VoiceManager";
+import PlayerInteractEmoji from "./PlayerInteractEmoji";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -26,6 +27,9 @@ export default class LayerPlayers extends cc.Component implements ILayer {
 
     @property(cc.Node)
     mBankIcon : cc.Node = null ;
+
+    @property(PlayerInteractEmoji)
+    mInteractEmoji : PlayerInteractEmoji = null ;
     
     protected mRoomData : MJRoomData = null ;
     // LIFE-CYCLE CALLBACKS:
@@ -169,9 +173,32 @@ export default class LayerPlayers extends cc.Component implements ILayer {
         }
     }
 
-    onInteractEmoji( InvokeIdx : number , targetIdx : number , emojiIdx : number ) : void 
+    onInteractEmoji( InvokeIdx : number , targetIdx : number , emoji : string ) : void 
     {
+        let orgPos : cc.Vec2 = null ;
+        let dstPos : cc.Vec2 = null ;
+        for ( let clientIdx = 0 ; clientIdx < this.mPlayers.length && ( orgPos == null || dstPos == null ); ++clientIdx )
+        {
+            let p = this.mPlayers[clientIdx];
+            if ( p.mSvrIdx == InvokeIdx )
+            {
+                orgPos = p.worldPosEmoji;
+                continue ;
+            }
 
+            if ( p.mSvrIdx == targetIdx )
+            {
+                dstPos = p.worldPosEmoji ;
+            }
+        }
+
+        if ( dstPos == null || null == dstPos )
+        {
+            cc.error( "some pos is null" );
+            return ;
+        }
+        
+        this.mInteractEmoji.playInteractEmoji(emoji,orgPos,dstPos) ;
     }
 
     onPlayerSitDown( p : MJPlayerData ) : void

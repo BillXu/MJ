@@ -74,6 +74,16 @@ export default class RoomPlayer extends cc.Component {
         return this.mWorlPosOfBankIcon;
     }
 
+    protected mWorldPosOfInteractEmoji = null ;
+    get worldPosEmoji() : cc.Vec2
+    {
+        if ( this.mWorldPosOfInteractEmoji == null )
+        {
+            this.mWorldPosOfInteractEmoji = this.mOfflineIcon.parent.convertToWorldSpaceAR(cc.v2(this.mOfflineIcon.position.x,this.mOfflineIcon.position.y));
+        }
+        return this.mWorldPosOfInteractEmoji;
+    }
+
     get chip() : number
     {
         return parseInt(this.mChip.string);

@@ -17489,7 +17489,7 @@ declare namespace dragonBones {
 		@param listener The callback that will be invoked when the event is dispatched.
 		@param target The target (this object) to invoke the callback, can be null 
 		*/
-		on(type: string, listener: (event: cc.Event) => void, target?: any): void;		
+		on(type: string, listener: (event: dragonBones.EventObject) => void, target?: any): void;		
 		/**
 		!#en
 		Remove the event listener for the DragonBones Event, the same to removeEventListener.

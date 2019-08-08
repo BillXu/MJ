@@ -23,7 +23,7 @@ import ResultTotalData from "./ResultTotalData";
     onMJActError() : void;
     onPlayerNetStateChanged( playerIdx : number , isOnline : boolean ) : void ;
     onPlayerChatMsg( playerIdx : number , type : eChatMsgType , strContent : string ) : void ;
-    onInteractEmoji( InvokeIdx : number , targetIdx : number , emojiIdx : number ) : void ;
+    onInteractEmoji( InvokeIdx : number , targetIdx : number , emoji : string ) : void ;
     onPlayerStandUp( idx : number ) : void ;
     onPlayerReady( idx : number ) : void ;
 

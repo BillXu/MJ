@@ -317,8 +317,8 @@ export default abstract class MJRoomData extends IModule {
             {
                 let invokerIdx = msg["invokerIdx"] ;
                 let targetIdx = msg["targetIdx"] ;
-                let emojiIdx = msg["emoji"] ;
-                this.mSceneDelegate.onInteractEmoji(invokerIdx,targetIdx,emojiIdx) ;
+                let emoji = msg["emoji"] ;
+                this.mSceneDelegate.onInteractEmoji(invokerIdx,targetIdx,emoji) ;
                 //AudioMgr.getInstance().playInteractEmoji(emojiIdx);
             }
             break ;
