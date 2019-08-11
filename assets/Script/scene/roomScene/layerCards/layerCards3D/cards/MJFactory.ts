@@ -1,4 +1,4 @@
-import { eMJCardType, eMJActType, eCardSate } from "../../roomDefine";
+import { eMJCardType, eMJActType, eCardSate } from "../../../roomDefine";
 import MJCard, { MJCardState } from "./MJCard";
 
 // Learn TypeScript:

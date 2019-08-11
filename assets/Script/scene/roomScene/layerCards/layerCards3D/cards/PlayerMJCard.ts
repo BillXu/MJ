@@ -1,6 +1,6 @@
 import MJCard, { MJCardState } from "./MJCard";
 import MJFactory from "./MJFactory";
-import { eArrowDirect, eMJActType } from "../../roomDefine";
+import { eArrowDirect, eMJActType } from "../../../roomDefine";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
