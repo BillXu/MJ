@@ -50,7 +50,7 @@ export default class SeatIndicator extends cc.Component {
         }
     }
 
-    setCurActIdx( svrIdx : number , leftTimer : number )
+    setCurActIdx( svrIdx : number , leftTimer : number = 30 )
     {
         let cnode : cc.Node = null ;
         let self = this ;

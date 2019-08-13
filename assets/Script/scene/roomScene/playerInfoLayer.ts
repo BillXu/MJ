@@ -30,12 +30,12 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
     @property([cc.Node])
     vWaitReadyStatePlayerPos : cc.Node[] = [] ;
 
-    vGameStatePlayerPos : cc.Vec2[] = [];
+    vGameStatePlayerPos : cc.Vec2[] = [];   
 
     @property(cc.Node)
     pLeftTag : cc.Node = null ;
 
-    @property(cc.Node)
+    @property(cc.Node)  
     pRightTag : cc.Node = null ;
 
     @property(cc.Node)

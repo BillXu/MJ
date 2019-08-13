@@ -643,8 +643,8 @@ export default class RoomScene extends cc.Component {
     }
 
     onDestroy()
-    {
-        cc.systemEvent.targetOff(this);
+    {   
+        cc.systemEvent.targetOff(this);  
     }
 
     sendRoomMsg( msg : Object , msgID : eMsgType, callBack? : IOneMsgCallback ) : boolean

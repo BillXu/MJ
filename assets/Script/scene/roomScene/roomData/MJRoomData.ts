@@ -576,9 +576,10 @@ export default abstract class MJRoomData extends IModule {
         }
     }
 
-    protected doChoseActAboutRecievedCard( act : eMJActType ) : boolean
+    protected doChoseActAboutRecievedCard( act : eMJActType,chuCard : number = null ) : boolean
     {
         let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
+        let card = playerCard.nNewFeatchedCard;
         switch ( act )
         {
             case eMJActType.eMJAct_BuGang:
@@ -605,18 +606,21 @@ export default abstract class MJRoomData extends IModule {
             break;
             case eMJActType.eMJAct_Chu:
             {
-
+                card = chuCard ;
             }
             break;
+            default:
+            cc.log( "unknown act for recived card = " + act );
+            return ;
         }
 
         let msg = {} ;
         msg["actType"] = act ;
-        msg["card"] = playerCard.nNewFeatchedCard ;
+        msg["card"] = card ;
         this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
     }
 
-    doChosedAct( act : eMJActType ) : boolean
+    doChosedAct( act : eMJActType, chuCard : number = null ) : boolean
     {
         let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
         if ( act == eMJActType.eMJAct_Chu || playerCard.vHoldCard.length % 3 == 2 )

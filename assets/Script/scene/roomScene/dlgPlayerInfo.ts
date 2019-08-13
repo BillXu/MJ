@@ -19,12 +19,12 @@ export default class dlgPlayerInfo extends DlgBase {
 
     @property(cc.Label)
     pName: cc.Label = null;
-
+ 
     @property(cc.Label)
     pID : cc.Label = null ;
 
     @property(cc.Label)
-    pIP : cc.Label = null ;
+    pIP : cc.Label = null ;  
 
     @property(PhotoItem)
     pHeadIcon : PhotoItem = null ;

@@ -20,9 +20,9 @@ const {ccclass, property} = cc._decorator;
 export default class DlgLocation extends DlgBase {
 
     @property([cc.Label])
-    vDistance: cc.Label[] = [];
+    vDistance: cc.Label[] = []; 
 
-    @property([LocationPlayer])
+    @property([LocationPlayer]) 
     vPlayers : LocationPlayer[] = [] ;
 
     // LIFE-CYCLE CALLBACKS:

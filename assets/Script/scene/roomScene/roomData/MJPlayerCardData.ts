@@ -1,6 +1,7 @@
 import { eMJActType, eArrowDirect, eEatType } from "../roomDefine";
 import * as _ from "lodash"
-import MJCard from "../layerCards3D/cards/MJCard";
+import MJCard from "../layerCards/layerCards3D/cards/MJCard";
+//import MJCard from "../layerCards3D/cards/MJCard";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -80,13 +81,13 @@ export class IPlayerCards
                     clientMing.vEatWithCards = tmp;
                     t.sort( (a : number, b : number )=>{ return a - b ;} ) ;
                 }
-                clientMing.eDir = self.getDirection(playerIdx,clientMing.nInvokerIdx);
+                clientMing.eDir = IPlayerCards.getDirection(playerIdx,clientMing.nInvokerIdx);
                 self.vMingCards.push(clientMing);
             } );
         }
     }
 
-    getDirection( idx : number, invokerIdx : number ) : eArrowDirect 
+    static getDirection( idx : number, invokerIdx : number ) : eArrowDirect 
     {
         if ( idx ==  ( invokerIdx + 1 ) % 4 )
         {
@@ -160,7 +161,7 @@ export class IPlayerCards
         pMing.nInvokerIdx = invokerIdx ;
         pMing.vEatWithCards = [ targetCard,withA,withB ] ;
         pMing.vEatWithCards.sort( ( a : number , b : number )=>{ return a - b ;} ) ;
-        pMing.eDir = this.getDirection( this.nPlayerIdx,invokerIdx );
+        pMing.eDir = IPlayerCards.getDirection( this.nPlayerIdx,invokerIdx );
         this.vMingCards.push(pMing);
     }
 
@@ -220,7 +221,7 @@ export class IPlayerCards
         pMing.eAct = eMJActType.eMJAct_Peng ;
         pMing.nTargetCard = targetCard ;
         pMing.nInvokerIdx = invokerIdx ;
-        pMing.eDir = this.getDirection( this.nPlayerIdx,invokerIdx );
+        pMing.eDir = IPlayerCards.getDirection( this.nPlayerIdx,invokerIdx );
         this.vMingCards.push(pMing);
     }
 
@@ -232,7 +233,7 @@ export class IPlayerCards
         pMing.eAct = eMJActType.eMJAct_MingGang ;
         pMing.nTargetCard = targetCard ;
         pMing.nInvokerIdx = invokerIdx ;
-        pMing.eDir = this.getDirection( this.nPlayerIdx,invokerIdx );
+        pMing.eDir = IPlayerCards.getDirection( this.nPlayerIdx,invokerIdx );
         this.vMingCards.push(pMing);
 
         this.onMo(newCard);

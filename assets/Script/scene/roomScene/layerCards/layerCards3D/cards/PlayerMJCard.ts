@@ -1,6 +1,7 @@
 import MJCard, { MJCardState } from "./MJCard";
 import MJFactory from "./MJFactory";
 import { eArrowDirect, eMJActType } from "../../../roomDefine";
+import { IPlayerCards } from "../../../roomData/MJPlayerCardData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -35,14 +36,39 @@ export default class PlayerMJCard extends cc.Component {
     protected mCurSelectHoldMJ : MJCard = null ;
 
     @property
-    holdCardPosZ : number = 684 ;
-    @property
-    chuCardStartX : number = 100 ;
-    @property
-    chuCardStartZ : number = 100 ;
+    mHoldMingMargin : number = 20 ;
+
+    @property(cc.Node)
+    mHoldAnNode : cc.Node = null ;
+
+    get holdCardPosZ() : number
+    {
+        return this.mHoldAnNode.z ;
+    }
+
+    get holdCardPosY() : number
+    {
+        return this.mHoldAnNode.y ;
+    }
+
+    @property(cc.Node)
+    mHoldMingNode : cc.Node = null ;
+
+    @property(cc.Node)
+    mChuNodeStart : cc.Node = null
+
+    get chuCardStartX() : number 
+    {
+        return this.mChuNodeStart.x ;
+    }
+
+    get chuCardStartZ() : number
+    {
+        return this.mChuNodeStart.z ;
+    }
 
     @property([cc.Component.EventHandler])
-    mHandleChuPai : cc.Component.EventHandler[] = [] ;
+    mHandleChuPai : cc.Component.EventHandler[] = [] ; // ( chuCard : MJCard )
     
     protected mIsReplayState = false ;
     protected _isSelf : boolean = false ;
@@ -106,7 +132,7 @@ export default class PlayerMJCard extends cc.Component {
         this.mCurSelectHoldMJ = null ;
     }
 
-    onRefresh()
+    onRefresh( cardData : IPlayerCards )
     {
 
     }
@@ -119,9 +145,9 @@ export default class PlayerMJCard extends cc.Component {
         let m = new MingCardGroup();
         m.actType = eMJActType.eMJAct_Chi ;
         m.dir = eArrowDirect.eDirect_Opposite ;
-        m.cards.push( this.mFacotry.getMJ( withA, MJCardState.FACE_UP,this.node ) );
-        m.cards.push( this.mFacotry.getMJ( withB, MJCardState.FACE_UP,this.node ) );
-        m.cards.push( this.mFacotry.getMJ( target, MJCardState.FACE_UP,this.node ) );
+        m.cards.push( this.mFacotry.getMJ( withA, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.cards.push( this.mFacotry.getMJ( withB, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.cards.push( this.mFacotry.getMJ( target, MJCardState.FACE_UP,this.mHoldMingNode ) );
         this.mMingCards.push(m);
 
         this.relayoutHoldCards();
@@ -133,9 +159,9 @@ export default class PlayerMJCard extends cc.Component {
 
         let m = new MingCardGroup();
         m.actType = eMJActType.eMJAct_Peng ;
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) );
+        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
         m.dir = dir ;
         this.mMingCards.push(m);
 
@@ -148,10 +174,10 @@ export default class PlayerMJCard extends cc.Component {
 
         let m = new MingCardGroup();
         m.actType = eMJActType.eMJAct_MingGang ;
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) );
-        m.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) ;
+        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) ;
         m.dir = dir ;
         this.mMingCards.push(m);
 
@@ -166,10 +192,10 @@ export default class PlayerMJCard extends cc.Component {
         let m = new MingCardGroup();
         m.actType = eMJActType.eMJAct_AnGang ;
         m.dir = eArrowDirect.eDirect_Opposite ;
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) );
-        m.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_COVER,this.node ) ;
+        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+        m.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_COVER,this.mHoldMingNode ) ;
         this.mMingCards.push(m);
 
         this.relayoutHoldCards();
@@ -190,7 +216,7 @@ export default class PlayerMJCard extends cc.Component {
                 continue ;
             }
 
-            v.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) ;
+            v.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) ;
             let vpos = v.cards[1].node.position ;
             vpos.y += v.gangUpCards.world_y_Size ;
             v.gangUpCards.node.position = vpos ;
@@ -371,11 +397,16 @@ export default class PlayerMJCard extends cc.Component {
 
     protected relayoutHoldCards()
     {
-        let xMargin = 10 ;
+        let xMargin = this.mHoldMingMargin ;
         let xAnHoldMargin = 0 ;
         let startX = -0.5 * ( this.mMingCards.length * 3 * ( MJCard.MODEL_X_SIZE + xMargin ) + this.mHoldCards.length * ( this.mHoldCards[0].world_x_Size + xAnHoldMargin ) ); 
-     
+        this.mHoldMingNode.x = startX ;
+        if ( this.isSelf )
+        {
+            this.mHoldMingNode.eulerAngles = new cc.Vec3(30,0,0);
+        }
         // layout ming cards ;
+        let startMing = 0 ;
         for ( let ming of this.mMingCards )
         {
             switch ( ming.actType )
@@ -383,28 +414,34 @@ export default class PlayerMJCard extends cc.Component {
                 case eMJActType.eMJAct_Chi:
                 case eMJActType.eMJAct_Peng:
                 {
-                    startX = this.layoutPartGroup(startX,ming.cards,ming.dir ) + xMargin ;
+                    startMing = this.layoutPartGroup(startMing,ming.cards,ming.dir ) + xMargin ;
                 }
                 break;
                 case eMJActType.eMJAct_AnGang:
                 case eMJActType.eMJAct_MingGang:
                 case eMJActType.eMJAct_BuGang:
                 {
-                    startX = this.layoutPartGroup(startX,ming.cards,ming.dir ) + xMargin ;
+                    startMing = this.layoutPartGroup(startMing,ming.cards,ming.dir ) + xMargin ;
                     let pos = ming.cards[1].node.position;
-                    pos.y += ming.gangUpCards.world_y_Size ;
+                    pos.y += ming.gangUpCards.world_y_Size;
                     ming.gangUpCards.node.position = pos ;
+                    if ( this.isSelf )
+                    {
+                        ming.gangUpCards.isSelf = true ;
+                        //ming.gangUpCards.node.eulerAngles = new cc.Vec3(-30,180,0);
+                    }
                 }
                 break;
             }
         }
 
         // layout hold cards ;
+        startX += startMing ; //this.mMingCards.length * 3 * ( MJCard.MODEL_X_SIZE + xMargin ) ;
         this.mHoldCards.sort( ( a : MJCard , b : MJCard )=>{ return a.cardNum - b.cardNum ; } ) ;
         startX += this.mHoldCards[0].world_x_Size * 0.5 ;
         for ( const hmj of this.mHoldCards )
         {
-             hmj.node.position = new cc.Vec3( startX, 0 * hmj.world_y_Size * 0.5,this.holdCardPosZ );
+             hmj.node.position = new cc.Vec3( startX, this.holdCardPosY,this.holdCardPosZ );
              startX += ( xAnHoldMargin + hmj.world_x_Size );
              cc.log( "hold pos = " + hmj.node.position );
         }
@@ -418,46 +455,47 @@ export default class PlayerMJCard extends cc.Component {
             return x ;
         }
 
+        if ( this.isSelf )
+        {
+            mjCards.forEach( (mj : MJCard )=>{ mj.isSelf = true ; } )
+        }
+
         var card = mjCards[0] ;
         if ( dir == eArrowDirect.eDirect_Left )
         {
-            let v = card.node.eulerAngles ;
-            v.y = 270 ;
-            card.node.eulerAngles = v ;
+            card.node.eulerAngles =  new cc.Vec3(0,270,0 ); ;
 
             x += card.world_z_Size * 0.5 ;
-            card.node.position = new cc.Vec3(x ,card.world_y_Size * 0.5,this.holdCardPosZ );
+            card.node.position = new cc.Vec3(x ,0,0 );
             x += card.world_z_Size * 0.5 ;
         }
         else
         {
             x += card.world_x_Size * 0.5 ;
-            card.node.position = new cc.Vec3(x,card.world_y_Size * 0.5,this.holdCardPosZ );
+            card.node.position = new cc.Vec3(x,0,0 );
             x += card.world_x_Size * 0.5 ;
         }
 
         // card 2
         card = mjCards[1] ;
         x += card.world_x_Size * 0.5 ;
-        card.node.position = new cc.Vec3(x,card.world_y_Size * 0.5,this.holdCardPosZ );
+        card.node.position = new cc.Vec3(x,0,0 );
         x += card.world_x_Size * 0.5 ;
 
         // card 3
         card = mjCards[2] ; 
         if ( dir == eArrowDirect.eDirect_Righ )
         {
-            let v = card.node.eulerAngles ;
-            v.y = 90 ;
-            card.node.eulerAngles = v ;
+            card.node.eulerAngles =  new cc.Vec3(0,90,0 ); 
 
             x += card.world_z_Size * 0.5 ;
-            card.node.position = new cc.Vec3(x ,card.world_y_Size * 0.5,this.holdCardPosZ );
+            card.node.position = new cc.Vec3(x,0,0 );
             x += card.world_z_Size * 0.5 ;
         }
         else
         {
             x += card.world_x_Size * 0.5 ;
-            card.node.position = new cc.Vec3(x,card.world_y_Size * 0.5,this.holdCardPosZ );
+            card.node.position = new cc.Vec3(x,0,0 );
             x += card.world_x_Size * 0.5 ;
         }
         return x ;
@@ -545,7 +583,7 @@ export default class PlayerMJCard extends cc.Component {
     {
         if ( this.mSelfCamera == null )
         {
-            this.mSelfCamera = cc.find("3D/layerPlayerCards/playerCard_0/SelfCamera").getComponent(cc.Camera);
+            this.mSelfCamera = cc.find("3D/opeateCamer/SelfCamera").getComponent(cc.Camera);
         }
 
         let ray = this.mSelfCamera.getRay(pos) ;

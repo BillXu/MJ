@@ -23,21 +23,15 @@ export default class test extends cc.Component {
     @property(PlayerMJCard)
     mPlayerCards : PlayerMJCard = null; 
     // LIFE-CYCLE CALLBACKS:
-
-    @property(SeatIndicator)
-    mIndicator : SeatIndicator = null ;
     // onLoad () {}
 
     start () {
-        this.mPlayerCards.isSelf = true;
+        this.mPlayerCards.isSelf = false;
     }
 
-    mValue = MJCard.makeCardNum(eMJCardType.eCT_Feng,1) ;
+    mValue = MJCard.makeCardNum(eMJCardType.eCT_Feng,2) ;
     onClick()
     {
-        this.mIndicator.setSelfIdx(2);
-        this.mIndicator.setCurActIdx(0,10 ) ;
-        return ;
         cc.log( "distribute" );
         let v : number[] = [] ;
         v.push( this.mValue );
@@ -52,22 +46,16 @@ export default class test extends cc.Component {
 
     onClick2()
     {
-        this.mIndicator.setSelfIdx(3);
-        this.mIndicator.setCurActIdx(1,16 ) ;       
-        return ;
         this.mPlayerCards.onChu(this.mValue);
     }
 
     onClick3()
     {
-        this.mIndicator.setCurActIdx(2,16 ) ;           return ;
         this.mPlayerCards.onPeng(this.mValue,eArrowDirect.eDirect_Left);
     }
 
     onClick4()
     {
-        this.mIndicator.setSelfIdx(0);
-        this.mIndicator.setCurActIdx(3,16 ) ;           return ;
         this.mPlayerCards.onMingGang(this.mValue,eArrowDirect.eDirect_Left,this.mValue + 1,null);
     }
     // update (dt) {}
