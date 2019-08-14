@@ -13,6 +13,7 @@ import ILayer from "../ILayer";
  
 export default interface ILayerPlayerCard extends ILayer {
 
+    setBottomSvrIdx( svrIdx : number ) : void ;
     onDistributedCards() : void ;
     onPlayerActMo( idx : number , card : number ) : void ;
     onPlayerActChu( idx : number , card : number ) : void ;

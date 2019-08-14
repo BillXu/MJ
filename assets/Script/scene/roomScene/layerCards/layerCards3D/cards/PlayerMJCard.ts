@@ -2,6 +2,7 @@ import MJCard, { MJCardState } from "./MJCard";
 import MJFactory from "./MJFactory";
 import { eArrowDirect, eMJActType } from "../../../roomDefine";
 import { IPlayerCards } from "../../../roomData/MJPlayerCardData";
+import LayerPlayerCards3D from "../LayerPlayerCards3D";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -40,6 +41,8 @@ export default class PlayerMJCard extends cc.Component {
 
     @property(cc.Node)
     mHoldAnNode : cc.Node = null ;
+
+    mLayerCards : LayerPlayerCards3D = null ;
 
     get holdCardPosZ() : number
     {
@@ -310,7 +313,15 @@ export default class PlayerMJCard extends cc.Component {
         let pos = this.removeHold(chuCard);
         let chuMJ = this.mFacotry.getMJ(chuCard,MJCardState.FACE_UP,this.node ) ;
         chuMJ.node.position = pos ;
-        cc.tween(chuMJ.node).to( 0.15, { position: this.getChuCardPos( this.mChuCards.length ) } ).start() ;
+        let self = this ;
+        cc.tween(chuMJ.node)
+        .to( 0.15, { position: this.getChuCardPos( this.mChuCards.length ) } )
+        .call( ()=>{
+            let wp = new cc.Vec3();
+            wp = chuMJ.node.getWorldPosition(wp);
+            self.mLayerCards.moveArrowToWorldPos( wp ) ;
+         } )
+        .start() ;
         this.mChuCards.push(chuMJ);
         this.relayoutHoldCards();
     }
@@ -323,6 +334,7 @@ export default class PlayerMJCard extends cc.Component {
             cc.warn( "onChuCardBePengGangHu card = is not the same v = " + cardNum + " t = " + p.cardNum );
         }
         this.mFacotry.recycleMJ(p);
+        this.mLayerCards.hideArrow();
     }
 
     protected removeHold( cardNum : number , cnt : number = 1 ) : cc.Vec3 

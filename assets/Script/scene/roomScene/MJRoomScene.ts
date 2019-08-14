@@ -10,6 +10,7 @@ import ILayer from "./ILayer";
 import LayerRoomInfo from "./layerRoomInfo/LayerRoomInfo";
 import LayerDlg from "./layerDlg/LayerDlg";
 import LayerPlayers from "./layerPlayers/LayerPlayers";
+import ILayerPlayerCard from "./layerCards/ILayerPlayerCard";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -31,6 +32,9 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     mLayerInfo : ILayer = null ;
     mLayerDlg : ILayer = null ;
     mLayerPlayers : ILayer = null ;
+
+    mLayerPlayerCard3d : ILayerPlayerCard = null ;
+    mLayerPlayerCard2d : ILayerPlayerCard = null ;
     // LIFE-CYCLE CALLBACKS:
 
     get layerRoomInfo() : LayerRoomInfo
@@ -46,6 +50,11 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     get layerPlayers() : LayerPlayers
     {
         return <LayerPlayers>this.mLayerPlayers ;
+    }
+
+    get layerPlayerCards() : ILayerPlayerCard
+    {
+        return this.mLayerPlayerCard3d ;
     }
      
     onLoad () 
@@ -71,7 +80,11 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
 
     onPlayerSitDown( p : MJPlayerData ) : void 
     {
-
+        this.layerPlayers.onPlayerSitDown( p ) ;
+        if ( p.mPlayerBaseData.svrIdx == this.mRoomData.getSelfIdx() )
+        {
+            this.layerPlayerCards.setBottomSvrIdx( p.mPlayerBaseData.svrIdx );
+        }
     }
 
     onRecivedAllPlayers( vPlayers : MJPlayerData[] ) : void
@@ -79,11 +92,12 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
         this.mLayerInfo.refresh( this.mRoomData );
         this.mLayerDlg.refresh( this.mRoomData );
         this.mLayerPlayers.refresh( this.mRoomData );
+        this.layerPlayerCards.refresh( this.mRoomData );
     }
 
     onMJActError() : void
     {
-
+        this.layerPlayerCards.onMJActError();
     }
 
     onPlayerNetStateChanged( playerIdx : number , isOnline : boolean ) : void 
@@ -113,52 +127,52 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
 
     onDistributedCards() : void 
     {
-
+        this.layerPlayerCards.onDistributedCards();
     }
 
     onPlayerActMo( idx : number , card : number ) : void 
     {
-
+        this.layerPlayerCards.onPlayerActMo( idx , card ) ;
     }
 
     onPlayerActChu( idx : number , card : number ) : void 
     {
-
+        this.layerPlayerCards.onPlayerActChu( idx , card ) ;
     }
 
     showActOptsAboutOtherCard( vActs : eMJActType[] ) : void 
     {
-
+        this.layerDlg.showDlgActOpts(vActs) ;
     }
 
     onPlayerActChi( idx : number , card : number , withA : number , withB : number, invokeIdx : number ) : void 
     {
-
+        this.layerPlayerCards.onPlayerActChi( idx, card, withA, withB,invokeIdx ) ;
     }
 
     onPlayerActPeng( idx : number , card : number, invokeIdx : number ) : void 
     {
-
+        this.layerPlayerCards.onPlayerActPeng( idx, card, invokeIdx ) ;
     }
 
     onPlayerActMingGang( idx : number , card : number, invokeIdx : number, newCard : number ) : void 
     {
-
+        this.layerPlayerCards.onPlayerActMingGang( idx, card, invokeIdx, newCard ) ;
     }
 
     onPlayerActAnGang( idx : number , card : number , NewCard : number ) : void 
     {
-
+        this.layerPlayerCards.onPlayerActAnGang( idx, card, NewCard ) ;
     }
 
     onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void 
     {
-
+        this.layerPlayerCards.onPlayerActBuGang( idx, card, NewCard );
     }
 
     onPlayerActHu( idx : number, card : number , invokeIdx : number ) : void 
     {
-
+        this.layerPlayerCards.onPlayerActHu( idx, card, invokeIdx );
     }
 
     showActOptsWhenRecivedCards( vActs : eMJActType[] ) : void 
@@ -182,6 +196,7 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
         this.mLayerInfo.onGameStart();
         this.mLayerDlg.onGameStart();
         this.mLayerPlayers.onGameStart();
+        this.layerPlayerCards.onGameStart();
     }
 
     onGameEnd( result : ResultSingleData  ) : void 
@@ -217,6 +232,7 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     onExchangedSeat() : void 
     {
         this.layerPlayers.refresh( this.mRoomData ) ;
+        this.layerPlayerCards.refresh( this.mRoomData );
     }
 
     // not delegate funciton 

@@ -26,7 +26,7 @@ export default class test extends cc.Component {
     // onLoad () {}
 
     start () {
-        this.mPlayerCards.isSelf = false;
+        //this.mPlayerCards.isSelf = false;
     }
 
     mValue = MJCard.makeCardNum(eMJCardType.eCT_Feng,2) ;

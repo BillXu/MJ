@@ -25,13 +25,21 @@ export default class LayerPlayerCards3D extends cc.Component implements ILayerPl
     @property(SeatIndicator)
     mIndicator : SeatIndicator = null ;
 
+    @property(cc.Node)
+    mLastChuArrowNode : cc.Node = null ;
+
     @property([PlayerMJCard])
     mPlayerCards : PlayerMJCard[] = [] ; // clientIdx ; 
 
     mBottomSvrIdx : number = 0 ;  // clientIdx pos 0 , corrspone svr idx ; 
     // LIFE-CYCLE CALLBACKS:
     mRoomData : MJRoomData = null ;
-    // onLoad () {}
+     
+    onLoad () 
+    {
+        let self = this ;
+        this.mPlayerCards.forEach( (a, idx ) => { a.mLayerCards = self ; a.isSelf = idx == 0 ;} );
+    }
 
     setBottomSvrIdx( svrIdx : number )
     {
@@ -55,6 +63,7 @@ export default class LayerPlayerCards3D extends cc.Component implements ILayerPl
         let selfIdx = data.getSelfIdx();
         this.setBottomSvrIdx( selfIdx == -1 ? 0 : selfIdx );
         this.mIndicator.setCurActIdx(data.mBaseData.curActSvrIdx ) ;
+        this.hideArrow();
 
         let self = this;
         data.mPlayers.forEach( ( player : MJPlayerData )=>{ 
@@ -144,6 +153,23 @@ export default class LayerPlayerCards3D extends cc.Component implements ILayerPl
 
         this.mRoomData.doChosedAct( eMJActType.eMJAct_Chu, card.cardNum ) ;
         this.mPlayerCards[0].onChu( card.cardNum ) ;
+    }
+
+    moveArrowToWorldPos( ptWorldPos : cc.Vec3 )
+    {
+        this.mLastChuArrowNode.active = true ;
+
+        let posLocal = new cc.Vec3();
+        this.node._invTransformPoint(posLocal,ptWorldPos );
+
+        this.mLastChuArrowNode.position = posLocal;
+        //this.mLastChuArrowNode.getWorldPosition 
+        console.log( "moveArrowToWorldPos " + ptWorldPos  );
+    }
+
+    hideArrow()
+    {
+        this.mLastChuArrowNode.active = false ;
     }
     // update (dt) {}
 }
