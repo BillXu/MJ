@@ -643,7 +643,7 @@ export default class RoomScene extends cc.Component {
     }
 
     onDestroy()
-    {   
+    {     
         cc.systemEvent.targetOff(this);  
     }
 

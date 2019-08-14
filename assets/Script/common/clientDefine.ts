@@ -174,4 +174,13 @@ export enum eMailState
 	eMailState_Max,
 };
 
+export enum ePayRoomCardType
+{
+	ePayType_None,
+	ePayType_RoomOwner = ePayType_None,
+	ePayType_AA,
+	ePayType_Winer,
+	ePayType_Max,
+};
+
 export { clientDefine , SceneName,clientEvent }  ;

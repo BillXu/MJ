@@ -1,4 +1,4 @@
-import { eGameType } from "../common/clientDefine";
+import { eGameType, ePayRoomCardType } from "../common/clientDefine";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -12,14 +12,14 @@ import { eGameType } from "../common/clientDefine";
 
 export default class IOpts
 {
-    protected jsOpts : Object ;
-
-    get payType() : number
+    protected jsOpts : Object = {};
+    init() : void {} ;
+    get payType() : ePayRoomCardType
     {
         return this.jsOpts["payType"] ;
     }
 
-    set payType( type : number ) 
+    set payType( type : ePayRoomCardType ) 
     {
         this.jsOpts["payType"] = type ;
     } 
@@ -44,7 +44,24 @@ export default class IOpts
         this.jsOpts["circle"] = is ? 1 : 0 ;
     }
 
-    totalCircleOrRoundCnt : number ;
+
+    get roundCnt() : number
+    {
+        if ( this.jsOpts["level"] == null )
+        {
+            this.jsOpts["level"] = 0 ;
+            cc.error("round key is null");
+        }
+        return this.jsOpts["level"] == 0 ? 8 : 16; 
+    } 
+
+    set roundCnt( value : number)
+    {
+        this.jsOpts["level"] = value == 8 ? 0 : 1 ;
+    }
+
+
+//    totalCircleOrRoundCnt : number ;
 
     get gameType() : eGameType
     {
@@ -91,6 +108,11 @@ export default class IOpts
         return this.jsOpts["gps"] == 1 ;
     }
 
+    toString() : string
+    {
+        return JSON.stringify( this.jsOpts );
+    }
+
     getRuleDesc() : string 
     {
         return "" ;
@@ -104,5 +126,13 @@ export default class IOpts
     parseOpts( js : Object ) : void 
     {
         this.jsOpts = js ;
+    }
+
+    parseFromString( strFmt : string )
+    {
+        if ( this.jsOpts = JSON.parse(strFmt) == null )
+        {
+            cc.error( "parse opt string error = " + strFmt );
+        }
     }
 } 

@@ -46,7 +46,7 @@ export default class PlayerInfoLayer extends roomSceneLayerBase {
 
     @property(RoomSound)
     pRoomSound : RoomSound = null ;
-
+  
     @property(dlgPlayerInfo)
     pdlgPlayerInfo : dlgPlayerInfo = null ;
 

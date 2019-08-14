@@ -23,7 +23,7 @@ export default class DlgLocation extends DlgBase {
     vDistance: cc.Label[] = []; 
 
     @property([LocationPlayer]) 
-    vPlayers : LocationPlayer[] = [] ;
+    vPlayers : LocationPlayer[] = [] ;  
 
     // LIFE-CYCLE CALLBACKS:
 
