@@ -1,6 +1,8 @@
 import { ILayerOpts } from "./ILayerOpts";
 import IOpts from "../../../opts/IOpts";
 import OptsDanDong from "../../../opts/OptsDanDong";
+import { ePayRoomCardType } from "../../../common/clientDefine";
+import Prompt from "../../../globalModule/Prompt";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -96,13 +98,99 @@ export default class LayerOptsDanDong extends cc.Component implements ILayerOpts
 
     getOpts() : IOpts
     {
-        this.buildOpts();
+        if ( false == this.buildOpts() )
+        {
+            return null ;
+        }
         return this.mOpts;
     }
 
-    protected buildOpts()
+    protected buildOpts() : boolean
     {
+        let self = this ;
 
+        // round 
+        let vRound = [8,16] ;
+        if ( vRound.length != this.mRound.length )
+        {
+            cc.error( "round array is the same length" );
+            return false ;
+        }
+
+        this.mRound.every( ( t : cc.Toggle, idx : number )=>
+        { 
+            if ( t.isChecked )
+            { 
+                self.mOpts.roundCnt = vRound[idx] ;
+                return false ;
+            } 
+        return true ;
+       } );
+
+       // seat ;
+       this.mOpts.seatCnt = this.mSeat4.isChecked ? 4 : 3 ;
+
+       // pay type ;
+       let vPayType = [ ePayRoomCardType.ePayType_RoomOwner,ePayRoomCardType.ePayType_AA ] ;
+       if ( vPayType.length != this.payTypes.length )
+       {
+           cc.error( "payTypes array is the same length" );
+           return false ;
+       }
+
+       this.payTypes.every(
+        ( t : cc.Toggle, idx : number )=>
+        {
+            if ( t.isChecked )
+            {
+                this.mOpts.payType = vPayType[idx] ;
+                return false ;
+            }
+            return true ;
+        });
+
+        // wan fa 
+        this.mOpts.isOnePlayerDianPao = this.mOneDianPao.isChecked ;
+
+        // limit fen
+        this.mOpts.limitFen = 0 ; 
+        if ( this.mGuang.isChecked )
+        {
+            let vFen = [ 30,50,70,100] ;
+            if ( vFen.length != this.mFengLimit.length )
+            {
+                cc.error( "mFengLimit array is the same length" );
+                return false ;
+            }
+            
+            this.mFengLimit.every( ( t : cc.Toggle , idx : number )=>{
+                if ( t.isChecked )
+                {
+                    this.mOpts.limitFen = vFen[idx] ;
+                    return false ;
+                }
+                return false ;
+            } );
+
+            if ( this.mOpts.limitFen == 0 )
+            {
+                Prompt.promptDlg( "请选择分数");
+                return false ;
+            }
+        }
+
+        // rand seat ;
+        this.mOpts.isRandSeat = this.mRandSeat.isChecked ;
+        
+        // ip and gps 
+        this.mOpts.isAvoidCheat = this.mIPAndGPS.isChecked ;
+        this.mOpts.isForceGPS = false ;
+        if ( this.mIPAndGPS.isChecked )
+        {
+            this.mOpts.isForceGPS = this.mForceGPS.isChecked ;
+        }
+
+        return true ;
     }
     // update (dt) {}
 }
