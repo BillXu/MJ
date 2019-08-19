@@ -12,7 +12,7 @@ import { eGameType, ePayRoomCardType } from "../common/clientDefine";
 
 export default class IOpts
 {
-    protected jsOpts : Object = {};
+    jsOpts : Object = {};
     init() : void {} ;
     get payType() : ePayRoomCardType
     {

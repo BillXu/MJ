@@ -17,7 +17,7 @@ import Prompt from "../../../globalModule/Prompt";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerOptsDanDong extends cc.Component implements ILayerOpts {
+export default class LayerOptsDanDong extends ILayerOpts {
 
     @property([cc.Toggle])
     mRound : cc.Toggle[] = [] ;

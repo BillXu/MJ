@@ -37,9 +37,10 @@ export default abstract class MJRoomData extends IModule {
     mSinglResultData : ResultSingleData = new ResultSingleData();
     mTotalResultData : ResultTotalData = new ResultTotalData();
 
-    init()
+    protected init()
     {
         super.init();
+        this.createCompoentData();
     }
 
     abstract createCompoentData() : void ; // create opts , baseData , Players ;
@@ -58,7 +59,7 @@ export default abstract class MJRoomData extends IModule {
         }
 
         let msgReqRoomInfo = { } ;
-        let port = Utility.getMsgPortByGameType( nRoomID ) ;
+        let port = Utility.getMsgPortByRoomID( nRoomID ) ;
         this.sendMsg(msgReqRoomInfo,eMsgType.MSG_REQUEST_ROOM_INFO,port,nRoomID) ;       
     }
 
@@ -503,8 +504,8 @@ export default abstract class MJRoomData extends IModule {
 
             if ( item.mPlayerBaseData.isSelf )
             {
-                var cards = jsMsg["cards"].Array ;
-                item.mPlayerCard.onRecivedHoldCard(cards,cards.Length) ;
+                let cards : number[] = jsMsg["cards"] ;
+                item.mPlayerCard.onRecivedHoldCard(cards,cards.length) ;
             }
             else
             {
@@ -780,7 +781,7 @@ export default abstract class MJRoomData extends IModule {
 
     doSendPlayerInteractEmoji( targetIdx : number , emojiName : string )
     {
-        var self = this.getSelfIdx();
+        let self = this.getSelfIdx();
         if ( self == -1 )
         {
             Prompt.promptText( "您没有坐下，不能发言。" );

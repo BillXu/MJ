@@ -16,6 +16,7 @@ import Network from "../../common/Network"
 import { eMsgPort, eMsgType } from "../../common/MessageIdentifer"
 import Utility from "../../globalModule/Utility"
 import {clientDefine,SceneName,clientEvent,eMusicType,eDeskBg,eMJBg} from "../../common/clientDefine"
+import ClientApp from "../../globalModule/ClientApp";
 @ccclass
 export default class DlgSetting extends DlgBase {
     @property
@@ -51,7 +52,7 @@ export default class DlgSetting extends DlgBase {
         super.onLoad();
         this.pBtnApplyDismiss.active = !this.isInMainScene ;
         this.pBtnLogout.active = this.isInMainScene ;
-        this.pLabelVersion.string = ClientData.getInstance().version ;
+        this.pLabelVersion.string = ClientApp.getInstance().getConfigMgr().getClientConfig().VERSION;
     }
 
     start () {
@@ -78,8 +79,9 @@ export default class DlgSetting extends DlgBase {
         //     return true ;
         // }) ;
 
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_PLAYER_LOGOUT,eMsgPort.ID_MSG_PORT_DATA,ClientData.getInstance().selfUID);
-        ClientData.getInstance().clearWhenLogout();
+        let uid = ClientApp.getInstance().getClientPlayerData().getSelfUID();
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_PLAYER_LOGOUT,eMsgPort.ID_MSG_PORT_DATA, uid );
+        ClientApp.getInstance().onPlayerClearLogout();
         self.closeDlg();
         cc.director.loadScene(SceneName.Scene_login) ;
         Utility.audioBtnClick();
@@ -92,20 +94,20 @@ export default class DlgSetting extends DlgBase {
 
     onAudioEffectSlider( pSlider : ProgressSlider )
     {
-        ClientData.getInstance().effectVolume = pSlider.progress;
+        ClientApp.getInstance().getConfigMgr().getSettingConfig().effectVolume = pSlider.progress;
         cc.audioEngine.setEffectsVolume(pSlider.progress);
     }
 
     onMusicSlider( pSlider : ProgressSlider )
     {
-        ClientData.getInstance().musicVolume = pSlider.progress;
+        ClientApp.getInstance().getConfigMgr().getSettingConfig().musicVolume = pSlider.progress;
         cc.audioEngine.setMusicVolume(pSlider.progress) ;
     }
 
     onToggleMusicType( toggle : cc.Toggle, selIdx : string )
     {
         let type : eMusicType = parseInt(selIdx) ;
-        ClientData.getInstance().musicTypeIdx = type;
+        ClientApp.getInstance().getConfigMgr().getSettingConfig().musicTypeIdx = type;
         Utility.bgMusic(type) ;
         /// dispatch event ;
         let pEvent = new cc.Event.EventCustom(clientEvent.setting_upate_Music,true) ;
@@ -117,7 +119,7 @@ export default class DlgSetting extends DlgBase {
     onToggleBackgroundType( toggle : cc.Toggle, selIdx : string )
     {
         let type : eDeskBg = parseInt(selIdx) ;
-        ClientData.getInstance().deskBgIdx = type;
+        ClientApp.getInstance().getConfigMgr().getSettingConfig().deskBgIdx = type;
         /// dispatch event ;
         let pEvent = new cc.Event.EventCustom(clientEvent.setting_update_deskBg,true) ;
         pEvent.detail = type ;
@@ -128,7 +130,7 @@ export default class DlgSetting extends DlgBase {
     onToggleMJType( toggle : cc.Toggle, selIdx : string )
     {
         let type : eMJBg = parseInt(selIdx);
-        ClientData.getInstance().mjBgIdx = type;
+        ClientApp.getInstance().getConfigMgr().getSettingConfig().mjBgIdx = type;
 
         /// dispatch event ;
         let pEvent = new cc.Event.EventCustom(clientEvent.setting_update_mjBg,true) ;
@@ -145,11 +147,12 @@ export default class DlgSetting extends DlgBase {
 
     protected refreshSetingDisplay()
     {
-        this.pEffectVoluem.progress = ClientData.getInstance().effectVolume ;
-        this.pMusicVolume.progress = ClientData.getInstance().musicVolume ;
-        this.updateToggleGroupCheck(this.vMusicType,ClientData.getInstance().musicTypeIdx);
-        this.updateToggleGroupCheck(this.vDeskBg,ClientData.getInstance().deskBgIdx);
-        this.updateToggleGroupCheck(this.vMJBg,ClientData.getInstance().mjBgIdx);
+        let setting = ClientApp.getInstance().getConfigMgr().getSettingConfig();
+        this.pEffectVoluem.progress = setting.effectVolume;
+        this.pMusicVolume.progress = setting.musicVolume ;
+        this.updateToggleGroupCheck(this.vMusicType,setting.musicTypeIdx );
+        this.updateToggleGroupCheck(this.vDeskBg,setting.deskBgIdx );
+        this.updateToggleGroupCheck(this.vMJBg, setting.mjBgIdx );
     }
 
     protected updateToggleGroupCheck( v : cc.Toggle[] , idx : number )

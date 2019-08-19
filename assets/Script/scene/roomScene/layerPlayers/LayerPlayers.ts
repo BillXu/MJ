@@ -21,7 +21,7 @@ import MJRoomScene from "../MJRoomScene";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerPlayers extends cc.Component implements ILayer {
+export default class LayerPlayers extends ILayer {
 
     @property( [RoomPlayer] )
     mPlayers : RoomPlayer[] = [] ;
@@ -122,7 +122,7 @@ export default class LayerPlayers extends cc.Component implements ILayer {
     onPlayerStandUp( idx : number ) : void
     {
         let nselfIdx = this.mRoomData.getSelfIdx();
-        if ( idx == nselfIdx )
+        if ( idx == nselfIdx || -1 == nselfIdx )
         {
             this.refresh(this.mRoomData);
             return ;

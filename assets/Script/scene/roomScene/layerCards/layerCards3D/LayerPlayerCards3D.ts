@@ -6,6 +6,7 @@ import MJPlayerData from "../../roomData/MJPlayerData";
 import { IPlayerCards } from "../../roomData/MJPlayerCardData";
 import MJCard from "./cards/MJCard";
 import { eMJActType } from "../../roomDefine";
+import ILayer from "../../ILayer";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -20,7 +21,7 @@ import { eMJActType } from "../../roomDefine";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerPlayerCards3D extends cc.Component implements ILayerPlayerCard {
+export default class LayerPlayerCards3D extends ILayerPlayerCard {
 
     @property(SeatIndicator)
     mIndicator : SeatIndicator = null ;

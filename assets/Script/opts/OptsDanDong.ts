@@ -16,11 +16,17 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class OptsDanDong extends IOpts {
 
+    constructor()
+    {
+        super();
+        this.isCircle = false ;
+        this.gameType = eGameType.eGame_DDMJ ;
+        this.baseScore = 1 ;
+    }
+
     init() : void
     {
-        this.isCircle = false ;
-        this.gameType = eGameType.eGame_FXMJ ;
-        this.baseScore = 1 ;
+
     }
 
     get isOnePlayerDianPao() : boolean

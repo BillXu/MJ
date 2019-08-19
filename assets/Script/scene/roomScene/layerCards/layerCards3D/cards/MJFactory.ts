@@ -18,6 +18,7 @@ export default class MJFactory extends cc.Component {
 
     private mPrefabs : { [ key : number] : cc.Prefab } = {} ;
     private mReserveMJ : { [key : number] : Array<MJCard> } = {} ;
+    static EVENT_FINISH_LOAD_CARD : string = "EVENT_FINISH_LOAD_CARD" ; 
     // LIFE-CYCLE CALLBACKS:
     @property()
     containHua : boolean = false ;
@@ -28,8 +29,24 @@ export default class MJFactory extends cc.Component {
     @property()
     containJian : boolean = false ;
     
+    mWillLoadMJPrefabCnt : number = 3*9 ;
     onLoad ()
     {
+        if ( this.containFeng )
+        {
+            this.mWillLoadMJPrefabCnt += 4;
+        }
+        
+        if ( this.containHua )
+        {
+            this.mWillLoadMJPrefabCnt += 8;
+        }
+
+        if ( this.containJian )
+        {
+            this.mWillLoadMJPrefabCnt += 3;
+        }
+
         this.loadMJPrefabs();
         cc.log( "loadMJPrefabs" );
     }
@@ -84,6 +101,11 @@ export default class MJFactory extends cc.Component {
                     return ;
                 }
                 self.mPrefabs[num] = prefab ;
+                if ( --self.mWillLoadMJPrefabCnt <= 0 )
+                {
+                    let ev = new cc.Event.EventCustom(MJFactory.EVENT_FINISH_LOAD_CARD,false);
+                    cc.systemEvent.dispatchEvent(ev) ;
+                } 
             });
         }
     }

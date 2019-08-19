@@ -137,7 +137,50 @@ export default class PlayerMJCard extends cc.Component {
 
     onRefresh( cardData : IPlayerCards )
     {
+        let self = this ;
+        // hold 
+        this.onDistribute(cardData.vHoldCard) ;
 
+        // chu 
+        cardData.vChuCards.forEach( n=>{
+            let chuMJ = self.mFacotry.getMJ(n,MJCardState.FACE_UP,self.node ) ;
+            chuMJ.node.position = self.getChuCardPos( self.mChuCards.length ) ;
+            self.mChuCards.push(chuMJ);
+        } ) ;
+
+        // hold ming 
+        cardData.vMingCards.forEach( v=>{
+            let m = new MingCardGroup();
+            m.actType = v.eAct ;
+            m.dir = v.eDir ;
+            switch ( m.actType )
+            {
+                case eMJActType.eMJAct_Chi:
+                {
+                    m.cards.push( this.mFacotry.getMJ( v.vEatWithCards[0], MJCardState.FACE_UP,this.mHoldMingNode ) );
+                    m.cards.push( this.mFacotry.getMJ( v.vEatWithCards[1], MJCardState.FACE_UP,this.mHoldMingNode ) );
+                    m.cards.push( this.mFacotry.getMJ( v.nTargetCard, MJCardState.FACE_UP,this.mHoldMingNode ) );
+                    this.mMingCards.push(m);
+                }
+                break;
+                default:
+                {
+                    let ncnt = 3 ;
+                    while ( ncnt-- )
+                    {
+                        m.cards.push( this.mFacotry.getMJ( v.nTargetCard, MJCardState.FACE_UP,this.mHoldMingNode ) );
+                    }
+
+                    if ( eMJActType.eMJAct_Peng != m.actType )
+                    {
+                        m.gangUpCards = this.mFacotry.getMJ( v.nTargetCard, v.eAct == eMJActType.eMJAct_AnGang ? MJCardState.FACE_COVER : MJCardState.FACE_UP,this.mHoldMingNode ) ;
+                    }
+                    this.mMingCards.push(m);
+                }
+            }
+        }) ;
+
+        this.relayoutHoldCards();
     }
 
     onEat( withA : number , withB : number , target : number )
@@ -409,6 +452,11 @@ export default class PlayerMJCard extends cc.Component {
 
     protected relayoutHoldCards()
     {
+        if ( this.mHoldCards.length == 0 )
+        {
+            return ;
+        }
+
         let xMargin = this.mHoldMingMargin ;
         let xAnHoldMargin = 0 ;
         let startX = -0.5 * ( this.mMingCards.length * 3 * ( MJCard.MODEL_X_SIZE + xMargin ) + this.mHoldCards.length * ( this.mHoldCards[0].world_x_Size + xAnHoldMargin ) ); 

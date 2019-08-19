@@ -11,17 +11,17 @@ import ILayer from "../ILayer";
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
  
-export default interface ILayerPlayerCard extends ILayer {
+export default abstract class  ILayerPlayerCard extends ILayer {
 
-    setBottomSvrIdx( svrIdx : number ) : void ;
-    onDistributedCards() : void ;
-    onPlayerActMo( idx : number , card : number ) : void ;
-    onPlayerActChu( idx : number , card : number ) : void ;
-    onPlayerActChi( idx : number , card : number , withA : number , withB : number, invokeIdx : number ) : void ;
-    onPlayerActPeng( idx : number , card : number, invokeIdx : number ) : void ;
-    onPlayerActMingGang( idx : number , card : number, invokeIdx : number, newCard : number ) : void ;
-    onPlayerActAnGang( idx : number , card : number , NewCard : number ) : void ;
-    onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void ;
-    onPlayerActHu( idx : number, card : number , invokeIdx : number ) : void ;
-    onMJActError() : void;
+    abstract setBottomSvrIdx( svrIdx : number ) : void ;
+    abstract onDistributedCards() : void ;
+    abstract onPlayerActMo( idx : number , card : number ) : void ;
+    abstract onPlayerActChu( idx : number , card : number ) : void ;
+    abstract onPlayerActChi( idx : number , card : number , withA : number , withB : number, invokeIdx : number ) : void ;
+    abstract onPlayerActPeng( idx : number , card : number, invokeIdx : number ) : void ;
+    abstract onPlayerActMingGang( idx : number , card : number, invokeIdx : number, newCard : number ) : void ;
+    abstract onPlayerActAnGang( idx : number , card : number , NewCard : number ) : void ;
+    abstract onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void ;
+    abstract onPlayerActHu( idx : number, card : number , invokeIdx : number ) : void ;
+    abstract onMJActError() : void;
 }

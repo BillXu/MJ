@@ -1,6 +1,5 @@
 import IModule from "../../common/IModule";
 import Utility from "../../globalModule/Utility";
-import DlgCreateRoom from "./dlgCreateRoom";
 import DlgJoinRoomOrClub from "./dlgJoinRoomOrClub";
 import LayerBackground from "./LayerBackground";
 import DlgClub from "./club/dlgClub";
@@ -12,6 +11,8 @@ import dlgRecord from "./record/dlgRecord";
 import DlgBase from "../../common/DlgBase";
 import DlgShop from "./shop/dlgShop";
 import DlgShare from "./dlgShare";
+import IOpts from "../../opts/IOpts";
+import DlgCreateRoom from "./dlgCreateRoom/DlgCreateRoom";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -97,6 +98,7 @@ export default class MainScene extends IModule {
             }
             console.log( "set join room id = " + nJoinRoomID );
             self.dlgJoinRoom.closeDlg();
+            ClientApp.getInstance().getClientPlayerData().getBaseData().stayInRoomID = parseInt(nJoinRoomID) ;
             cc.director.loadScene(SceneName.Scene_Room ) ;
             return true ;
         } );
@@ -106,16 +108,19 @@ export default class MainScene extends IModule {
     {
         this.pBackground.hide();
         let self = this ;
-        this.dlgCreateRoom.showDlg( this.onCreateRoomDlgResult.bind(this) ,null,(dlg : DlgCreateRoom)=>{ self.pBackground.show();});
+        this.dlgCreateRoom.showDlg( null ,null,(dlg : DlgCreateRoom)=>{ self.pBackground.show();});
         Utility.audioBtnClick();
     }
 
-    protected onCreateRoomDlgResult( msgCreateRoom : Object )
+    onDlgCreateRoomResult( opts : IOpts )
     {
         let baseData = ClientApp.getInstance().getClientPlayerData().getBaseData();
+        let msgCreateRoom = opts.jsOpts ;
         msgCreateRoom["uid"] = baseData.uid;
+        //msgCreateRoom["gameType"] = opts.gameType ;
+        //msgCreateRoom["opts"] = opts.toString() ;
         console.log( "onCreateRoomDlgResult" );
-        let port = Utility.getMsgPortByGameType(msgCreateRoom["gameType"]);
+        let port = Utility.getMsgPortByGameType(opts.gameType);
         let self = this ;
         this.sendMsg(msgCreateRoom,eMsgType.MSG_CREATE_ROOM,port,msgCreateRoom["uid"],( msg : Object)=>{
             let ret = msg["ret"] ;

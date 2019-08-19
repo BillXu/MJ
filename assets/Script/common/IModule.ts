@@ -17,12 +17,17 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class IModule extends cc.Component {
 
+    onLoad()
+    {
+        this.init();
+    }
+
     onDestroy()
     {
         this.unregisterEventListener();
     }
 
-    init()
+    protected init()
     {
         this.registerEventListener();
     }

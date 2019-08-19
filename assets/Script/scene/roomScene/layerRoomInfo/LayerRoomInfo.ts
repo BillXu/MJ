@@ -15,7 +15,7 @@ import ClientApp from "../../../globalModule/ClientApp";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerRoomInfo extends cc.Component implements ILayer {
+export default class LayerRoomInfo extends ILayer {
 
     @property(cc.Label)
     roomID: cc.Label = null;

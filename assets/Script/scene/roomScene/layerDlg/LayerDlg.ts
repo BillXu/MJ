@@ -30,7 +30,7 @@ import DlgShowMore from "./DlgShowMore";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerDlg extends cc.Component implements ILayer {
+export default class LayerDlg extends ILayer {
 
     @property(DlgActOpts)
     mDlgActOpts: DlgActOpts = null;

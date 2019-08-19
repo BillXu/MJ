@@ -11,6 +11,11 @@ import LayerRoomInfo from "./layerRoomInfo/LayerRoomInfo";
 import LayerDlg from "./layerDlg/LayerDlg";
 import LayerPlayers from "./layerPlayers/LayerPlayers";
 import ILayerPlayerCard from "./layerCards/ILayerPlayerCard";
+import MJFactory from "./layerCards/layerCards3D/cards/MJFactory";
+import ClientApp from "../../globalModule/ClientApp";
+import LayerPlayerCards3D from "./layerCards/layerCards3D/LayerPlayerCards3D";
+import { SceneName } from "../../common/clientDefine";
+import Prompt from "../../globalModule/Prompt";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -27,50 +32,54 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class MJRoomScene extends cc.Component implements IRoomDataDelegate {
 
+    @property(MJRoomData)
     mRoomData : MJRoomData = null ;
 
-    mLayerInfo : ILayer = null ;
-    mLayerDlg : ILayer = null ;
-    mLayerPlayers : ILayer = null ;
+    @property(cc.Node)
+    mLayerInfo : cc.Node = null ;
 
-    mLayerPlayerCard3d : ILayerPlayerCard = null ;
+    @property(cc.Node)
+    mLayerDlg : cc.Node = null ;
+
+    @property(cc.Node)
+    mLayerPlayers : cc.Node = null ;
+
+    @property(cc.Node)
+    mLayerPlayerCard3d : cc.Node = null ;
     mLayerPlayerCard2d : ILayerPlayerCard = null ;
     // LIFE-CYCLE CALLBACKS:
 
     get layerRoomInfo() : LayerRoomInfo
     {
-        return <LayerRoomInfo>this.mLayerInfo ;
+        return this.mLayerInfo.getComponent(LayerRoomInfo) ;
     }
 
     get layerDlg() : LayerDlg
     {
-        return <LayerDlg>this.mLayerDlg ;
+        return this.mLayerDlg.getComponent(LayerDlg) ;
     }
 
     get layerPlayers() : LayerPlayers
     {
-        return <LayerPlayers>this.mLayerPlayers ;
+        return this.mLayerPlayers.getComponent(LayerPlayers) ;
     }
 
     get layerPlayerCards() : ILayerPlayerCard
     {
-        return this.mLayerPlayerCard3d ;
+        return this.mLayerPlayerCard3d.getComponent(LayerPlayerCards3D) ;
     }
      
     onLoad () 
     {
-        // create roomData here 
-        this.mRoomData.init();
         // request info ;
+        let self = this ;
+        let roomID = ClientApp.getInstance().getClientPlayerData().getBaseData().stayInRoomID;
+        cc.systemEvent.once( MJFactory.EVENT_FINISH_LOAD_CARD,()=>{ self.mRoomData.reqRoomInfo( roomID ) ;} ) ;
     }
 
     start () {
+        this.mRoomData.mSceneDelegate = this ;
         this.layerPlayers.mScene = this ;
-    }
-
-    onDestroy()
-    {
-        this.mRoomData.onDestroy();
     }
 
     onRecivedRoomInfo( info : MJRoomBaseData ) : void 
@@ -89,9 +98,9 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
 
     onRecivedAllPlayers( vPlayers : MJPlayerData[] ) : void
     {
-        this.mLayerInfo.refresh( this.mRoomData );
-        this.mLayerDlg.refresh( this.mRoomData );
-        this.mLayerPlayers.refresh( this.mRoomData );
+        this.layerRoomInfo.refresh( this.mRoomData );
+        this.layerDlg.refresh( this.mRoomData );
+        this.layerPlayers.refresh( this.mRoomData );
         this.layerPlayerCards.refresh( this.mRoomData );
     }
 
@@ -193,9 +202,9 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
 
     onGameStart() : void 
     {
-        this.mLayerInfo.onGameStart();
-        this.mLayerDlg.onGameStart();
-        this.mLayerPlayers.onGameStart();
+        this.layerRoomInfo.onGameStart();
+        this.layerDlg.onGameStart();
+        this.layerPlayers.onGameStart();
         this.layerPlayerCards.onGameStart();
     }
 
@@ -221,7 +230,15 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
 
     onRoomDoClosed( isDismissed : boolean ) : void 
     {
+        if ( isDismissed )
+        {
+            Prompt.promptText("房间已经解散");
+        }
 
+        if ( this.mRoomData.mBaseData.isRoomOpened == false )
+        {
+            cc.director.loadScene( SceneName.Scene_Main );
+        }
     }
 
     onRecivedPlayerBrifeData( infoData : PlayerInfoData  ) : void 

@@ -175,7 +175,7 @@ export default class LoginScene extends IModule {
             });
     }
 
-    onClickVisitorBtn( event : cc.Event.EventTouch, btn : cc.Button , customEventData : string )
+    onClickVisitorBtn( event : cc.Event.EventTouch, customEventData : string )
     {
         let nIdx : number = parseInt(customEventData) ;
         // if ( CC_JSB && 3 == nIdx )

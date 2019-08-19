@@ -27,17 +27,17 @@ export default class MJPlayerData
         }
 
         this.mPlayerBaseData.parseFromMsg( jsPlayer );
-        if ( jsPlayer["holdCnt"] == null && jsPlayer["holdCards"] == null )
-        {
-            // no card info ;
-            return ;
-        }
 
         if ( this.mPlayerCard == null )
         {
             this.mPlayerCard = new IPlayerCards();
         }
         
+        if ( jsPlayer["holdCnt"] == null && jsPlayer["holdCards"] == null )
+        {
+            // no card info ;
+            return ;
+        }
         this.mPlayerCard.parseFromMsg( jsPlayer,this.mPlayerBaseData.svrIdx );
     }
 
@@ -49,7 +49,7 @@ export default class MJPlayerData
 
     isEmpty() : boolean 
     {
-        return this.mPlayerBaseData.uid == -1 ;
+        return null == this.mPlayerBaseData || this.mPlayerBaseData.uid == -1 ;
     }
 
     onEndGame() : void

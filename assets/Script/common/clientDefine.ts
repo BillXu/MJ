@@ -23,7 +23,7 @@ let SceneName =
     Scene_Load : "loading",
     Scene_login : "login",
     Scene_Main : "main",
-    Scene_Room : "room",
+    Scene_Room : "room3D",
     Scene_Replay : "replay",
 }
 
@@ -74,6 +74,11 @@ export enum eGameType
 	eGame_CFMJ,
 	eGame_AHMJ,
 	eGame_NCMJ,
+	eGame_DDMJ,
+	eGame_SZMJ,
+	eGame_SDMJ,
+	eGame_YZMJ,
+	eGame_NJMJ,
 	eGame_Max,
 };
 
