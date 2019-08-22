@@ -64,6 +64,11 @@ export default class DlgResultSingle extends cc.Component {
         this.node.active = true ;
     }
 
+    isDlgShowing()
+    {
+        return this.node.active ;
+    }
+
     closeDlg()
     {
         this.node.active = false ;

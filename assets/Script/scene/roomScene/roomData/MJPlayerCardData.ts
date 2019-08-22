@@ -1,4 +1,4 @@
-import { eMJActType, eArrowDirect, eEatType } from "../roomDefine";
+import { eMJActType, eArrowDirect, eEatType, eMJCardType } from "../roomDefine";
 import * as _ from "lodash"
 import MJCard from "../layerCards/layerCards3D/cards/MJCard";
 //import MJCard from "../layerCards3D/cards/MJCard";
@@ -26,12 +26,11 @@ export class PlayerActedCard
 export class IPlayerCards
 {
     vHoldCard : number[] = [];
-    nHoldCardCnt : number = 0 ; 
+    //nHoldCardCnt : number = 0 ; 
     
     vMingCards : PlayerActedCard[] = [];
     vChuCards : number[] = [];
 
-    nNewFeatchedCard : number = 0 ;
     nHuCard : number = 0 ;
     nPlayerIdx = -1 ;
 
@@ -40,9 +39,10 @@ export class IPlayerCards
     parseFromMsg( info : Object , playerIdx : number )
     {
         this.nPlayerIdx = playerIdx ;
+        let holdCnt = 0 ;
         if ( info["holdCnt"] != null )
         {
-            this.nHoldCardCnt = info["holdCnt"] ;
+            holdCnt = info["holdCnt"] ;
         }
 
         if ( info["holdCards"] != null )
@@ -50,14 +50,16 @@ export class IPlayerCards
             this.vHoldCard = this.vHoldCard.concat(info["holdCards"]);
             if ( this.vHoldCard.length > 0 )
             {
-                this.nHoldCardCnt = this.vHoldCard.length ;
+                holdCnt = this.vHoldCard.length ;
             }
         }
 
-        if ( this.nHoldCardCnt % 3 == 2 )
+        if ( holdCnt != this.vHoldCard.length )
         {
-            this.nNewFeatchedCard = this.vHoldCard.length > 0 ? this.vHoldCard.pop() : 1 ;
-            --this.nHoldCardCnt ;
+            while ( holdCnt-- )
+            {
+                this.vHoldCard.push( MJCard.makeCardNum(eMJCardType.eCT_Tong,1)) ;
+            }
         }
 
         if ( info["chued"] != null )
@@ -104,46 +106,26 @@ export class IPlayerCards
     clear()
     {
         this.vHoldCard.length = 0 ;
-        this.nHoldCardCnt = 0 ;
+        //this.nHoldCardCnt = 0 ;
         this.vMingCards.length = 0 ;
         this.vChuCards.length = 0 ;
         this.nHuCard = 0 ;
-        this.nNewFeatchedCard = 0 ;
     }
 
     onMo( nNewCard : number )
     {
         if ( !this.isSelf() )
         {
-            ++this.nHoldCardCnt ;
-            return ;
+            nNewCard = this.vHoldCard.push( MJCard.makeCardNum(eMJCardType.eCT_Tong,1)) ;
         }
 
-        if ( this.nNewFeatchedCard )
-        {
-            this.vHoldCard.push(this.nNewFeatchedCard);
-            this.nNewFeatchedCard = 0 ;
-        }
-        
-        this.nNewFeatchedCard = nNewCard ;
+        this.vHoldCard.push(nNewCard);
     }
 
     onChu( nChu : number )
     {
         this.removeHold(nChu) ;
         this.vChuCards.push(nChu);
-        if ( this.nNewFeatchedCard )
-        {
-            if ( this.isSelf() )
-            {
-                this.vHoldCard.push(this.nNewFeatchedCard);
-                this.nNewFeatchedCard = 0 ;
-            }
-            else
-            {
-                ++this.nHoldCardCnt ;
-            }
-        }
     }
 
     onEat( targetCard : number , withA : number , withB : number , invokerIdx : number  )
@@ -167,11 +149,6 @@ export class IPlayerCards
 
     isHaveCard( card : number )
     {
-        if ( card == this.nNewFeatchedCard )
-        {
-            return true ;
-        }
-
         let v = _.findIndex(this.vHoldCard,( c : number )=>{ return card == c ;} ) ;
         return -1 != v ;
     }
@@ -183,24 +160,14 @@ export class IPlayerCards
             cnt = 1 ;
         }
 
-        if ( this.vHoldCard.length == 0 ) // other player 
-        {
-            this.nHoldCardCnt -= cnt ;
-            return  true ;
-        }
-
-        if ( cnt > 0 )
-        {
-            if ( card == this.nNewFeatchedCard )
-            {
-                this.nNewFeatchedCard = 0 ;
-                --cnt;
-            }
-
-        }
-
         while ( cnt-- > 0 )
         {
+            if ( this.isSelf() == false )
+            {
+                this.vHoldCard.pop();
+                continue ;
+            }
+
             let v = _.findIndex(this.vHoldCard,( c : number )=>{ return card == c ;} ) ;
             if ( -1 == v )
             {
@@ -359,8 +326,17 @@ export class IPlayerCards
         if ( cards != null )
         {
             this.vHoldCard.length = 0 ;
-            _.unionBy(this.vHoldCard,cards) ;
+            this.vHoldCard = this.vHoldCard.concat(cards);
         }
-        this.nHoldCardCnt = cnt ;
+
+        console.log( " hold card cnt = " + this.vHoldCard.length + " cnt = " + cnt )
+        if ( this.vHoldCard.length != cnt )
+        {
+            while ( cnt-- )
+            {
+                this.vHoldCard.push( MJCard.makeCardNum(eMJCardType.eCT_Tong,2) ) ;
+            }
+        }
+        //this.nHoldCardCnt = cnt ;
     }
 }

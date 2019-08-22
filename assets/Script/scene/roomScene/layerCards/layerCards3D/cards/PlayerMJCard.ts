@@ -104,7 +104,8 @@ export default class PlayerMJCard extends cc.Component {
     // onLoad () {}
 
     start () {
-
+        this.mHoldAnNode.active = this.mChuNodeStart.active = false ;
+        this.mHoldMingNode.removeAllChildren();
     }
 
     clear()
@@ -137,6 +138,7 @@ export default class PlayerMJCard extends cc.Component {
 
     onRefresh( cardData : IPlayerCards )
     {
+        this.clear();
         let self = this ;
         // hold 
         this.onDistribute(cardData.vHoldCard) ;
@@ -181,6 +183,19 @@ export default class PlayerMJCard extends cc.Component {
         }) ;
 
         this.relayoutHoldCards();
+    }
+
+    showHoldAfterHu( card : number[] )
+    {
+        for ( const iterator of this.mHoldCards )
+        {
+            this.mFacotry.recycleMJ(iterator);
+        }
+        this.mHoldCards.length = 0 ;
+        let r = this.mIsReplayState;
+        this.mIsReplayState = true ;
+        this.onDistribute(card) ;
+        this.mIsReplayState = r ;
     }
 
     onEat( withA : number , withB : number , target : number )
@@ -271,6 +286,7 @@ export default class PlayerMJCard extends cc.Component {
         }
 
         this.removeHold(num);
+        this.relayoutHoldCards();
         this.onMo(newCard,cardWallPos);
     }
 
@@ -503,7 +519,7 @@ export default class PlayerMJCard extends cc.Component {
         {
              hmj.node.position = new cc.Vec3( startX, this.holdCardPosY,this.holdCardPosZ );
              startX += ( xAnHoldMargin + hmj.world_x_Size );
-             cc.log( "hold pos = " + hmj.node.position );
+             //cc.log( "hold pos = " + hmj.node.position );
         }
     }
 
@@ -563,7 +579,7 @@ export default class PlayerMJCard extends cc.Component {
 
     protected getChuCardPos( idx : number ) : cc.Vec3
     {
-        let nCntPerRow = 6 ;
+        let nCntPerRow = 7 ;
         let xMargin = 1;
         let zMargin = 2 ;
 

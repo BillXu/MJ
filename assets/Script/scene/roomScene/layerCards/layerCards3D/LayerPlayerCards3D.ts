@@ -7,6 +7,7 @@ import { IPlayerCards } from "../../roomData/MJPlayerCardData";
 import MJCard from "./cards/MJCard";
 import { eMJActType } from "../../roomDefine";
 import ILayer from "../../ILayer";
+import EffectLayer from "../effectLayer";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -32,6 +33,9 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
     @property([PlayerMJCard])
     mPlayerCards : PlayerMJCard[] = [] ; // clientIdx ; 
 
+    @property(EffectLayer)
+    mEffectLayer : EffectLayer = null ;
+
     mBottomSvrIdx : number = 0 ;  // clientIdx pos 0 , corrspone svr idx ; 
     // LIFE-CYCLE CALLBACKS:
     mRoomData : MJRoomData = null ;
@@ -54,6 +58,12 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
         return this.mPlayerCards[nClientIdx] ;
     }
 
+    protected playActEffect( svrIdx : number , act : eMJActType )
+    {
+        let nClientIdx = ( ( svrIdx - this.mBottomSvrIdx ) + this.mPlayerCards.length ) % this.mPlayerCards.length ;
+        this.mEffectLayer.playPlayerEffect( nClientIdx,act );
+    }
+
     start () {
 
     }
@@ -63,7 +73,7 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
         this.mRoomData = data ;
         let selfIdx = data.getSelfIdx();
         this.setBottomSvrIdx( selfIdx == -1 ? 0 : selfIdx );
-        this.mIndicator.setCurActIdx(data.mBaseData.curActSvrIdx ) ;
+        this.mIndicator.setCurActIdx( data.mBaseData.isInGamingState() ? data.mBaseData.curActSvrIdx : -1 ) ;
         this.hideArrow();
 
         let self = this;
@@ -81,6 +91,7 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
     {
         this.mPlayerCards.forEach( a => a.clear() ) ;
         this.mIndicator.setCurActIdx(this.mRoomData.mBaseData.bankerIdx) ;
+        this.hideArrow();
     }
 
     onDistributedCards() : void 
@@ -99,6 +110,7 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
     onPlayerActMo( idx : number , card : number ) : void 
     {
         this.getPlayerCardBySvrIdx(idx).onMo(card,null) ;
+        this.mIndicator.setCurActIdx(idx);
     }
 
     onPlayerActChu( idx : number , card : number ) : void 
@@ -113,31 +125,55 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
     onPlayerActChi( idx : number , card : number , withA : number , withB : number, invokeIdx : number ) : void 
     {
         this.getPlayerCardBySvrIdx(idx).onEat(withA,withB,card) ;
+        this.mIndicator.setCurActIdx(idx);
+        this.playActEffect( idx, eMJActType.eMJAct_Chi );
     }
 
     onPlayerActPeng( idx : number , card : number, invokeIdx : number ) : void 
     {
         this.getPlayerCardBySvrIdx(idx).onPeng(card,IPlayerCards.getDirection(idx,invokeIdx) ) ;
+        this.mIndicator.setCurActIdx(idx);
+        this.playActEffect( idx, eMJActType.eMJAct_Peng );
     }
 
     onPlayerActMingGang( idx : number , card : number, invokeIdx : number, newCard : number ) : void 
     {
         this.getPlayerCardBySvrIdx(idx).onMingGang(card,IPlayerCards.getDirection(idx,invokeIdx),newCard,null ) ;
+        this.mIndicator.setCurActIdx(idx);
+        this.playActEffect( idx, eMJActType.eMJAct_MingGang );
     }
 
     onPlayerActAnGang( idx : number , card : number , NewCard : number ) : void 
     {
         this.getPlayerCardBySvrIdx(idx).onAnGang(card,NewCard,null) ;
+        this.mIndicator.setCurActIdx(idx);
+        this.playActEffect( idx, eMJActType.eMJAct_AnGang );
     }
 
     onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void 
     {
         this.getPlayerCardBySvrIdx(idx).onBuGang(card,NewCard,null) ;
+        this.mIndicator.setCurActIdx(idx);
+        this.playActEffect( idx, eMJActType.eMJAct_BuGang );
     }
 
     onPlayerActHu( idx : number, card : number , invokeIdx : number ) : void 
     {
         this.getPlayerCardBySvrIdx(idx).onHu(card,idx == invokeIdx ) ;
+        this.playActEffect( idx, eMJActType.eMJAct_Hu );
+    }
+
+    showHoldCardAfterGameEnd()
+    {
+        let self = this;
+        this.mRoomData.mPlayers.forEach( ( player : MJPlayerData )=>{ 
+            if ( player == null || player.isEmpty() )
+            {
+                return ;
+            }
+            let p = self.getPlayerCardBySvrIdx( player.mPlayerBaseData.svrIdx ) ;
+            p.showHoldAfterHu( player.mPlayerCard.vHoldCard );
+        } ) ;
     }
 
     onMJActError() : void

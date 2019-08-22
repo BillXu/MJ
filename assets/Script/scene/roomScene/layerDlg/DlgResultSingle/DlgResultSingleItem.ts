@@ -46,14 +46,16 @@ export default class DlgResultSingleItem extends cc.Component {
 
     set gangScore( nScore : number )
     {
-        this.gangFen.string = "杠分：" + (nScore > 0 ? "+" : "" ) + nScore ;
+        this.gangFen.string = (nScore > 0 ? "+" : "" ) + nScore ;
         this.gangFen.node.color = cc.Color.WHITE.fromHEX( nScore >= 0 ? "#FFCD1A":"#43CEFF" );
+        this.gangFen.node.parent.color = this.gangFen.node.color.clone();
     }
 
     set huScore( nScore : number )
     {
-        this.huFen.string = "胡分：" + (nScore > 0 ? "+" : "" ) + nScore ;
+        this.huFen.string = (nScore > 0 ? "+" : "" ) + nScore ;
         this.huFen.node.color = cc.Color.WHITE.fromHEX( nScore >= 0 ? "#FFCD1A":"#43CEFF" );
+        this.huFen.node.parent.color = this.huFen.node.color.clone();
     }
 
     set huTypes( huStr : string )
@@ -72,6 +74,7 @@ export default class DlgResultSingleItem extends cc.Component {
         this.mFinalLose.node.active = this.mFinalWin.node.active = false ;
         let p = value > 0 ? this.mFinalWin : this.mFinalLose ;
         p.string = value > 0 ? ( "+" + value ) : ( value + "" ); 
+        p.node.active = true ;
     }
 
     setInfo( data : ResultItem )
@@ -79,18 +82,19 @@ export default class DlgResultSingleItem extends cc.Component {
         this.gangScore = data.mGangScore ;
         this.huScore = data.mHuScore ;
         this.sumFinal = data.mFinalChip ;
-        if ( data.mHuScore >= 0 )
-        {
-            this.huTypes = null;
-            return ;
-        }
-        this.huTypes = data.getHuTypeStr();
 
         this.mSumNode.active = true ;
         this.mDetailNode.active = false ;
 
         this.unscheduleAllCallbacks();
         this.scheduleOnce( this.onShowDetail ,2 ) ;
+
+        if ( data.mHuScore <= 0 )
+        {
+            this.huTypes = null;
+            return ;
+        }
+        this.huTypes = data.getHuTypeStr();
     }
 
     onShowDetail()

@@ -100,17 +100,23 @@ export default class LayerDlg extends ILayer {
 
         this.mDlgLocation.closeDlg();
 
-        this.mBtnCopyRoomNum.active = this.mBtnInvite.active = data.mBaseData.isRoomOpened == false ;
+        this.mBtnCopyRoomNum.active = this.mBtnInvite.active = ( data.mBaseData.isRoomOpened == false && data.mBaseData.isInGamingState() == false );
     }
 
     onGameStart()
     {
         this.mBtnCopyRoomNum.active = this.mBtnInvite.active = false ;
+        this.mDlgResultSingle.closeDlg();
     }
 
     // dlg act opts 
     showDlgActOpts( actOpts : eMJActType[] )
     {
+        if ( actOpts.length == 1 && ( actOpts[0] == eMJActType.eMJAct_Pass || actOpts[0] == eMJActType.eMJAct_Chu )  )
+        {
+            return ;
+        }
+
         this.mDlgActOpts.showDlg(actOpts);
     }
 
@@ -178,8 +184,13 @@ export default class LayerDlg extends ILayer {
     // dlg total result
     showDlgResultTotal( result : ResultTotalData, data : MJRoomData )
     {
-        this.mDlgResultTotal.refreshDlg(data,result) ;
         this.mDlgResultSingle.setBtn(true);
+        this.mDlgResultTotal.refreshDlg(data,result) ;
+        if ( this.mDlgResultSingle.isDlgShowing() )
+        {
+            return ;
+        }
+        this.mDlgResultTotal.showDlg();
     }
 
     // dlg result single 

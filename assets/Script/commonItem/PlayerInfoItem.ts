@@ -49,6 +49,7 @@ export default class PlayerInfoItem extends cc.Component {
     onLoad () 
     {
         cc.systemEvent.on(PlayerInfoDataCacher.EVENT_RECIEVED_PLAYER_INFO_DATA,this.onPlayerDataInfoEvent,this);
+        this.pDefaultPhoto = this.pPhotoSprite.spriteFrame.clone();
     }
 
     start () {
@@ -112,7 +113,10 @@ export default class PlayerInfoItem extends cc.Component {
 
     clear()
     {
-        cc.error( "not implete" );
+        //cc.error( "not implete" );
+        this.pName.string = "" ;
+        this.setHeadUrl("") ;
+        this.pID.string = "" ;
     }
 
     protected setHeadUrl( strUrl : string )

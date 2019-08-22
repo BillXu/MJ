@@ -89,7 +89,7 @@ export default class LayerPlayers extends ILayer {
         this.mRoomData = data ;
         let nselfIdx = data.getSelfIdx();
         let isSelfSitDown = nselfIdx != -1 ;
-        for ( let svrIdx = 0 ; svrIdx < data.mOpts.seatCnt ; ++svrIdx )
+        for ( let svrIdx = 0 ; svrIdx < this.mPlayers.length ; ++svrIdx )
         {
             let clientIdx = data.svrIdxToClientIdx(svrIdx);
             if ( clientIdx >= this.mPlayers.length )
@@ -99,7 +99,7 @@ export default class LayerPlayers extends ILayer {
             }
             
             this.mPlayers[clientIdx].mSvrIdx = svrIdx;
-            if ( data.mPlayers[svrIdx].isEmpty() )
+            if ( data.mPlayers[svrIdx] == null || data.mPlayers[svrIdx].isEmpty() )
             {
                 this.mPlayers[clientIdx].state = isSelfSitDown == false ? eRoomPlayerState.RPS_WaitSitDown : eRoomPlayerState.RPS_Empty ;
             }
@@ -110,11 +110,38 @@ export default class LayerPlayers extends ILayer {
                 this.mPlayers[clientIdx].isReady = data.mBaseData.isInGamingState() && data.mPlayers[svrIdx].mPlayerBaseData.isReady ;
             }
         }
+
+        if ( this.mRoomData.mBaseData.isInGamingState() )
+        {
+            this.setBankerIdx( data.mBaseData.bankerIdx ) ;
+        }
+
+        this.refreshPlayerChips();
+    }
+
+    refreshPlayerChips()
+    {
+        for ( let svrIdx = 0 ; svrIdx < this.mPlayers.length ; ++svrIdx )
+        {
+            let clientIdx = this.mRoomData.svrIdxToClientIdx(svrIdx);
+            if ( clientIdx >= this.mPlayers.length || this.mRoomData.mPlayers[svrIdx] == null || this.mRoomData.mPlayers[svrIdx].isEmpty() )
+            {
+                cc.error( "invlid svridx and client idx " + svrIdx + " c = " + clientIdx );
+                continue ;
+            }
+            
+            this.mPlayers[clientIdx].mSvrIdx = this.mRoomData.mPlayers[svrIdx].mPlayerBaseData.chip;
+ 
+        }
     }
 
     setBankerIdx( svrIdx : number )
     {
         let clientIdx = this.mRoomData.svrIdxToClientIdx(svrIdx);
+        if ( clientIdx >= this.mPlayers.length )
+        {
+            return ;
+        }
         let targetPos = this.mBankIcon.parent.convertToNodeSpaceAR( this.mPlayers[clientIdx].bankIconWorldPos ) ; 
         cc.tween(this.mBankIcon).to(0.3, { position: targetPos }, { easing: 'sineOut'}).start() ;
     }
@@ -223,6 +250,7 @@ export default class LayerPlayers extends ILayer {
         {
             p.isReady = false ;
         }
+        this.setBankerIdx( this.mRoomData.mBaseData.bankerIdx );
     }
 
     onClickPlayer( isSitDown : boolean , arg : number )

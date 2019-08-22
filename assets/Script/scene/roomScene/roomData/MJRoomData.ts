@@ -109,27 +109,30 @@ export default abstract class MJRoomData extends IModule {
             break ;
             case eMsgType.MSG_ROOM_PLAYER_EXCHANGE_SEAT:
             {
-                let tmpPlayers : MJPlayerData[] = [] ;
-                for (const p of this.mPlayers ) {
-                    tmpPlayers.push(p);
-                }
-                this.mPlayers.length = 0 ;
-                var vPlayers : Object[] = msg["detail"];
-                for ( var item of vPlayers )
+                let vPlayers : Object[] = msg["detail"];
+                for ( let item of vPlayers )
                 {
                     let idx : number = item["idx"];
                     let uid : number = item["uid"];
-                    var tmp = _.find(tmpPlayers,( p : MJPlayerData)=>{ return p.mPlayerBaseData.uid == uid ;} ) ;
+                    let tmp = _.find(this.mPlayers,( p : MJPlayerData)=>{ return p.mPlayerBaseData.uid == uid ;} ) ;
                     if ( tmp == null )
                     {
                         cc.error("why client do not have player uid = " + uid );
                         continue ;
                     }
+
+                    if (  idx == tmp.mPlayerBaseData.svrIdx )
+                    {
+                        continue;
+                    }
+                    
+                    let orgiIdx = tmp.mPlayerBaseData.svrIdx ;
+                    this.mPlayers[orgiIdx] = this.mPlayers[idx];
+                    this.mPlayers[orgiIdx].mPlayerBaseData.svrIdx = orgiIdx ;
+      
                     this.mPlayers[idx] = tmp;
                     tmp.mPlayerBaseData.svrIdx = idx ;
                 }
-                tmpPlayers.length = 0 ;
-                tmpPlayers = null ;
                 this.mSceneDelegate.onExchangedSeat();
             }
             break;
@@ -212,7 +215,10 @@ export default abstract class MJRoomData extends IModule {
             case eMsgType.MSG_ROOM_MQMJ_WAIT_ACT_AFTER_CP:
             case eMsgType.MSG_PLAYER_WAIT_ACT_AFTER_RECEIVED_CARD:
             {
-                this.mSceneDelegate.showActOptsWhenRecivedCards(msg["acts"]) ;
+                let vAct : eMJActType[] = [] ;
+                let v : Object[] = msg["acts"] ;
+                v.forEach( n => vAct.push( n["act"] ) );
+                this.mSceneDelegate.showActOptsWhenRecivedCards( vAct ) ;
             }
             break;
             case eMsgType.MSG_ROOM_MQMJ_PLAYER_HU:
@@ -249,6 +255,17 @@ export default abstract class MJRoomData extends IModule {
             case eMsgType.MSG_ROOM_SCMJ_GAME_END:
             {
                 this.mSinglResultData.parseResult(msg);
+                for ( const item of this.mPlayers )
+                {
+                    let pr = this.mSinglResultData.mResults[item.mPlayerBaseData.svrIdx];
+                    if ( null != item && item.isEmpty() == false && pr.isEmpty() == false )
+                    {
+                        item.mPlayerBaseData.chip = pr.mFinalChip ;
+                        item.mPlayerCard.vHoldCard.length = 0 ;
+                        item.mPlayerCard.vHoldCard = item.mPlayerCard.vHoldCard.concat(pr.mAnHoldCards );
+                    }
+                }
+
                 this.mSceneDelegate.onGameEnd(this.mSinglResultData) ;
                 this.endGame();
             }
@@ -505,6 +522,7 @@ export default abstract class MJRoomData extends IModule {
             if ( item.mPlayerBaseData.isSelf )
             {
                 let cards : number[] = jsMsg["cards"] ;
+                console.log( "do self card = " + cards + "lenght = " + cards.length  );
                 item.mPlayerCard.onRecivedHoldCard(cards,cards.length) ;
             }
             else
@@ -580,7 +598,7 @@ export default abstract class MJRoomData extends IModule {
     protected doChoseActAboutRecievedCard( act : eMJActType,chuCard : number = null ) : boolean
     {
         let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
-        let card = playerCard.nNewFeatchedCard;
+        let card = 0;
         switch ( act )
         {
             case eMJActType.eMJAct_BuGang:
@@ -626,7 +644,7 @@ export default abstract class MJRoomData extends IModule {
         let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
         if ( act == eMJActType.eMJAct_Chu || playerCard.vHoldCard.length % 3 == 2 )
         {
-            return this.doChoseActAboutRecievedCard(act);
+            return this.doChoseActAboutRecievedCard(act,chuCard);
         }
         else
         {

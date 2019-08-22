@@ -15,16 +15,6 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class ClientPlayerBaseData extends PlayerInfoData {
 
-    set headUrl ( h : string )
-    {
-        this.playerBrifeDataMsg["headIcon"] = h ;
-    }
-
-    set gender( g : number )
-    {
-        this.playerBrifeDataMsg["sex"] = g ;
-    }
-
     get diamond() : number 
     {
         return this.playerBrifeDataMsg["diamond"] ;

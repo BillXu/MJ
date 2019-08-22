@@ -24,4 +24,5 @@ export default abstract class  ILayerPlayerCard extends ILayer {
     abstract onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void ;
     abstract onPlayerActHu( idx : number, card : number , invokeIdx : number ) : void ;
     abstract onMJActError() : void;
+    abstract showHoldCardAfterGameEnd() : void ;
 }

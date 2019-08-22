@@ -43,7 +43,14 @@ export default class DlgActOpts extends cc.Component {
     {
         this.mOptNodeEat.active = _.find(actOpts,( t : eMJActType )=>{ return t == eMJActType.eMJAct_Chi ;}) != null ;
         this.mOptNodePeng.active = _.find(actOpts,( t : eMJActType )=>{ return t == eMJActType.eMJAct_Peng ;}) != null ;
-        this.mOptNodeGang.active = _.find(actOpts,( t : eMJActType )=>{ return t == eMJActType.eMJAct_AnGang || eMJActType.eMJAct_BuGang == t || t == eMJActType.eMJAct_MingGang ;}) != null ;
+        this.mOptNodeGang.active = _.find(actOpts,( t : eMJActType )=>{ 
+            console.log( "gang check node = " + t.toString() ); 
+            let isGang = t == eMJActType.eMJAct_AnGang || eMJActType.eMJAct_BuGang == t || t == eMJActType.eMJAct_MingGang;
+            if ( isGang )
+            {
+                this.mOptNodeGang.name = t + "" ;
+            }
+            return isGang ; }) != null ;
         this.mOptNodeHu.active = _.find(actOpts,( t : eMJActType )=>{ return t == eMJActType.eMJAct_Hu ;}) != null ;
         this.node.active = true ;
     }
@@ -51,6 +58,10 @@ export default class DlgActOpts extends cc.Component {
     onClickButton( event : cc.Event.EventTouch , type : string )
     {
         let actType : eMJActType = parseInt(type);
+        if ( actType == eMJActType.eMJAct_AnGang )
+        {
+            actType = parseInt( this.mOptNodeGang.name );
+        }
         cc.Component.EventHandler.emitEvents(this.mOnDglResult,actType ) ;
         this.node.active = false ;
     }

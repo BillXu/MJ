@@ -96,12 +96,13 @@ export default class DlgDismiss extends DlgBase {
 
         // set operater button ;
         let selfIdx = data.getSelfIdx();
-        this.mResponeButton.active = selfIdx != applyIdx && ( _.find(data.mBaseData.agreeDismissIdx,( idx : number )=>{ return selfIdx ;}) == null );
+        this.mResponeButton.active = selfIdx != applyIdx && ( _.find(data.mBaseData.agreeDismissIdx,( idx : number )=>{ return selfIdx == idx ;}) == null );
         
         // timer ;
         this.unscheduleAllCallbacks();
         this.mLeftTime = data.mBaseData.dimissRoomLeftTime ;
         this.schedule( this.onTimerCountDown,1,this.mLeftTime,0);
+        this.onTimerCountDown();
     }
 
     protected onTimerCountDown()
@@ -112,6 +113,7 @@ export default class DlgDismiss extends DlgBase {
             return ;
         }
         this.mTimer.string = "" + this.mLeftTime ;
+        --this.mLeftTime;
     }
 
     onPlayerRespone( svrIdx : number , isAgree : boolean )

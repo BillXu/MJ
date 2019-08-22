@@ -28,7 +28,7 @@ import DlgDismiss from "./dlgDismissRoom"
 import DlgDuiPu from "./dlgDuiPu"
 import Utility from "../../globalModule/Utility";
 import DlgBase from "../../common/DlgBase";
-import EffectLayer from "./effectLayer"
+import EffectLayer from "./layerCards/effectLayer"
 import DlgRoomChat from "./dlgRoomChat";
 import VoiceManager from "../../sdk/VoiceManager";
 import DlgLocation from "./location/dlgLocation";

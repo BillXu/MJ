@@ -45,6 +45,16 @@ export default class PlayerInfoData {
         return this.playerBrifeDataMsg["sex"] ;
     }
 
+    set headUrl ( h : string )
+    {
+        this.playerBrifeDataMsg["headIcon"] = h ;
+    }
+
+    set gender( g : number )
+    {
+        this.playerBrifeDataMsg["sex"] = g ;
+    }
+
     get ip() : string
     {
         return this.playerBrifeDataMsg["ip"] ;

@@ -42,6 +42,7 @@ export default class MJRoomBaseData {
         this.leftMJCnt = msg["leftCards"] ;
         this.roomID = msg["roomID"] ;
         this.bankerIdx = msg["bankIdx"] ;
+        this.state = msg["state"] ;
 
         if ( msg["isWaitingDismiss"] == 1 )
         {
@@ -64,6 +65,12 @@ export default class MJRoomBaseData {
         if ( this.state != eRoomState.eRoomSate_WaitReady )
         {
             this.isRoomOpened = true ;
+        }
+
+        if ( msg["lastActInfo"] != null )
+        {
+            this.otherCanActCard = msg["lastActInfo"]["card"] ;
+            this.lastChuIdx = msg["lastActInfo"]["idx"];
         }
     }
 

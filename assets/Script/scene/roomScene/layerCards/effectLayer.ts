@@ -9,7 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import { eMJActType } from "./roomDefine"
+import { eMJActType } from "../roomDefine"
 @ccclass
 export default class EffectLayer extends cc.Component {
 

@@ -137,11 +137,21 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     onDistributedCards() : void 
     {
         this.layerPlayerCards.onDistributedCards();
+        let self = this;
+        self.layerRoomInfo.leftMJCardCnt = this.mRoomData.mBaseData.initCardCnt;
+        this.mRoomData.mPlayers.forEach( ( player : MJPlayerData )=>{ 
+            if ( player == null || player.isEmpty() )
+            {
+                return ;
+            }
+            self.layerRoomInfo.leftMJCardCnt -= player.mPlayerCard.vHoldCard.length ;
+        } ) ;
     }
 
     onPlayerActMo( idx : number , card : number ) : void 
     {
         this.layerPlayerCards.onPlayerActMo( idx , card ) ;
+        --this.layerRoomInfo.leftMJCardCnt;
     }
 
     onPlayerActChu( idx : number , card : number ) : void 
@@ -167,16 +177,19 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     onPlayerActMingGang( idx : number , card : number, invokeIdx : number, newCard : number ) : void 
     {
         this.layerPlayerCards.onPlayerActMingGang( idx, card, invokeIdx, newCard ) ;
+        --this.layerRoomInfo.leftMJCardCnt;
     }
 
     onPlayerActAnGang( idx : number , card : number , NewCard : number ) : void 
     {
         this.layerPlayerCards.onPlayerActAnGang( idx, card, NewCard ) ;
+        --this.layerRoomInfo.leftMJCardCnt;
     }
 
     onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void 
     {
         this.layerPlayerCards.onPlayerActBuGang( idx, card, NewCard );
+        --this.layerRoomInfo.leftMJCardCnt;
     }
 
     onPlayerActHu( idx : number, card : number , invokeIdx : number ) : void 
@@ -199,7 +212,6 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
         this.layerDlg.showDlgGangOpts( vGangOpts ) ;
     }
 
-
     onGameStart() : void 
     {
         this.layerRoomInfo.onGameStart();
@@ -211,6 +223,8 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     onGameEnd( result : ResultSingleData  ) : void 
     {
         this.layerDlg.showDlgResultSingle( result ) ;
+        this.layerPlayers.refreshPlayerChips();
+        this.layerPlayerCards.showHoldCardAfterGameEnd() ;
     }
 
     onRoomOvered( result : ResultTotalData ) : void 
