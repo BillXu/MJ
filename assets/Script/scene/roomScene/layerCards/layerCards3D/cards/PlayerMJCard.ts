@@ -95,7 +95,7 @@ export default class PlayerMJCard extends cc.Component {
 
     get isSelf()
     {
-        return this._isSelf ;
+        return this._isSelf && this.mIsReplayState == false;
     }
     protected mSelfCamera : cc.Camera = null ;
     protected mClickDownCard : MJCard = null ;
@@ -185,7 +185,7 @@ export default class PlayerMJCard extends cc.Component {
         this.relayoutHoldCards();
     }
 
-    showHoldAfterHu( card : number[] )
+    showHoldAfterHu( card : number[] , huCard : number )
     {
         for ( const iterator of this.mHoldCards )
         {
@@ -195,6 +195,12 @@ export default class PlayerMJCard extends cc.Component {
         let r = this.mIsReplayState;
         this.mIsReplayState = true ;
         this.onDistribute(card) ;
+        if ( card.length % 3 == 2 && huCard != 0 ) // really hu 
+        {
+            this.removeHold(huCard) ;
+            this.relayoutHoldCards();
+            this.onMo(huCard,null) ;
+        }
         this.mIsReplayState = r ;
     }
 
@@ -477,10 +483,7 @@ export default class PlayerMJCard extends cc.Component {
         let xAnHoldMargin = 0 ;
         let startX = -0.5 * ( this.mMingCards.length * 3 * ( MJCard.MODEL_X_SIZE + xMargin ) + this.mHoldCards.length * ( this.mHoldCards[0].world_x_Size + xAnHoldMargin ) ); 
         this.mHoldMingNode.x = startX ;
-        if ( this.isSelf )
-        {
-            this.mHoldMingNode.eulerAngles = new cc.Vec3(30,0,0);
-        }
+        this.mHoldMingNode.eulerAngles = new cc.Vec3( this.isSelf ? 30 : 0 ,0,0);
         // layout ming cards ;
         let startMing = 0 ;
         for ( let ming of this.mMingCards )
@@ -501,11 +504,7 @@ export default class PlayerMJCard extends cc.Component {
                     let pos = ming.cards[1].node.position;
                     pos.y += ming.gangUpCards.world_y_Size;
                     ming.gangUpCards.node.position = pos ;
-                    if ( this.isSelf )
-                    {
-                        ming.gangUpCards.isSelf = true ;
-                        //ming.gangUpCards.node.eulerAngles = new cc.Vec3(-30,180,0);
-                    }
+                    ming.gangUpCards.isSelf = this.isSelf ;
                 }
                 break;
             }
@@ -531,10 +530,7 @@ export default class PlayerMJCard extends cc.Component {
             return x ;
         }
 
-        if ( this.isSelf )
-        {
-            mjCards.forEach( (mj : MJCard )=>{ mj.isSelf = true ; } )
-        }
+        mjCards.forEach( (mj : MJCard )=>{ mj.isSelf = this.isSelf ; } )
 
         var card = mjCards[0] ;
         if ( dir == eArrowDirect.eDirect_Left )

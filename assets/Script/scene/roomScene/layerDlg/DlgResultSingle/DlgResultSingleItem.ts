@@ -81,7 +81,7 @@ export default class DlgResultSingleItem extends cc.Component {
     {
         this.gangScore = data.mGangScore ;
         this.huScore = data.mHuScore ;
-        this.sumFinal = data.mFinalChip ;
+        this.sumFinal = data.mOffset ;
 
         this.mSumNode.active = true ;
         this.mDetailNode.active = false ;

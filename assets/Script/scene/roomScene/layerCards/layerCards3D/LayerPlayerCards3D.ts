@@ -39,6 +39,7 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
     mBottomSvrIdx : number = 0 ;  // clientIdx pos 0 , corrspone svr idx ; 
     // LIFE-CYCLE CALLBACKS:
     mRoomData : MJRoomData = null ;
+    mHuCard : number = 0 ;
      
     onLoad () 
     {
@@ -85,6 +86,7 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
             let p = self.getPlayerCardBySvrIdx( player.mPlayerBaseData.svrIdx ) ;
             p.onRefresh( player.mPlayerCard );
         } ) ;
+        this.mHuCard = 0 ;
     }
 
     onGameStart() : void
@@ -92,6 +94,7 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
         this.mPlayerCards.forEach( a => a.clear() ) ;
         this.mIndicator.setCurActIdx(this.mRoomData.mBaseData.bankerIdx) ;
         this.hideArrow();
+        this.mHuCard = 0 ;
     }
 
     onDistributedCards() : void 
@@ -127,6 +130,8 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
         this.getPlayerCardBySvrIdx(idx).onEat(withA,withB,card) ;
         this.mIndicator.setCurActIdx(idx);
         this.playActEffect( idx, eMJActType.eMJAct_Chi );
+        this.getPlayerCardBySvrIdx(invokeIdx).onChuCardBePengGangHu(card);
+        this.hideArrow();
     }
 
     onPlayerActPeng( idx : number , card : number, invokeIdx : number ) : void 
@@ -134,6 +139,9 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
         this.getPlayerCardBySvrIdx(idx).onPeng(card,IPlayerCards.getDirection(idx,invokeIdx) ) ;
         this.mIndicator.setCurActIdx(idx);
         this.playActEffect( idx, eMJActType.eMJAct_Peng );
+
+        this.getPlayerCardBySvrIdx(invokeIdx).onChuCardBePengGangHu(card);
+        this.hideArrow();
     }
 
     onPlayerActMingGang( idx : number , card : number, invokeIdx : number, newCard : number ) : void 
@@ -141,6 +149,9 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
         this.getPlayerCardBySvrIdx(idx).onMingGang(card,IPlayerCards.getDirection(idx,invokeIdx),newCard,null ) ;
         this.mIndicator.setCurActIdx(idx);
         this.playActEffect( idx, eMJActType.eMJAct_MingGang );
+
+        this.getPlayerCardBySvrIdx(invokeIdx).onChuCardBePengGangHu(card);
+        this.hideArrow();
     }
 
     onPlayerActAnGang( idx : number , card : number , NewCard : number ) : void 
@@ -161,6 +172,13 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
     {
         this.getPlayerCardBySvrIdx(idx).onHu(card,idx == invokeIdx ) ;
         this.playActEffect( idx, eMJActType.eMJAct_Hu );
+
+        if ( this.mHuCard == 0 )
+        {
+            this.getPlayerCardBySvrIdx(invokeIdx).onChuCardBePengGangHu(card);
+            this.hideArrow();
+        }
+        this.mHuCard = card ;
     }
 
     showHoldCardAfterGameEnd()
@@ -172,7 +190,7 @@ export default class LayerPlayerCards3D extends ILayerPlayerCard {
                 return ;
             }
             let p = self.getPlayerCardBySvrIdx( player.mPlayerBaseData.svrIdx ) ;
-            p.showHoldAfterHu( player.mPlayerCard.vHoldCard );
+            p.showHoldAfterHu( player.mPlayerCard.vHoldCard,this.mHuCard );
         } ) ;
     }
 

@@ -257,8 +257,14 @@ export default abstract class MJRoomData extends IModule {
                 this.mSinglResultData.parseResult(msg);
                 for ( const item of this.mPlayers )
                 {
+                    if ( null == item || item.isEmpty() )
+                    {
+                        continue ;
+                    }
+
                     let pr = this.mSinglResultData.mResults[item.mPlayerBaseData.svrIdx];
-                    if ( null != item && item.isEmpty() == false && pr.isEmpty() == false )
+                    
+                    if ( pr.isEmpty() == false )
                     {
                         item.mPlayerBaseData.chip = pr.mFinalChip ;
                         item.mPlayerCard.vHoldCard.length = 0 ;
