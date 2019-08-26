@@ -25,6 +25,7 @@ export default class MJCardFactory2D extends cc.Component {
 
     start () {
         //this.test();
+        this.loadMJAtals(1);
     }
 
     getCard( cardNum : number , posIdx : number , cardState : eCardSate ) : MJCard2D
