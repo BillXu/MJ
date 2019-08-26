@@ -58,9 +58,11 @@ export enum eCardSate
     eCard_Out,
     eCard_Peng ,
     eCard_MingGang,
-    eCard_AnGang,
+	eCard_AnGang,
+	eCard_Back,
     eCard_Eat,
-    eCard_Hu,
+	eCard_Hu,
+	eCard_Max,
 };
 
 export enum eEatType

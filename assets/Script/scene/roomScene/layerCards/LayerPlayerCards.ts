@@ -1,13 +1,11 @@
-import ILayerPlayerCard from "../ILayerPlayerCard";
-import MJRoomData from "../../roomData/MJRoomData";
-import SeatIndicator from "../SeatIndicator";
-import PlayerMJCard from "./cards/PlayerMJCard";
-import MJPlayerData from "../../roomData/MJPlayerData";
-import { IPlayerCards } from "../../roomData/MJPlayerCardData";
-import MJCard from "./cards/MJCard";
-import { eMJActType } from "../../roomDefine";
-import ILayer from "../../ILayer";
-import EffectLayer from "../effectLayer";
+import MJRoomData from "../roomData/MJRoomData";
+import SeatIndicator from "./SeatIndicator";
+import PlayerMJCard from "./cards3D/PlayerMJCard";
+import MJPlayerData from "../roomData/MJPlayerData";
+import { IPlayerCards } from "../roomData/MJPlayerCardData";
+import MJCard from "./cards3D/MJCard";
+import { eMJActType } from "../roomDefine";
+import EffectLayer from "./effectLayer";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -22,7 +20,7 @@ import EffectLayer from "../effectLayer";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerPlayerCards3D extends ILayerPlayerCard {
+export default class LayerPlayerCards extends cc.Component {
 
     @property(SeatIndicator)
     mIndicator : SeatIndicator = null ;

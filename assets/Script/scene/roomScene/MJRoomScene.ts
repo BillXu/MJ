@@ -70,13 +70,13 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     {
         // request info ;
         let self = this ;
-        let roomID = ClientApp.getInstance().getClientPlayerData().getBaseData().stayInRoomID;
-        cc.systemEvent.once( MJFactory.EVENT_FINISH_LOAD_CARD,()=>{ self.mRoomData.reqRoomInfo( roomID ) ;} ) ;
+        //let roomID = ClientApp.getInstance().getClientPlayerData().getBaseData().stayInRoomID;
+        //cc.systemEvent.once( MJFactory.EVENT_FINISH_LOAD_CARD,()=>{ self.mRoomData.reqRoomInfo( roomID ) ;} ) ;
     }
 
     start () {
-        this.mRoomData.mSceneDelegate = this ;
-        this.layerPlayers.mScene = this ;
+        //this.mRoomData.mSceneDelegate = this ;
+        //this.layerPlayers.mScene = this ;
     }
 
     onRecivedRoomInfo( info : MJRoomBaseData ) : void 

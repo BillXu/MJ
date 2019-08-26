@@ -1,8 +1,4 @@
- 
-import { eMJCardType, eArrowDirect } from "./scene/roomScene/roomDefine";
  import * as _ from "lodash"
-import MJCard from "./scene/roomScene/layerCards/cards3D/MJCard";
-import PlayerMJCard from "./scene/roomScene/layerCards/cards3D/PlayerMJCard";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -18,8 +14,6 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class test extends cc.Component {
 
-    @property(PlayerMJCard)
-    mPlayerCards : PlayerMJCard = null; 
     // LIFE-CYCLE CALLBACKS:
     // onLoad () {}
 
@@ -27,34 +21,32 @@ export default class test extends cc.Component {
         //this.mPlayerCards.isSelf = false;  
     }
 
-    mValue = MJCard.makeCardNum(eMJCardType.eCT_Feng,2) ;
-    onClick()
+     onClick()
     {
-        cc.log( "distribute" );
-        let v : number[] = [] ;
-        v.push( this.mValue );
-        v.push( this.mValue );
-        v.push( this.mValue );
-        v.push( this.mValue );
-        v.push( this.mValue );
-        this.mPlayerCards.onDistribute(v);
-
-        //this.mPlayerCards.onMo( MJCard.makeCardNum(eMJCardType.eCT_Wan,1),null);
+        cc.log( "click" );
+        let pEvent = new cc.Event.EventCustom( "click",true) ;
+        cc.systemEvent.dispatchEvent(pEvent) ;
     }
 
     onClick2()
     {
-        this.mPlayerCards.onChu(this.mValue);
+        cc.log( "click2" );
+        let pEvent = new cc.Event.EventCustom( "click2",true) ;
+        cc.systemEvent.dispatchEvent(pEvent) ;
     }
 
     onClick3()
     {
-        this.mPlayerCards.onPeng(this.mValue,eArrowDirect.eDirect_Left);
+        cc.log( "click3" );
+        let pEvent = new cc.Event.EventCustom( "click3",true) ;
+        cc.systemEvent.dispatchEvent(pEvent) ;
     }
 
     onClick4()
     {
-        this.mPlayerCards.onMingGang(this.mValue,eArrowDirect.eDirect_Left,this.mValue + 1,null);
+        cc.log( "click4" );
+        let pEvent = new cc.Event.EventCustom( "click4",true) ;
+        cc.systemEvent.dispatchEvent(pEvent) ;
     }
     // update (dt) {}
 }
