@@ -6,16 +6,14 @@ import { eChatMsgType, eMJActType, eEatType } from "./roomDefine";
 import ResultSingleData from "./roomData/ResultSingleData";
 import ResultTotalData from "./roomData/ResultTotalData";
 import PlayerInfoData from "../../clientData/playerInfoData";
-import ILayer from "./ILayer";
 import LayerRoomInfo from "./layerRoomInfo/LayerRoomInfo";
 import LayerDlg from "./layerDlg/LayerDlg";
 import LayerPlayers from "./layerPlayers/LayerPlayers";
-import ILayerPlayerCard from "./layerCards/ILayerPlayerCard";
-import MJFactory from "./layerCards/layerCards3D/cards/MJFactory";
 import ClientApp from "../../globalModule/ClientApp";
-import LayerPlayerCards3D from "./layerCards/layerCards3D/LayerPlayerCards3D";
 import { SceneName } from "../../common/clientDefine";
 import Prompt from "../../globalModule/Prompt";
+import LayerPlayerCards from "./layerCards/LayerPlayerCards";
+import MJFactory from "./layerCards/cards3D/MJFactory";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -45,8 +43,7 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     mLayerPlayers : cc.Node = null ;
 
     @property(cc.Node)
-    mLayerPlayerCard3d : cc.Node = null ;
-    mLayerPlayerCard2d : ILayerPlayerCard = null ;
+    mLayerPlayerCard : cc.Node = null ;
     // LIFE-CYCLE CALLBACKS:
 
     get layerRoomInfo() : LayerRoomInfo
@@ -64,9 +61,9 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
         return this.mLayerPlayers.getComponent(LayerPlayers) ;
     }
 
-    get layerPlayerCards() : ILayerPlayerCard
+    get layerPlayerCards() : LayerPlayerCards
     {
-        return this.mLayerPlayerCard3d.getComponent(LayerPlayerCards3D) ;
+        return this.mLayerPlayerCard.getComponent(LayerPlayerCards) ;
     }
      
     onLoad () 

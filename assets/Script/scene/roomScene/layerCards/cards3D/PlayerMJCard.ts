@@ -1,8 +1,9 @@
 import MJCard, { MJCardState } from "./MJCard";
 import MJFactory from "./MJFactory";
-import { eArrowDirect, eMJActType } from "../../../roomDefine";
-import { IPlayerCards } from "../../../roomData/MJPlayerCardData";
-import LayerPlayerCards3D from "../LayerPlayerCards3D";
+import { eArrowDirect, eMJActType } from "../../roomDefine";
+import { IPlayerCards } from "../../roomData/MJPlayerCardData";
+import LayerPlayerCards from "../LayerPlayerCards";
+import IPlayerMJCard from "../IPlayerMJCard";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -25,7 +26,7 @@ class MingCardGroup
 } ;
 
 @ccclass
-export default class PlayerMJCard extends cc.Component {
+export default class PlayerMJCard extends IPlayerMJCard {
 
     @property(MJFactory)
     mFacotry : MJFactory = null ;
@@ -42,7 +43,7 @@ export default class PlayerMJCard extends cc.Component {
     @property(cc.Node)
     mHoldAnNode : cc.Node = null ;
 
-    mLayerCards : LayerPlayerCards3D = null ;
+    mLayerCards : LayerPlayerCards = null ;
 
     get holdCardPosZ() : number
     {

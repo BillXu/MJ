@@ -1,10 +1,8 @@
  
 import { eMJCardType, eArrowDirect } from "./scene/roomScene/roomDefine";
  import * as _ from "lodash"
-import PlayerInteractEmoji from "./scene/roomScene/layerPlayers/PlayerInteractEmoji";
-import PlayerMJCard from "./scene/roomScene/layerCards/layerCards3D/cards/PlayerMJCard";
-import MJCard from "./scene/roomScene/layerCards/layerCards3D/cards/MJCard";
-import SeatIndicator from "./scene/roomScene/layerCards/SeatIndicator";
+import MJCard from "./scene/roomScene/layerCards/cards3D/MJCard";
+import PlayerMJCard from "./scene/roomScene/layerCards/cards3D/PlayerMJCard";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -26,7 +24,7 @@ export default class test extends cc.Component {
     // onLoad () {}
 
     start () {
-        //this.mPlayerCards.isSelf = false;
+        //this.mPlayerCards.isSelf = false;  
     }
 
     mValue = MJCard.makeCardNum(eMJCardType.eCT_Feng,2) ;
