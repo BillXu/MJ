@@ -219,7 +219,7 @@ export default class LayerPlayerCards extends cc.Component implements MJPlayerCa
         }
         else
         {
-            ptWorldPos = this.mLastChuArrowNode.parent.convertToNodeSpaceAR(ptWorldPos);
+            ptWorldPos = this.mLastChuArrowNode.parent.convertToNodeSpaceAR(<cc.Vec2>ptWorldPos);
             this.mLastChuArrowNode.position = ptWorldPos ;
         }
         //this.mLastChuArrowNode.getWorldPosition 
@@ -250,6 +250,8 @@ export default class LayerPlayerCards extends cc.Component implements MJPlayerCa
         }
 
         this.mRoomData.doChosedAct( eMJActType.eMJAct_Chu, cardNum ) ;
+        let p = this.mPlayerCards[0].onSelfChu( cardNum,ptCardWorldPos );
+        this.moveArrowToWorldPos(p) ;
         return true ;
     }
     // update (dt) {}

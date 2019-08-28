@@ -138,8 +138,12 @@ export default class MJPlayerCard2D extends IPlayerMJCard {
     onChu( chuCard : number ) : cc.Vec2 | cc.Vec3 
     {
         let p = this.holdCards.removeCard(chuCard);
-        this.chuCards.addCard(chuCard,p ) ;
-        return p ;
+        return this.chuCards.addCard(chuCard,p ) ;
+    }
+
+    onSelfChu( chuCard : number , ptWorldPost : cc.Vec2 | cc.Vec3 ) : cc.Vec2 | cc.Vec3 
+    {
+        return this.chuCards.addCard(chuCard,<cc.Vec2>ptWorldPost ) ;
     }
 
     onChuCardBePengGangHu( cardNum : number ) : void 

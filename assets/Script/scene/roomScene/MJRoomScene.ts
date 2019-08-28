@@ -14,6 +14,7 @@ import { SceneName } from "../../common/clientDefine";
 import Prompt from "../../globalModule/Prompt";
 import LayerPlayerCards from "./layerCards/LayerPlayerCards";
 import MJFactory from "./layerCards/cards3D/MJFactory";
+import MJCardFactory2D from "./layerCards/cards2D/MJCardFactory2D";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -70,13 +71,14 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     {
         // request info ;
         let self = this ;
-        //let roomID = ClientApp.getInstance().getClientPlayerData().getBaseData().stayInRoomID;
-        //cc.systemEvent.once( MJFactory.EVENT_FINISH_LOAD_CARD,()=>{ self.mRoomData.reqRoomInfo( roomID ) ;} ) ;
+        let roomID = ClientApp.getInstance().getClientPlayerData().getBaseData().stayInRoomID;
+        cc.systemEvent.once( MJFactory.EVENT_FINISH_LOAD_CARD,()=>{ self.mRoomData.reqRoomInfo( roomID ) ;} ) ;
+        cc.systemEvent.once( MJCardFactory2D.EVENT_FINISH_LOAD_MJ,()=>{ self.mRoomData.reqRoomInfo( roomID ) ;} ) ;
     }
 
     start () {
-        //this.mRoomData.mSceneDelegate = this ;
-        //this.layerPlayers.mScene = this ;
+        this.mRoomData.mSceneDelegate = this ;
+        this.layerPlayers.mScene = this ;
     }
 
     onRecivedRoomInfo( info : MJRoomBaseData ) : void 

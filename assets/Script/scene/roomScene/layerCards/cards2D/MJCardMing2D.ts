@@ -56,7 +56,7 @@ export default class MJCardMing2D extends cc.Component {
     // onLoad () {}
 
     start () {
-        this.test();
+        //this.test();
     }
 
     refresh( cardData : IPlayerCards )

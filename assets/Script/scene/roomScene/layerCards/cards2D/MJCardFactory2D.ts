@@ -21,11 +21,14 @@ export default class MJCardFactory2D extends cc.Component {
     // LIFE-CYCLE CALLBACKS:
 
     static EVENT_FINISH_LOAD_MJ : string = "EVENT_FINISH_LOAD_MJ" ;
-    // onLoad () {}
+     onLoad ()
+    { 
+        this.loadMJAtals(1);
+    }
 
     start () {
         //this.test();
-        this.loadMJAtals(1);
+        
     }
 
     getCard( cardNum : number , posIdx : number , cardState : eCardSate ) : MJCard2D

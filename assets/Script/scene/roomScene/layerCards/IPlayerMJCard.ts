@@ -36,6 +36,7 @@ export default abstract class IPlayerMJCard extends cc.Component {
     abstract onMo( newCard : number , cardWallPos : cc.Vec3 ) : void ;
     abstract onDistribute( newCards : number[] ) : void ;
     abstract onChu( chuCard : number ) : cc.Vec2 | cc.Vec3 ;
+    abstract onSelfChu( chuCard : number , ptWorldPost : cc.Vec2 | cc.Vec3 ) :  cc.Vec2 | cc.Vec3  ;
     abstract onChuCardBePengGangHu( cardNum : number ) : void ;
     abstract switchCardHighLight( cardNum : number , isEnable : boolean ) : void ;
 }

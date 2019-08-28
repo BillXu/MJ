@@ -13,8 +13,8 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class LastChuArrowAni extends cc.Component {
     start () {
-        let up = cc.tween().by(0.7,{ y : 25 }) ;
-        let down = cc.tween().by(0.7,{y : -25 } );
+        let up = cc.tween().by(0.8,{ y : 25 }) ;
+        let down = cc.tween().by(0.8,{y : -25 } );
         cc.tween(this.node).sequence(up,down).repeatForever().start();
     }
 

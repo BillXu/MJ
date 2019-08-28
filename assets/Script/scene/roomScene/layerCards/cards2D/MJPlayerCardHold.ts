@@ -50,7 +50,7 @@ export default class MJPlayerCardHold extends cc.Component {
     }
 
     start () {
-        this.test();
+        //this.test();
         if ( this.posIdx == 0 && !this.isReplay )
         {
             this.node.targetOff(this);
@@ -151,6 +151,7 @@ export default class MJPlayerCardHold extends cc.Component {
             return false ;
         } );
 
+        console.log( "remove Card cnt = " + this.vHoldCards.length + " pos = " + vPos );
         this.layoutHoldCard();
         vPos = this.node.convertToWorldSpaceAR(vPos) ;
         return vPos ;
@@ -228,7 +229,12 @@ export default class MJPlayerCardHold extends cc.Component {
 
         let self = this ;
         this.vHoldCards.forEach( ( v : cc.Node , idx : number )=>{
+            cc.log( "layout hold pos = " + self.posIdx + " idx = " + idx );
             self.setCardPos(v,idx);
+            if ( self.posIdx == 1 )
+            {
+                v.zIndex = idx * -1 ;
+            }
         } );
     }
 
@@ -395,6 +401,8 @@ export default class MJPlayerCardHold extends cc.Component {
             if ( this.mDelegate && this.mDelegate.onSelfRequestChuCard( pNode.getComponent(MJCard2D).mCardNum, pNode.convertToWorldSpaceAR(cc.Vec2.ZERO) ) )
             {
                 this.mFactory.recycleCard( pNode.getComponent(MJCard2D) );
+                _.remove( this.vHoldCards, (v : cc.Node )=> { return v == pNode } );
+                this.layoutHoldCard();
             }
             else
             {
@@ -424,6 +432,8 @@ export default class MJPlayerCardHold extends cc.Component {
         if ( this.mDelegate && this.mDelegate.onSelfRequestChuCard( pNode.getComponent(MJCard2D).mCardNum, pNode.convertToWorldSpaceAR(cc.Vec2.ZERO) ) )
         {
             this.mFactory.recycleCard( pNode.getComponent(MJCard2D) );
+            _.remove( this.vHoldCards, (v : cc.Node )=> { return v == pNode } );
+            this.layoutHoldCard();
         }
     }
 
@@ -441,6 +451,8 @@ export default class MJPlayerCardHold extends cc.Component {
             if ( this.mDelegate && this.mDelegate.onSelfRequestChuCard( pNode.getComponent(MJCard2D).mCardNum, pNode.convertToWorldSpaceAR(cc.Vec2.ZERO) ) )
             {
                 this.mFactory.recycleCard( pNode.getComponent(MJCard2D) );
+                _.remove( this.vHoldCards, (v : cc.Node )=> { return v == pNode } );
+                this.layoutHoldCard();
             }
             else
             {

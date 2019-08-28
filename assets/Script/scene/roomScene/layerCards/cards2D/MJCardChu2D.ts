@@ -58,7 +58,7 @@ export default class MJCardChu2D extends cc.Component {
         }
     }
 
-    addCard( cardNum : number, ptWorldPos : cc.Vec2  )
+    addCard( cardNum : number, ptWorldPos : cc.Vec2  ) : cc.Vec2
     {
         let card = this.mFactroy.getCard( cardNum ,this.posIdx,eCardSate.eCard_Out );
         this.node.addChild(card.node);
@@ -67,6 +67,7 @@ export default class MJCardChu2D extends cc.Component {
             card.node.zIndex = this.node.childrenCount * -1  ;
         }
         card.node.position = this.getLastChuCardPos();
+        return card.node.parent.convertToWorldSpaceAR( card.node.position );
     }
 
     removeLastCard( cardNum : number ) : boolean
@@ -120,7 +121,7 @@ export default class MJCardChu2D extends cc.Component {
     // onLoad () {}
 
     start () {
-        this.test();
+        //this.test();
     }
 
     // update (dt) {}
