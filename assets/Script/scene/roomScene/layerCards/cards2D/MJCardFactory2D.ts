@@ -49,6 +49,7 @@ export default class MJCardFactory2D extends cc.Component {
             this.mMJCahers[cacherID] = [] ;
         }
         card.node.removeFromParent();
+        card.switchHighLight(false);
 
         if ( card.mAtalsResName != this.mSpriteAtals.name )
         {

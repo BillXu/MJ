@@ -23,6 +23,11 @@ export default class MJCard2D extends cc.Component {
         this.mPosIdx = posIdx ;
     }
 
+    switchHighLight( isLight : boolean )
+    {
+        this.node.color = isLight ? cc.Color.WHITE.fromHEX("#EBC634") : cc.Color.WHITE;
+    }
+
     start () {
 
     }

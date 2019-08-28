@@ -23,7 +23,6 @@ export default class MJCardChu2D extends cc.Component {
     @property
     colMargin : number = 0 ;
 
-    @property
     posIdx : number = 0 ;
 
     @property(MJCardFactory2D)
@@ -36,6 +35,10 @@ export default class MJCardChu2D extends cc.Component {
         {
             let card = this.mFactroy.getCard(c,this.posIdx,eCardSate.eCard_Out );
             this.node.addChild(card.node);
+            if ( this.posIdx == 1 || 2 == this.posIdx )
+            {
+                card.node.zIndex = this.node.childrenCount * -1  ;
+            }
             card.node.position = this.getLastChuCardPos();
         }
     }
@@ -59,6 +62,10 @@ export default class MJCardChu2D extends cc.Component {
     {
         let card = this.mFactroy.getCard( cardNum ,this.posIdx,eCardSate.eCard_Out );
         this.node.addChild(card.node);
+        if ( this.posIdx == 1 || 2 == this.posIdx  )
+        {
+            card.node.zIndex = this.node.childrenCount * -1  ;
+        }
         card.node.position = this.getLastChuCardPos();
     }
 
@@ -78,6 +85,11 @@ export default class MJCardChu2D extends cc.Component {
         }
 
         return false ;
+    }
+
+    switchCardHighLight( cardNum : number , isEnable : boolean )
+    {
+        this.node.children.forEach( ( c : cc.Node )=>{ let card = c.getComponent(MJCard2D); if ( card && card.mCardNum == cardNum ){ card.switchHighLight(isEnable) ;}  } ) ;
     }
 
     protected getLastChuCardPos() : cc.Vec2
@@ -108,13 +120,14 @@ export default class MJCardChu2D extends cc.Component {
     // onLoad () {}
 
     start () {
-        //this.test();
+        this.test();
     }
 
     // update (dt) {}
     test()
     {
         let self = this ;
+        self.refresh( [25,25,25,24,24,24,24,24,24 ] ) ;
         cc.systemEvent.on( "click2", ()=>{ 
             self.addCard( 24 , null );
         } )

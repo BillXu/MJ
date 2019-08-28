@@ -11,6 +11,7 @@ import * as _ from "lodash"
 import MJCard2D from "./MJCard2D";
 import MJCardFactory2D from "./MJCardFactory2D";
 import { eCardSate } from "../../roomDefine";
+import { MJPlayerCardHoldDelegate } from "../IPlayerMJCard";
 const {ccclass, property} = cc._decorator;
 
 enum eOptNodeState 
@@ -21,17 +22,10 @@ enum eOptNodeState
     eDrag_Sel,
 } ;
 
-export interface MJPlayerCardHoldDelegate 
-{
-    onHoldCardSelected( cardNum : number ) : void ;
-    onHoldCardReleaseSelect( cardNum : number ) : void ;
-    onSelfRequestChuCard( cardNum : number , ptCardWorldPos : cc.Vec2 ) : boolean ;
-}
 
 @ccclass
 export default class MJPlayerCardHold extends cc.Component {
 
-    @property
     posIdx : number = 0 ;
 
     @property(MJCardFactory2D)
@@ -44,16 +38,22 @@ export default class MJPlayerCardHold extends cc.Component {
     mNewMoCardMargin : number = 10 ;
 
     private vHoldCards : cc.Node[] = [] ;
-    private isReplay : boolean = false ;
+    isReplay : boolean = false ;
     private optNodeProperty : Object = { } ; // { node : cc.Node , state : eOptNodeState , orgPos : cc.Vec2 , waitClickTimer : -1  }
     private pOutstandNode : cc.Node = null ;
-    mDelegate : MJPlayerCardHoldDelegate = null ;
+    mDelegate : MJPlayerCardHoldDelegate = null ; 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad ()
     {
+
+    }
+
+    start () {
+        this.test();
         if ( this.posIdx == 0 && !this.isReplay )
         {
+            this.node.targetOff(this);
             this.node.on(cc.Node.EventType.TOUCH_START,this.onTouchStart,this) ;
             this.node.on(cc.Node.EventType.TOUCH_MOVE,this.onTouchMoved,this) ;
             this.node.on(cc.Node.EventType.TOUCH_END,this.onTouchEnd,this) ;
@@ -77,6 +77,10 @@ export default class MJPlayerCardHold extends cc.Component {
                 let card = this.mFactory.getCard( vHoldCards[idx],this.posIdx, this.isReplay ? eCardSate.eCard_Out : eCardSate.eCard_Hold ) ;
                 this.vHoldCards.push(card.node );
                 this.node.addChild(card.node);
+                if ( this.posIdx == 1 )
+                {
+                    card.node.zIndex = this.node.childrenCount * -1 ;
+                }
                 this.setCardPos(card.node,idx );
             }
         }
@@ -108,8 +112,12 @@ export default class MJPlayerCardHold extends cc.Component {
                 let cnt = 4 ;
                 while ( inerIdx < vholdCards.length && cnt-- > 0 )
                 {
-                    let card = this.mFactory.getCard( vholdCards[inerIdx],this.posIdx, this.isReplay ? eCardSate.eCard_Out : eCardSate.eCard_Hold ) ;
-                    this.node.addChild(card.node);
+                    let card = self.mFactory.getCard( vholdCards[inerIdx],self.posIdx, self.isReplay ? eCardSate.eCard_Out : eCardSate.eCard_Hold ) ;
+                    self.node.addChild(card.node);
+                    if ( self.posIdx == 1 )
+                    {
+                        card.node.zIndex = self.node.childrenCount * -1 ;
+                    }
                     self.vHoldCards.push(card.node );
                     self.setCardPos( card.node, inerIdx ) ;
                     ++inerIdx ;
@@ -120,8 +128,9 @@ export default class MJPlayerCardHold extends cc.Component {
         }
     }
 
-    removeCard( card : number , cnt : number = 1 )
+    removeCard( card : number , cnt : number = 1 ) : cc.Vec2 
     {
+        let vPos : cc.Vec2 = cc.Vec2.ZERO ;
         let self = this ;
         _.remove( this.vHoldCards, ( node : cc.Node )=>{
             if ( cnt <= 0 )
@@ -132,6 +141,8 @@ export default class MJPlayerCardHold extends cc.Component {
             let card2d = node.getComponent(MJCard2D) ;
             if ( ( self.posIdx != 0 && self.isReplay == false ) || card2d.mCardNum == card )
             {
+                vPos.x = card2d.node.x ;
+                vPos.y = card2d.node.y ;
                 self.mFactory.recycleCard(card2d);
                 --cnt ;
                 return true ;
@@ -141,6 +152,8 @@ export default class MJPlayerCardHold extends cc.Component {
         } );
 
         this.layoutHoldCard();
+        vPos = this.node.convertToWorldSpaceAR(vPos) ;
+        return vPos ;
     }
 
     onMo( cardNum : number )
@@ -150,6 +163,10 @@ export default class MJPlayerCardHold extends cc.Component {
         let card = this.mFactory.getCard( cardNum,this.posIdx, this.isReplay ? eCardSate.eCard_Out : eCardSate.eCard_Hold ) ;
         this.vHoldCards.push(card.node );
         this.node.addChild(card.node);
+        if ( this.posIdx == 1 )
+        {
+            card.node.zIndex = this.node.childrenCount * -1 ;
+        }
 
         let isPlus = this.posIdx < 2 ;
         let isX = this.posIdx % 2 == 0 ;
@@ -158,6 +175,35 @@ export default class MJPlayerCardHold extends cc.Component {
         let pos = ( isPlus ? 1 : -1 ) * ( ( this.vHoldCards.length - 1 ) * ( cardSize + this.mMargin ) + cardSize * 0.5 - this.mMargin + this.mNewMoCardMargin ) ;
 
         card.node.position = cc.v2( isX ? pos : 0 , isX ? 0 : pos );
+    }
+
+    onHu( cardNum : number , isZiMo : boolean )
+    {
+        if ( isZiMo )
+        {
+            this.removeCard(cardNum);
+        }
+
+        let card = this.mFactory.getCard( cardNum,this.posIdx, eCardSate.eCard_Out ) ;
+        this.vHoldCards.push(card.node );
+        this.node.addChild(card.node);
+
+        let isPlus = this.posIdx < 2 ;
+        let isX = this.posIdx % 2 == 0 ;
+
+        let cardSize = isX ? this.vHoldCards[0].getContentSize().width : this.vHoldCards[0].getContentSize().height ;
+        let thisCardSize = isX ? card.node.getContentSize().width : card.node.getContentSize().height ;
+        let pos = ( isPlus ? 1 : -1 ) * ( ( this.vHoldCards.length - 1 ) * ( cardSize + this.mMargin ) + thisCardSize * 0.5 - this.mMargin + this.mNewMoCardMargin ) ;
+
+        card.node.position = cc.v2( isX ? pos : 0 , isX ? 0 : pos );        
+    }
+
+    getLength() : number
+    {
+        let isX = this.posIdx % 2 == 0 ;
+        let node = this.vHoldCards[this.vHoldCards.length -1 ] ;
+        let size = node.getContentSize();
+        return ( isX ? ( Math.abs(node.x ) + size.width * 0.5 ) : ( Math.abs(node.y) + size.height * 0.5 ) );
     }
 
     protected setCardPos( cardNode : cc.Node , idx : number )
@@ -408,14 +454,12 @@ export default class MJPlayerCardHold extends cc.Component {
         }
     }
 
-    start () {
-        this.test();
-    }
-
     // update (dt) {}
     test()
     {
         let self = this ;
+        self.refresh( [22,20,23,22]);
+        
         cc.systemEvent.on( "click", ()=>{ 
              let v : number[] = [] ;
              let cnt = 13 ;

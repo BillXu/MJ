@@ -1,5 +1,6 @@
 import LabelTimer from "../../../common/LabelTimer";
 import test from "../../../test";
+import IIndicator from "./IIndicator";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -14,7 +15,7 @@ import test from "../../../test";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class SeatIndicator2d extends cc.Component {
+export default class SeatIndicator2d extends IIndicator {
 
     @property(LabelTimer)
     mTimer : LabelTimer = null;
@@ -33,7 +34,7 @@ export default class SeatIndicator2d extends cc.Component {
 
     setBottomSvrIdx( svrIdx : number )
     {
-        this.mSeatRoot.rotation = -90 * svrIdx ;
+        this.mSeatRoot.angle = -90 * svrIdx ;
     }
 
     setCurActIdx( svrIdx : number , leftTimer : number = 30 )

@@ -39,7 +39,6 @@ export default class MJCardMing2D extends cc.Component {
     @property
     groupMargin : number = 16 ;
 
-    @property
     posIdx : number = 0 ;
 
     @property(MJCardFactory2D)
@@ -57,7 +56,7 @@ export default class MJCardMing2D extends cc.Component {
     // onLoad () {}
 
     start () {
-        //this.test();
+        this.test();
     }
 
     refresh( cardData : IPlayerCards )
@@ -107,10 +106,10 @@ export default class MJCardMing2D extends cc.Component {
 
         if ( 0 == this.posIdx || 2 == this.posIdx )
         {
-            return this.curMaxPos + this.node.children[0].getContentSize().width * 0.5 ;
+            return Math.abs( this.curMaxPos ) + this.node.children[0].getContentSize().width * 0.5 ;
         }
 
-        return this.curMaxPos
+        return Math.abs( this.curMaxPos ) ;
     }
 
     onBuGang( card : number )
@@ -178,6 +177,14 @@ export default class MJCardMing2D extends cc.Component {
 
         this.vMingCards.push(p);
         this.layoutThisMingCardGroup(p) ;
+    }
+
+    switchCardHighLight( cardNum : number , isEnable : boolean )
+    {
+        for ( let cg of this.vMingCards )
+        {
+            cg.cards.forEach( v => { if ( v.mCardNum == cardNum ){ v.switchHighLight( isEnable); } } )
+        }
     }
 
     protected layoutThisMingCardGroup( cards : MingCardGroup2D )
