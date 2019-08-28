@@ -79,9 +79,9 @@ export class IPlayerCards
                 if ( eMJActType.eMJAct_Chi == clientMing.eAct )
                 {
                     let tmp : number[] = [] ;
-                    let t = tmp.concat(ming["card"]);
+                    tmp = tmp.concat(ming["card"]);
                     clientMing.vEatWithCards = tmp;
-                    t.sort( (a : number, b : number )=>{ return a - b ;} ) ;
+                    tmp.sort( (a : number, b : number )=>{ return a - b ;} ) ;
                 }
                 clientMing.eDir = IPlayerCards.getDirection(playerIdx,clientMing.nInvokerIdx);
                 self.vMingCards.push(clientMing);

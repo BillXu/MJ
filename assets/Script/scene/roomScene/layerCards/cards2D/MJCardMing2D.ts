@@ -66,7 +66,7 @@ export default class MJCardMing2D extends cc.Component {
         cardData.vMingCards.forEach( v=>{
             if ( v.eAct == eMJActType.eMJAct_Chi )
             {
-                self.addMingCards( [v.vEatWithCards[0],v.nTargetCard,v.vEatWithCards[1]],v.eAct,v.eDir) ;
+                self.addMingCards( v.vEatWithCards,v.eAct,v.eDir) ;
             }
             else
             {

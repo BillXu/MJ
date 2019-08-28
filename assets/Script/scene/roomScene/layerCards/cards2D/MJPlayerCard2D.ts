@@ -122,7 +122,7 @@ export default class MJPlayerCard2D extends IPlayerMJCard {
 
     onHu( num : number , isZiMo : boolean ) : void 
     {
-        this.onHu( num, isZiMo );
+        this.holdCards.onHu( num, isZiMo ) ;
     }
 
     onMo( newCard : number , cardWallPos : cc.Vec3 ) : void 
