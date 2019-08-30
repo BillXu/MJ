@@ -133,6 +133,7 @@ export default class MJPlayerCard2D extends IPlayerMJCard {
     onDistribute( newCards : number[] ) : void 
     {
         this.holdCards.onDistributeCard( newCards );
+        this.layoutMingAndHold();
     }
 
     onChu( chuCard : number ) : cc.Vec2 | cc.Vec3 

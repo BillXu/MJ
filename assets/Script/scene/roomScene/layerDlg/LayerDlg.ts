@@ -97,7 +97,7 @@ export default class LayerDlg extends ILayer {
         {
             this.showDlgDismiss(data);
         }
-
+  
         this.mDlgLocation.closeDlg();
 
         this.mBtnCopyRoomNum.active = this.mBtnInvite.active = ( data.mBaseData.isRoomOpened == false && data.mBaseData.isInGamingState() == false );

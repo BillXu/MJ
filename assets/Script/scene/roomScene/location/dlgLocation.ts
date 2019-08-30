@@ -24,7 +24,7 @@ export default class DlgLocation extends DlgBase {
 
     @property([LocationPlayer]) 
     vPlayers : LocationPlayer[] = [] ;  
-
+   
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}

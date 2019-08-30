@@ -26,7 +26,7 @@ class clubItemData
 {
     name : string = "" ;
     id : number = 0 ;
-    isSelected : boolean = false ;
+    isSelected : boolean = false ;    
 }
 
 @ccclass

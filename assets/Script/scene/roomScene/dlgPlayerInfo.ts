@@ -22,7 +22,7 @@ export default class dlgPlayerInfo extends DlgBase {
  
     @property(cc.Label)
     pID : cc.Label = null ;  
-
+ 
     @property(cc.Label)
     pIP : cc.Label = null ;  
 

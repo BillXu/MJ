@@ -103,6 +103,26 @@ export default class MJPlayerCardHold extends cc.Component {
     {
         this.clear();
 
+        for ( let idx = 0 ; idx < vholdCards.length ; ++idx )
+        {
+            if ( idx == vholdCards.length -1 && vholdCards.length % 3 == 2 )
+            {
+                this.onMo(vholdCards[idx]) ;
+                this.vHoldCards[this.vHoldCards.length -1 ].active = false ;
+                continue ;
+            }
+            
+            let card = this.mFactory.getCard( vholdCards[idx],this.posIdx, this.isReplay ? eCardSate.eCard_Out : eCardSate.eCard_Hold ) ;
+            this.node.addChild(card.node);
+            if ( this.posIdx == 1 )
+            {
+                card.node.zIndex = this.node.childrenCount * -1 ;
+            }
+            this.vHoldCards.push(card.node );
+            this.setCardPos( card.node, idx ) ;
+            card.node.active = false ;
+        }
+
         let elaps = 0.2 * 1000 ;
         let self = this ;
         for ( let idx = 0 ; idx < vholdCards.length ; )
@@ -112,14 +132,7 @@ export default class MJPlayerCardHold extends cc.Component {
                 let cnt = 4 ;
                 while ( inerIdx < vholdCards.length && cnt-- > 0 )
                 {
-                    let card = self.mFactory.getCard( vholdCards[inerIdx],self.posIdx, self.isReplay ? eCardSate.eCard_Out : eCardSate.eCard_Hold ) ;
-                    self.node.addChild(card.node);
-                    if ( self.posIdx == 1 )
-                    {
-                        card.node.zIndex = self.node.childrenCount * -1 ;
-                    }
-                    self.vHoldCards.push(card.node );
-                    self.setCardPos( card.node, inerIdx ) ;
+                    self.vHoldCards[inerIdx].active = true ;
                     ++inerIdx ;
                 }
 
@@ -201,10 +214,21 @@ export default class MJPlayerCardHold extends cc.Component {
 
     getLength() : number
     {
+        if ( this.vHoldCards.length == 0 )
+        {
+            return 0 ;
+        }
+
         let isX = this.posIdx % 2 == 0 ;
         let node = this.vHoldCards[this.vHoldCards.length -1 ] ;
         let size = node.getContentSize();
-        return ( isX ? ( Math.abs(node.x ) + size.width * 0.5 ) : ( Math.abs(node.y) + size.height * 0.5 ) );
+        //return ( isX ? ( Math.abs(node.x ) + size.width * 0.5 ) : ( Math.abs(node.y) + size.height * 0.5 ) );
+        let lenght = ( isX ? (( size.width + this.mMargin ) * this.vHoldCards.length - this.mMargin ) : ( ( size.height + this.mMargin ) * this.vHoldCards.length - this.mMargin ));
+        if ( this.vHoldCards.length % 3 == 2 )
+        {
+            lenght += ( this.mNewMoCardMargin - this.mMargin );
+        }
+        return lenght ;
     }
 
     protected setCardPos( cardNode : cc.Node , idx : number )

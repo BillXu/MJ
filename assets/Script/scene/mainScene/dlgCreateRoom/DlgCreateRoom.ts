@@ -36,7 +36,7 @@ export default class DlgCreateRoom extends DlgBase {
     // LIFE-CYCLE CALLBACKS:
 
     onLoad ()
-    {
+    {   
         super.onLoad();
         // setup Pairs ; 
         let p : togglePair = { toggle : this.mToggleDanDong, layerOpts : this.mLayerOptsDanDong } ;
