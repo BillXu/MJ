@@ -31,6 +31,7 @@ export default abstract class IPlayerMJCard extends cc.Component {
     abstract onPeng( num : number , dir : eArrowDirect ) : void ;
     abstract onMingGang( num : number , dir : eArrowDirect, newCard : number, cardWallPos : cc.Vec3 ) : void ;
     abstract onAnGang( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void ;
+    abstract onBuHua( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void ;
     abstract onBuGang( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void ;
     abstract onHu( num : number , isZiMo : boolean ) : void ;
     abstract onMo( newCard : number , cardWallPos : cc.Vec3 ) : void ;

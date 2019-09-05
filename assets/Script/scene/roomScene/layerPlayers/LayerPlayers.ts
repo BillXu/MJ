@@ -29,6 +29,9 @@ export default class LayerPlayers extends ILayer {
     @property(cc.Node)
     mBankIcon : cc.Node = null ;
 
+    @property(cc.Node)
+    mBtnReady : cc.Node = null ;
+
     @property(PlayerInteractEmoji)
     mInteractEmoji : PlayerInteractEmoji = null ;
     
@@ -107,7 +110,7 @@ export default class LayerPlayers extends ILayer {
             {
                 this.mPlayers[clientIdx].state = eRoomPlayerState.RPS_Normal ;
                 this.mPlayers[clientIdx].setInfo( data.mPlayers[svrIdx].mPlayerBaseData );
-                this.mPlayers[clientIdx].isReady = data.mBaseData.isInGamingState() && data.mPlayers[svrIdx].mPlayerBaseData.isReady ;
+                this.mPlayers[clientIdx].isReady = data.mBaseData.isInGamingState() == false  && data.mPlayers[svrIdx].mPlayerBaseData.isReady ;
             }
         }
 
@@ -115,6 +118,7 @@ export default class LayerPlayers extends ILayer {
         {
             this.setBankerIdx( data.mBaseData.bankerIdx ) ;
         }
+        this.mBtnReady.active = this.mRoomData.mBaseData.isInGamingState() == false && isSelfSitDown && data.mPlayers[nselfIdx].mPlayerBaseData.isReady == false ;
 
         this.refreshPlayerChips();
     }
@@ -163,6 +167,10 @@ export default class LayerPlayers extends ILayer {
     {
         let clientIdx = this.mRoomData.svrIdxToClientIdx( idx );
         this.mPlayers[clientIdx].isReady = true ;
+        if ( idx == this.mRoomData.getSelfIdx() )
+        {
+            this.mBtnReady.active = false ;
+        }
     }
 
     onPlayerNetStateChanged( playerIdx : number , isOnline : boolean ) : void 
@@ -268,6 +276,11 @@ export default class LayerPlayers extends ILayer {
             //cc.log( "clicked player uid = " + arg );
             this.mScene.showDlgPlayerInfo( arg ) ;
         }
+    }
+
+    onBtnSetReady()
+    {
+        this.mRoomData.doReady();
     }
     // update (dt) {}
 }

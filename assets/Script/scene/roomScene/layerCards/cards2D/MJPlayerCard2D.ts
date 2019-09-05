@@ -113,6 +113,13 @@ export default class MJPlayerCard2D extends IPlayerMJCard {
         this.layoutMingAndHold();
     }
 
+    onBuHua( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void
+    {
+        this.holdCards.removeCard( num);
+        this.holdCards.onMo(newCard);
+        this.layoutMingAndHold();
+    }
+
     onBuGang( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void 
     {
         this.holdCards.removeCard( num,1 );

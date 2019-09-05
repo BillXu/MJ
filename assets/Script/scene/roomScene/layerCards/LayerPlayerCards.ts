@@ -6,6 +6,7 @@ import { eMJActType } from "../roomDefine";
 import EffectLayer from "./effectLayer";
 import IPlayerMJCard, { MJPlayerCardHoldDelegate } from "./IPlayerMJCard";
 import IIndicator from "./IIndicator";
+import MJCardFactory2D from "./cards2D/MJCardFactory2D";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -43,7 +44,17 @@ export default class LayerPlayerCards extends cc.Component implements MJPlayerCa
     DEFAULT_ACT_TIME : number = 30 ;
     onLoad () 
     {
+        cc.systemEvent.on( MJCardFactory2D.EVENT_FINISH_REFRESH_MJ,this.onRefreshMJ,this );
+    }
 
+    onDestroy()
+    {
+        cc.systemEvent.targetOff( this );
+    }
+
+    protected onRefreshMJ()
+    {
+        this.refresh( this.mRoomData );
     }
 
     start () {
@@ -165,6 +176,13 @@ export default class LayerPlayerCards extends cc.Component implements MJPlayerCa
         this.getPlayerCardBySvrIdx(idx).onAnGang(card,NewCard,null) ;
         this.mIndicator.setCurActIdx(idx,this.DEFAULT_ACT_TIME);
         this.playActEffect( idx, eMJActType.eMJAct_AnGang );
+    }
+
+    onPlayerActBuHua( idx : number , huaCard : number , NewCard : number ) : void
+    {
+        this.getPlayerCardBySvrIdx(idx).onBuHua(huaCard,NewCard,null) ;
+        this.mIndicator.setCurActIdx(idx,this.DEFAULT_ACT_TIME);
+        this.playActEffect( idx, eMJActType.eMJAct_BuHua );
     }
 
     onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void 

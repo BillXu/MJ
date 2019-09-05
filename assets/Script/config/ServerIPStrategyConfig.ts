@@ -15,7 +15,7 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class ServerIPStrategyConfig implements IConfig {
 
-    private vDefaultIP : string[] = ["192.168.1.24","192.168.1.24"]; 
+    private vDefaultIP : string[] = ["192.168.1.35","192.168.1.35"]; 
     private _exclusiveIP : string = "" ;
     private _isUseExclusiveIP : boolean = false ;
     private _port : string = "40012" ;

@@ -1,5 +1,7 @@
 import MJCard2D from "./MJCard2D";
 import { eCardSate, eMJCardType } from "../../roomDefine";
+import ClientApp from "../../../../globalModule/ClientApp";
+import { clientEvent } from "../../../../common/clientDefine";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -21,14 +23,31 @@ export default class MJCardFactory2D extends cc.Component {
     // LIFE-CYCLE CALLBACKS:
 
     static EVENT_FINISH_LOAD_MJ : string = "EVENT_FINISH_LOAD_MJ" ;
-     onLoad ()
+    static EVENT_FINISH_REFRESH_MJ : string =  "EVENT_FINISH_REFRESH_MJ" ;
+    misInitLoadMJ : boolean = false ;
+    onLoad ()
     { 
-        this.loadMJAtals(1);
+        this.misInitLoadMJ = true ;
+        let idx = ClientApp.getInstance().getConfigMgr().getSettingConfig().mjBgIdx ;
+        this.loadMJAtals(idx);
+        cc.systemEvent.on( clientEvent.setting_update_mjBg,this.onRefreshMJ,this ) ; 
+    }
+
+    onDestroy()
+    {
+        cc.systemEvent.targetOff( this );
     }
 
     start () {
         //this.test();
         
+    }
+
+    protected onRefreshMJ()
+    {
+        this.misInitLoadMJ = false ;
+        let idx = ClientApp.getInstance().getConfigMgr().getSettingConfig().mjBgIdx ;
+        this.loadMJAtals(idx);
     }
 
     getCard( cardNum : number , posIdx : number , cardState : eCardSate ) : MJCard2D
@@ -188,7 +207,7 @@ export default class MJCardFactory2D extends cc.Component {
             }
         }
 
-        let pEvent = new cc.Event.EventCustom( MJCardFactory2D.EVENT_FINISH_LOAD_MJ,true) ;
+        let pEvent = new cc.Event.EventCustom( this.misInitLoadMJ ? MJCardFactory2D.EVENT_FINISH_LOAD_MJ : MJCardFactory2D.EVENT_FINISH_REFRESH_MJ,true) ;
         cc.systemEvent.dispatchEvent(pEvent) ;
     }
 

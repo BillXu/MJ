@@ -77,6 +77,22 @@ export default class SettingConfig implements IConfig {
         return v  ;
     }
 
+    set isLocalSpeach( v : boolean )
+    {
+        this.jsConfigData["_islocalspeach"] = v ? 1 : 0;
+    }
+
+    get isLocalSpeach() : boolean
+    {
+        let v = this.jsConfigData["_islocalspeach"];
+        if ( v == null )
+        {
+            return false ;
+        }
+        
+        return v == 1  ;
+    }
+
     set mjBgIdx( v : number )
     {
         this.jsConfigData["_mjBgIdx"] = v;

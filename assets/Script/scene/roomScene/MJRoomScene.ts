@@ -185,6 +185,12 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
         --this.layerRoomInfo.leftMJCardCnt;
     }
 
+    onPlayerActBuHua( idx : number , huaCard : number , NewCard : number ) : void
+    {
+        this.layerPlayerCards.onPlayerActBuHua( idx, huaCard, NewCard ) ;
+        --this.layerRoomInfo.leftMJCardCnt;
+    }
+
     onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void 
     {
         this.layerPlayerCards.onPlayerActBuGang( idx, card, NewCard );

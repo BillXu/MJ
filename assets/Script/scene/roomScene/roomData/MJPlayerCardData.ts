@@ -1,6 +1,6 @@
 import { eMJActType, eArrowDirect, eEatType, eMJCardType } from "../roomDefine";
 import * as _ from "lodash"
-import MJCard from "../layerCards/layerCards3D/cards/MJCard";
+import MJCard from "../layerCards/cards3D/MJCard";
 //import MJCard from "../layerCards3D/cards/MJCard";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -30,6 +30,7 @@ export class IPlayerCards
     
     vMingCards : PlayerActedCard[] = [];
     vChuCards : number[] = [];
+    vBuedHua : number[] = [] ;
 
     nHuCard : number = 0 ;
     nPlayerIdx = -1 ;
@@ -72,6 +73,12 @@ export class IPlayerCards
             let vMing : Object[] = info["ming"] ;
             let self = this ;
             vMing.forEach( ( ming : Object )=>{
+                if ( ming["act"] == eMJActType.eMJAct_BuHua )
+                {
+                    self.vBuedHua.push(ming["card"][0]);
+                    return ;
+                }
+                
                 let clientMing = new PlayerActedCard();
                 clientMing.nInvokerIdx = ming["invokerIdx"] ;
                 clientMing.nTargetCard = ming["card"][0] ;
@@ -109,6 +116,7 @@ export class IPlayerCards
         //this.nHoldCardCnt = 0 ;
         this.vMingCards.length = 0 ;
         this.vChuCards.length = 0 ;
+        this.vBuedHua.length = 0 ;
         this.nHuCard = 0 ;
     }
 
@@ -229,6 +237,13 @@ export class IPlayerCards
         pMing.nTargetCard = targetCard ;
         this.vMingCards.push(pMing);
 
+        this.onMo(newCard);
+    }
+
+    onBuHua( huaCard : number , newCard : number )
+    {
+        this.vBuedHua.push(huaCard);
+        this.removeHold(huaCard) ;
         this.onMo(newCard);
     }
 

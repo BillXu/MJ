@@ -1,6 +1,8 @@
 import DlgBase from "../../../common/DlgBase";
 import LayerOptsDanDong from "./LayerOptsDanDong";
 import { ILayerOpts } from "./ILayerOpts";
+import LayerOptsSuZhou from "./LayerOptsSuZhou";
+import LayerOptsSuZhouBaiDa from "./LayerOptsSuZhouBaiDa";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -23,25 +25,41 @@ interface togglePair
 @ccclass
 export default class DlgCreateRoom extends DlgBase {
 
+    vTogglePairs : togglePair[] = [] ;
+
+    @property( [cc.Component.EventHandler ] )
+    onDlgResult : cc.Component.EventHandler[] = [] ; // ( opts : IOpts )
+    
     @property(cc.Toggle)
     mToggleDanDong : cc.Toggle = null;
 
     @property(LayerOptsDanDong)
     mLayerOptsDanDong : LayerOptsDanDong = null ;
 
-    vTogglePairs : togglePair[] = [] ;
+    // su zhou 
+    @property(cc.Toggle)
+    mToggleSuZhou : cc.Toggle = null;
 
-    @property( [cc.Component.EventHandler ] )
-    onDlgResult : cc.Component.EventHandler[] = [] ; // ( opts : IOpts )
+    @property(LayerOptsSuZhou)
+    mLayerOptsSuZhou : LayerOptsSuZhou = null ;
+
+
+    // su zhou bai da 
+    @property(cc.Toggle)
+    mToggleSuZhouBaiDa : cc.Toggle = null;
+
+    @property(LayerOptsSuZhouBaiDa)
+    mLayerOptsSuZhouBaiDa : LayerOptsSuZhouBaiDa = null ;
+
     // LIFE-CYCLE CALLBACKS:
 
     onLoad ()
     {   
         super.onLoad();
         // setup Pairs ; 
-        let p : togglePair = { toggle : this.mToggleDanDong, layerOpts : this.mLayerOptsDanDong } ;
-        this.vTogglePairs.push(p);
-
+        this.vTogglePairs.push({ toggle : this.mToggleDanDong, layerOpts : this.mLayerOptsDanDong });
+        this.vTogglePairs.push({ toggle : this.mToggleSuZhou, layerOpts : this.mLayerOptsSuZhou }) ;
+        this.vTogglePairs.push({ toggle : this.mToggleSuZhouBaiDa, layerOpts : this.mLayerOptsSuZhouBaiDa }) ;
         // init state;
         this.onSelectGame();
     }

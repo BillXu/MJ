@@ -90,6 +90,16 @@ export default class Utility  {
                 return eMsgPort.ID_MSG_PORT_DDMJ;
             }
             break ;
+            case eGameType.eGame_SZMJ:
+            {
+                return eMsgPort.ID_MSG_PORT_SZMJ;
+            }
+            break;
+            case eGameType.eGame_SDMJ:
+            {
+                return eMsgPort.ID_MSG_PORT_SDMJ;
+            }
+            break ;
         }
 
         cc.error( "get can not parse port from gametype = " + game );

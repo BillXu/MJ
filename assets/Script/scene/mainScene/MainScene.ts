@@ -41,8 +41,8 @@ export default class MainScene extends IModule {
     @property(DlgClub)
     pDlgClub : DlgClub = null ;
 
-    @property(DlgSetting)
-    pDlgSetting: DlgSetting = null;
+    @property(DlgBase)
+    pDlgSetting: DlgBase = null;
 
     @property(dlgRecord)
     pDlgRecord : dlgRecord = null ;

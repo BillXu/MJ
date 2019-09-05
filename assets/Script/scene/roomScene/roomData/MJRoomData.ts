@@ -163,6 +163,7 @@ export default abstract class MJRoomData extends IModule {
                     return true;
                 } 
                 this.mPlayers[idx].mPlayerBaseData.isReady = true ;
+                this.mSceneDelegate.onPlayerReady( idx )  ;
             }
             break ;
             case eMsgType.MSG_PLAYER_LEAVE_ROOM:
@@ -497,6 +498,13 @@ export default abstract class MJRoomData extends IModule {
                 this.mSceneDelegate.onPlayerActHu(svrIdx,targetCard,invokerIdx ) ;
             }
             break ;
+            case eMJActType.eMJAct_BuHua:
+            {
+                roomPlayer.mPlayerCard.onBuHua(targetCard,msg["gangCard"] );
+                this.mBaseData.leftMJCnt -= 1 ;
+                this.mSceneDelegate.onPlayerActBuHua(svrIdx,targetCard,msg["gangCard"] );
+            }
+            break;
             default:
             cc.error( "unknown act type = " + actType );
             return ;

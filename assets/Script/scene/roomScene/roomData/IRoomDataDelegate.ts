@@ -35,6 +35,7 @@ import ResultTotalData from "./ResultTotalData";
     onPlayerActPeng( idx : number , card : number, invokeIdx : number ) : void ;
     onPlayerActMingGang( idx : number , card : number, invokeIdx : number, newCard : number ) : void ;
     onPlayerActAnGang( idx : number , card : number , NewCard : number ) : void ;
+    onPlayerActBuHua( idx : number , huaCard : number , NewCard : number ) : void ;
     onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void ;
     onPlayerActHu( idx : number, card : number , invokeIdx : number ) : void ;
     showActOptsWhenRecivedCards( vActs : eMJActType[] ) : void ;
