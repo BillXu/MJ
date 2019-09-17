@@ -1,5 +1,5 @@
 import { eMJActType, eMJCardType } from "./roomDefine";
-import Card from "./card";
+import MJCard from "./layerCards/cards3D/MJCard";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -15,7 +15,6 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class RoomSound extends cc.Component {
-
     // @property(cc.AudioSource)
     // vMaleWanCardSound : cc.AudioSource[] = [] ;
 
@@ -144,8 +143,8 @@ export default class RoomSound extends cc.Component {
             return ;
         }
 
-        let type : eMJCardType = Card.parseCardType(cardNum);
-        let value : number = Card.parseCardValue(cardNum); 
+        let type : eMJCardType = MJCard.parseCardType(cardNum);
+        let value : number = MJCard.parseCardValue(cardNum); 
 
         let vType = [ "","wan","tong","tiao","feng","zi"] ;
         let url = "sound/"+ (isMale ? "man" : "female") + "/" + value + vType[type];

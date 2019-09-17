@@ -16,12 +16,12 @@ import OptsJoinOrCreate from "./dlgJoinOrCreate"
 import DlgJoinRoomOrClub from "../dlgJoinRoomOrClub"
 import DlgCreateClubTip from "./dlgCreateClubTip";
 import DlgCreateClubVerify from "./dlgCreateClubVerify";
-import DlgCreateRoom from "../dlgCreateRoom";
 import Network from "../../../common/Network";
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Utility from "../../../globalModule/Utility";
 import ClubData from "../../../clientData/clubData/ClubData";
 import ClientApp from "../../../globalModule/ClientApp";
+import DlgCreateRoom from "../dlgCreateRoom/DlgCreateRoom";
 class clubItemData
 {
     name : string = "" ;
@@ -64,7 +64,7 @@ export default class ClubList extends cc.Component {
 
     onLoad () 
     {
-
+ 
     }
 
     start () {

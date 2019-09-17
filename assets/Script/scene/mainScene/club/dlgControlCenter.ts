@@ -11,12 +11,12 @@
 const {ccclass, property} = cc._decorator;
 import DlgBase from "../../../common/DlgBase"
 import { eGameType } from "../../../common/clientDefine"
-import DlgCreateRoom from "../dlgCreateRoom";
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Network from "../../../common/Network"
 import Utility from "../../../globalModule/Utility";
 import ClubData from "../../../clientData/clubData/ClubData";
 import ClubDataBase from "../../../clientData/clubData/ClubDataBase";
+import DlgCreateRoom from "../dlgCreateRoom/DlgCreateRoom";
 @ccclass
 export default class DlgControlCenter extends DlgBase {
 

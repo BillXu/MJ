@@ -29,7 +29,7 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class MainScene extends IModule {
 
-    @property(DlgCreateRoom)
+    @property(DlgCreateRoom)    
     dlgCreateRoom: DlgCreateRoom = null;
 
     @property(DlgJoinRoomOrClub)
