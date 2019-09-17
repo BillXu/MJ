@@ -34,7 +34,7 @@ export default abstract class MJRoomData extends IModule {
     mBaseData : MJRoomBaseData = null ;
     mPlayers : MJPlayerData[] = [] ;
     mSceneDelegate : IRoomDataDelegate = null ; 
-    mSinglResultData : ResultSingleData = new ResultSingleData();
+    mSinglResultData : any = null ;
     mTotalResultData : ResultTotalData = new ResultTotalData();
 
     protected init()

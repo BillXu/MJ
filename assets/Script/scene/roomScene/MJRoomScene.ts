@@ -15,6 +15,9 @@ import Prompt from "../../globalModule/Prompt";
 import LayerPlayerCards from "./layerCards/LayerPlayerCards";
 import MJFactory from "./layerCards/cards3D/MJFactory";
 import MJCardFactory2D from "./layerCards/cards2D/MJCardFactory2D";
+import IResultSingleData from "../roomSceneSZ/layerDlg/dlgResultSingle/IResultSingleDate";
+import { ILayerDlg } from "./layerDlg/ILayerDlg";
+import ILayer from "./ILayer";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -45,16 +48,13 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
 
     @property(cc.Node)
     mLayerPlayerCard : cc.Node = null ;
+
+    layerDlg : ILayerDlg = null ;
     // LIFE-CYCLE CALLBACKS:
 
     get layerRoomInfo() : LayerRoomInfo
     {
         return this.mLayerInfo.getComponent(LayerRoomInfo) ;
-    }
-
-    get layerDlg() : LayerDlg
-    {
-        return this.mLayerDlg.getComponent(LayerDlg) ;
     }
 
     get layerPlayers() : LayerPlayers
@@ -98,7 +98,8 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     onRecivedAllPlayers( vPlayers : MJPlayerData[] ) : void
     {
         this.layerRoomInfo.refresh( this.mRoomData );
-        this.layerDlg.refresh( this.mRoomData );
+        let p : any = this.layerDlg ;
+        (p as ILayer ).refresh( this.mRoomData );
         this.layerPlayers.refresh( this.mRoomData );
         this.layerPlayerCards.refresh( this.mRoomData );
     }
@@ -189,6 +190,7 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     {
         this.layerPlayerCards.onPlayerActBuHua( idx, huaCard, NewCard ) ;
         --this.layerRoomInfo.leftMJCardCnt;
+        this.layerPlayers.onPlayerRefreshHuaCnt(idx,this.mRoomData.mPlayers[idx].mPlayerCard.vBuedHua.length ) ;
     }
 
     onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void 
@@ -220,12 +222,13 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
     onGameStart() : void 
     {
         this.layerRoomInfo.onGameStart();
-        this.layerDlg.onGameStart();
+        let p : any = this.layerDlg ;
+        p.onGameStart();
         this.layerPlayers.onGameStart();
         this.layerPlayerCards.onGameStart();
     }
 
-    onGameEnd( result : ResultSingleData  ) : void 
+    onGameEnd( result : IResultSingleData  ) : void 
     {
         this.layerDlg.showDlgResultSingle( result ) ;
         this.layerPlayers.refreshPlayerChips();

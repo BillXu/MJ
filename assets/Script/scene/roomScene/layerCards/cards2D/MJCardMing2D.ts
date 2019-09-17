@@ -1,7 +1,7 @@
 import MJCardFactory2D from "./MJCardFactory2D";
 import MJCard2D from "./MJCard2D";
 import { eMJActType, eArrowDirect, eCardSate } from "../../roomDefine";
-import { IPlayerCards } from "../../roomData/MJPlayerCardData";
+import { PlayerActedCard } from "../../roomData/MJPlayerCardData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -31,7 +31,7 @@ export default class MJCardMing2D extends cc.Component {
     margin : number = 0 ;
 
     @property(cc.Vec2)
-    gangCardMargin : cc.Vec2 = cc.v2();
+    gangCardMargin : cc.Vec2 = cc.v2(0,20);
 
     @property(cc.Vec2)
     arrowMargin : cc.Vec2 = cc.v2();
@@ -59,11 +59,11 @@ export default class MJCardMing2D extends cc.Component {
         //this.test();
     }
 
-    refresh( cardData : IPlayerCards )
+    refresh( cardDataMing : PlayerActedCard[] )
     {
         this.clear();
         let self = this ;
-        cardData.vMingCards.forEach( v=>{
+        cardDataMing.forEach( v=>{
             if ( v.eAct == eMJActType.eMJAct_Chi )
             {
                 self.addMingCards( v.vEatWithCards,v.eAct,v.eDir) ;
@@ -167,7 +167,7 @@ export default class MJCardMing2D extends cc.Component {
             }
         }
 
-        if ( dir != null )
+        if ( dir != null && this.mArrowSpriteFrame != null )
         {
             p.dir = dir ;
             p.dirNode = new cc.Node();

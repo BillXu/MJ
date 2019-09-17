@@ -35,7 +35,7 @@ export default class DlgClub extends DlgBase implements PlayerClubsDelegate {
 
     @property(ClubList)
     pLeftClubList : ClubList = null;
-
+   
     @property([ClubPannel])
     vClubInfoPannels : ClubPannel[] = [] ;
     private nCurPannelIdx : number = 0 ;

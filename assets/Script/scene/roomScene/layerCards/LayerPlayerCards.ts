@@ -181,7 +181,7 @@ export default class LayerPlayerCards extends cc.Component implements MJPlayerCa
     onPlayerActBuHua( idx : number , huaCard : number , NewCard : number ) : void
     {
         this.getPlayerCardBySvrIdx(idx).onBuHua(huaCard,NewCard,null) ;
-        this.mIndicator.setCurActIdx(idx,this.DEFAULT_ACT_TIME);
+        //this.mIndicator.setCurActIdx(idx,this.DEFAULT_ACT_TIME);
         this.playActEffect( idx, eMJActType.eMJAct_BuHua );
     }
 

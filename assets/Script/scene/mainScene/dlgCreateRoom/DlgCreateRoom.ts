@@ -86,7 +86,7 @@ export default class DlgCreateRoom extends DlgBase {
                 break ;
             }
         }
-        this.closeDlg();
+        this.closeDlg();   
     }
 
     // update (dt) {}

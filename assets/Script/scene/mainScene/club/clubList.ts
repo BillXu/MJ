@@ -25,7 +25,7 @@ import ClientApp from "../../../globalModule/ClientApp";
 class clubItemData
 {
     name : string = "" ;
-    id : number = 0 ;
+    id : number = 0 ;    
     isSelected : boolean = false ;    
 }
 

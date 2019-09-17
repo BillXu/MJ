@@ -65,7 +65,7 @@ export default class MJPlayerCard2D extends IPlayerMJCard {
     onRefresh( cardData : IPlayerCards ) : void 
     {
         this.chuCards.refresh(cardData.vChuCards);
-        this.mingCards.refresh( cardData );
+        this.mingCards.refresh( cardData.vMingCards );
         this.holdCards.refresh( cardData.vHoldCard ) ;
         this.layoutMingAndHold();
     }

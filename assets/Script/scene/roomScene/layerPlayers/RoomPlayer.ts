@@ -30,6 +30,12 @@ export default class RoomPlayer extends cc.Component {
     mCommonInfoNode : cc.Node = null ;
 
     @property(cc.Label)
+    mHuaCnt : cc.Label = null ;
+
+    @property(cc.Node)
+    mHuaZi : cc.Node = null ;
+
+    @property(cc.Label)
     mChip : cc.Label = null ;
 
     @property(cc.Node)
@@ -94,6 +100,16 @@ export default class RoomPlayer extends cc.Component {
         this.mChip.string = n.toString() ;
     }
 
+    set huaCnt( cnt : number ) 
+    {
+        this.mHuaCnt.string = cnt + "" ;
+    }
+
+    set huaCntColor( clr : cc.Color )
+    {
+        this.mHuaCnt.node.color = clr ;
+        this.mHuaZi.color = clr ;
+    }
 
     private mState : eRoomPlayerState = eRoomPlayerState.RPS_Empty ;
     

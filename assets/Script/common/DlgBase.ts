@@ -119,7 +119,7 @@ export default class DlgBase extends cc.Component {
     }
 
     isShow() : boolean
-    {
+    { 
         return this.pRootNode.active ;
     }
     

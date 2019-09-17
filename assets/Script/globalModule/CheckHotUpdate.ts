@@ -185,7 +185,7 @@ export default class CheckHotUpdate extends cc.Component {
 
             if (this.pAssertManager.getState() === jsb.AssetsManager.State.UNINITED) {
                 // Resolve md5 url
-                var url = this.manifestUrl.nativeUrl;
+                let url = this.manifestUrl.nativeUrl;
                 if (cc.loader.md5Pipe) {
                     url = cc.loader.md5Pipe.transformURL(url);
                 }

@@ -7,6 +7,7 @@ import Prompt from "../../../globalModule/Prompt";
 import VoiceManager from "../../../sdk/VoiceManager";
 import PlayerInteractEmoji from "./PlayerInteractEmoji";
 import MJRoomScene from "../MJRoomScene";
+import OptsSuZhou from "../../../opts/OptsSuZhou";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -110,6 +111,7 @@ export default class LayerPlayers extends ILayer {
             {
                 this.mPlayers[clientIdx].state = eRoomPlayerState.RPS_Normal ;
                 this.mPlayers[clientIdx].setInfo( data.mPlayers[svrIdx].mPlayerBaseData );
+                this.onPlayerRefreshHuaCnt( svrIdx,data.mPlayers[svrIdx].mPlayerCard.vBuedHua.length );
                 this.mPlayers[clientIdx].isReady = data.mBaseData.isInGamingState() == false  && data.mPlayers[svrIdx].mPlayerBaseData.isReady ;
             }
         }
@@ -177,6 +179,14 @@ export default class LayerPlayers extends ILayer {
     {
         let clientIdx = this.mRoomData.svrIdxToClientIdx( playerIdx );
         this.mPlayers[clientIdx].isOnline = isOnline ;
+    }
+
+    onPlayerRefreshHuaCnt( playerSvrIdx : number , huaCnt : number )
+    {
+        let playerIdx = this.mRoomData.svrIdxToClientIdx( playerSvrIdx );
+        this.mPlayers[playerIdx].huaCnt = huaCnt ;
+        let keep = ( this.mRoomData.mOpts as OptsSuZhou ).ruleMode == 1 ? 2 : 3 ;
+        this.mPlayers[playerIdx].huaCntColor = cc.Color.GREEN.fromHEX( huaCnt > keep ? "#00f200" : "#c96b82" ) ;
     }
 
     onPlayerChatMsg( playerIdx : number , type : eChatMsgType , strContent : string ) : void 

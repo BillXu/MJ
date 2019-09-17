@@ -16,6 +16,8 @@ import DlgLocation from "./DlgLocation";
 import DlgVoice from "./DlgVoice/DlgVoice";
 import DlgPlayerInfo from "./DlgPlayerInfo";
 import DlgShowMore from "./DlgShowMore";
+import { ILayerDlg } from "./ILayerDlg";
+import IResultSingleData from "../../roomSceneSZ/layerDlg/dlgResultSingle/IResultSingleDate";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -30,7 +32,7 @@ import DlgShowMore from "./DlgShowMore";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerDlg extends ILayer {
+export default class LayerDlg extends ILayer implements ILayerDlg {
 
     @property(DlgActOpts)
     mDlgActOpts: DlgActOpts = null;
@@ -106,7 +108,10 @@ export default class LayerDlg extends ILayer {
     onGameStart()
     {
         this.mBtnCopyRoomNum.active = this.mBtnInvite.active = false ;
-        this.mDlgResultSingle.closeDlg();
+        if (  this.mDlgResultSingle != null )
+        {
+            this.mDlgResultSingle.closeDlg();
+        }
     }
 
     // dlg act opts 
@@ -194,9 +199,9 @@ export default class LayerDlg extends ILayer {
     }
 
     // dlg result single 
-    showDlgResultSingle( result : ResultSingleData )
+    showDlgResultSingle( result : IResultSingleData )
     {
-        this.mDlgResultSingle.showDlg(this.mRoomData.getSelfIdx(),result ) ;
+        //this.mDlgResultSingle.showDlg(this.mRoomData.getSelfIdx(),result ) ;
     }
 
     protected onDlgResultSingleResult( isAllBtn : boolean )

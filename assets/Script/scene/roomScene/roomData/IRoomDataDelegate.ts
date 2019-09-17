@@ -4,6 +4,7 @@ import { eChatMsgType, eMJActType, eEatType } from "../roomDefine";
 import PlayerInfoData from "../../../clientData/playerInfoData";
 import ResultSingleData from "./ResultSingleData";
 import ResultTotalData from "./ResultTotalData";
+import IResultSingleData from "../../roomSceneSZ/layerDlg/dlgResultSingle/IResultSingleDate";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -43,7 +44,7 @@ import ResultTotalData from "./ResultTotalData";
     showGangOpts( vGangOpts : number[] ) : void ;
 
     onGameStart() : void ;
-    onGameEnd( result : ResultSingleData  ) : void ;
+    onGameEnd( result : IResultSingleData  ) : void ; 
     onRoomOvered( result : ResultTotalData ) : void ;
     onApplyDismisRoom( idx : number ) : void ;
     onReplayDismissRoom( idx : number , isAgree : boolean ) : void ;

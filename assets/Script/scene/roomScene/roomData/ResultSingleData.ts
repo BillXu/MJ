@@ -33,7 +33,7 @@ export class ResultItem
         this.mIdx = -1 ;
         if ( this.mHuTypes != null )
         {
-            this.mHuTypes.length = 0 ;;
+            this.mHuTypes.length = 0 ;
         }
 
         this.mFinalChip = 0 ;
@@ -191,6 +191,7 @@ export default class ResultSingleData {
     mResults : ResultItem[] = []; 
 
     mIsLiuJu : boolean = true ;
+    mDianPaoIdx : number = -1 ;
 
     parseResult( js : Object ) : void
     {
@@ -277,6 +278,7 @@ export default class ResultSingleData {
         else
         {
             let huPlayers : Object[] = detail["huPlayers"] ;
+            this.mDianPaoIdx = detail["dianPaoIdx"] ;
             for ( let i = 0; i < huPlayers.length; i++ )
             {
                 let obj : Object = huPlayers[i];

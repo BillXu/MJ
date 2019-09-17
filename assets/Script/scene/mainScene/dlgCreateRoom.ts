@@ -24,7 +24,7 @@ export default class DlgCreateRoom extends DlgBase {
     @property(cc.Color)
     checkedToggleClr : cc.Color = cc.Color.RED ;
 
-    @property([cc.Toggle])
+    @property([cc.Toggle])   
     vMJTypeToggles :cc.Toggle[] = [] ;
 
     @property([cc.Toggle])

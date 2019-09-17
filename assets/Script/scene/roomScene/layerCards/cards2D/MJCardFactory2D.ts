@@ -28,7 +28,11 @@ export default class MJCardFactory2D extends cc.Component {
     onLoad ()
     { 
         this.misInitLoadMJ = true ;
-        let idx = ClientApp.getInstance().getConfigMgr().getSettingConfig().mjBgIdx ;
+        let idx = 0 ;
+        if ( CC_JSB )
+        {
+            idx = ClientApp.getInstance().getConfigMgr().getSettingConfig().mjBgIdx ;
+        }
         this.loadMJAtals(idx);
         cc.systemEvent.on( clientEvent.setting_update_mjBg,this.onRefreshMJ,this ) ; 
     }

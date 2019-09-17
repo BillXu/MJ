@@ -118,6 +118,7 @@ export class IPlayerCards
         this.vChuCards.length = 0 ;
         this.vBuedHua.length = 0 ;
         this.nHuCard = 0 ;
+       // console.log( "clear cards " );
     }
 
     onMo( nNewCard : number )
@@ -354,4 +355,6 @@ export class IPlayerCards
         }
         //this.nHoldCardCnt = cnt ;
     }
+
+
 }
