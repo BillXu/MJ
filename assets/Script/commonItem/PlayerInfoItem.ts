@@ -49,14 +49,16 @@ export default class PlayerInfoItem extends cc.Component {
     onLoad () 
     {
         cc.systemEvent.on(PlayerInfoDataCacher.EVENT_RECIEVED_PLAYER_INFO_DATA,this.onPlayerDataInfoEvent,this);
-        this.pDefaultPhoto = this.pPhotoSprite.spriteFrame.clone();
     }
 
     start () {
         if ( this.pPhotoSprite.spriteFrame == null )
         {
             console.error( "must have a default sprite frame" );
+            return ;
         }
+
+        this.pDefaultPhoto = this.pPhotoSprite.spriteFrame.clone();
     }
 
     onDestroy()

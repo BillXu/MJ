@@ -108,7 +108,7 @@ export default class MainScene extends IModule {
     {
         this.pBackground.hide();
         let self = this ;
-        this.dlgCreateRoom.showDlg( null ,null,(dlg : DlgCreateRoom)=>{ self.pBackground.show();});
+        this.dlgCreateRoom.showDlg( this.onDlgCreateRoomResult.bind(this) ,null,(dlg : DlgCreateRoom)=>{ self.pBackground.show();});
         Utility.audioBtnClick();
     }
 

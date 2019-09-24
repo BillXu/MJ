@@ -27,8 +27,8 @@ export default class DlgCreateRoom extends DlgBase {
 
     vTogglePairs : togglePair[] = [] ;
 
-    @property( [cc.Component.EventHandler ] )
-    onDlgResult : cc.Component.EventHandler[] = [] ; // ( opts : IOpts )
+   // @property( [cc.Component.EventHandler ] )
+    //onDlgResult : cc.Component.EventHandler[] = [] ; // ( opts : IOpts )
     
     @property(cc.Toggle)
     mToggleDanDong : cc.Toggle = null;
@@ -82,7 +82,11 @@ export default class DlgCreateRoom extends DlgBase {
         {
             if ( pair.toggle.isChecked )
             {
-                cc.Component.EventHandler.emitEvents( this.onDlgResult,pair.layerOpts.getOpts() ) ;
+                //cc.Component.EventHandler.emitEvents( this.onDlgResult,pair.layerOpts.getOpts() ) ;
+                if ( this.pFuncResult != null )
+                {
+                    this.pFuncResult( pair.layerOpts.getOpts() ) ;
+                }
                 break ;
             }
         }

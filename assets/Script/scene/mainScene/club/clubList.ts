@@ -22,6 +22,7 @@ import Utility from "../../../globalModule/Utility";
 import ClubData from "../../../clientData/clubData/ClubData";
 import ClientApp from "../../../globalModule/ClientApp";
 import DlgCreateRoom from "../dlgCreateRoom/DlgCreateRoom";
+import IOpts from "../../../opts/IOpts";
 class clubItemData
 {
     name : string = "" ;
@@ -165,7 +166,8 @@ export default class ClubList extends cc.Component {
         let msg = { } ;
         msg["clubID"] = applyClubID;
         let self = this ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_APPLY_JOIN,eMsgPort.ID_MSG_PORT_CLUB,applyClubID,( msg : Object)=>
+        let selfUID = ClientApp.getInstance().getClientPlayerData().getSelfUID();
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_APPLY_JOIN,eMsgPort.ID_MSG_PORT_CLUB,selfUID,( msg : Object)=>
         {
             let ret = msg["ret"] ;
             let vError = [ "加入申请已经提交，请耐心等待管理员审批","您已经在该俱乐部里","您已经申请了，请勿重复申请，耐心等待管理员审批","俱乐部成员数量已达上限","玩家对象为空"] ;
@@ -212,12 +214,12 @@ export default class ClubList extends cc.Component {
         this.pDlgCreateRoom.showDlg(this.onCreateRoomDlgResult.bind(this)) ;
     }
 
-    protected onCreateRoomDlgResult( msgCreateRoom : Object )
+    protected onCreateRoomDlgResult( msgCreateRoom : IOpts )
     {
          let self = this ;
          let msg = { } ;
          msg["name"] = this.strCreateRoomName ;
-         msg["opts"] = msgCreateRoom ;
+         msg["opts"] = msgCreateRoom.jsOpts ;
          let selfUID = ClientApp.getInstance().getClientPlayerData().getSelfUID() ;
          Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_CREATE_CLUB,eMsgPort.ID_MSG_PORT_CLUB,selfUID ,( msg : Object )=>{
             let ret : number = msg["ret"] ;

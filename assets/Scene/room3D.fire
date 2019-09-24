@@ -58195,6 +58195,8 @@
     "mCommonInfoNode": {
       "__id__": 1250
     },
+    "mHuaCnt": null,
+    "mHuaZi": null,
     "mChip": {
       "__id__": 1268
     },
@@ -60754,6 +60756,8 @@
     "mCommonInfoNode": {
       "__id__": 1305
     },
+    "mHuaCnt": null,
+    "mHuaZi": null,
     "mChip": {
       "__id__": 1323
     },
@@ -63313,6 +63317,8 @@
     "mCommonInfoNode": {
       "__id__": 1360
     },
+    "mHuaCnt": null,
+    "mHuaZi": null,
     "mChip": {
       "__id__": 1378
     },
@@ -65872,6 +65878,8 @@
     "mCommonInfoNode": {
       "__id__": 1415
     },
+    "mHuaCnt": null,
+    "mHuaZi": null,
     "mChip": {
       "__id__": 1433
     },
@@ -76349,8 +76357,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 25,
-      "height": 31
+      "width": 37,
+      "height": 45
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -76399,7 +76407,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "7a4ea272-8ba8-44e3-a306-485791cd245e"
+      "__uuid__": "be0e4909-b0ca-4a3e-b48e-1c837f8e58b9"
     },
     "_type": 0,
     "_sizeMode": 2,

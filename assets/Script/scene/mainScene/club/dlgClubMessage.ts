@@ -17,6 +17,7 @@ import Network from "../../../common/Network"
 import { eMsgPort,eMsgType } from "../../../common/MessageIdentifer"
 import Utility from "../../../globalModule/Utility";
 import ClubDataEvent, { ClubEvent } from "../../../clientData/clubData/ClubDataEvent";
+import ClientApp from "../../../globalModule/ClientApp";
 @ccclass
 export default class dlgClubMessage extends DlgBase {
 
@@ -72,7 +73,8 @@ export default class dlgClubMessage extends DlgBase {
         msg["clubID"] = this.pData.clubID ;
         let self = this ;
         let clubID = this.pData.clubID ;
-        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_PROCESS_EVENT,eMsgPort.ID_MSG_PORT_CLUB,clubID,( msg : Object )=>{
+        let selfID = ClientApp.getInstance().getClientPlayerData().getSelfUID();
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_CLUB_PROCESS_EVENT,eMsgPort.ID_MSG_PORT_CLUB,selfID,( msg : Object )=>{
             let ret = msg["ret"] ;
             let error = [ "已经处理","事件不存在","已经被其他管理员处理了","权限不足","你没有登录","参数错误" ];
             if ( ret < error.length )

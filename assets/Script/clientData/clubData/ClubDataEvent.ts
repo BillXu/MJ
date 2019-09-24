@@ -5,6 +5,7 @@ import Utility from "../../globalModule/Utility";
 import ClubData from "./ClubData"
 import PlayerInfoDataCacher from "../PlayerInfoDataCacher";
 import PlayerInfoData from "../playerInfoData";
+import ClientApp from "../../globalModule/ClientApp";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -161,11 +162,12 @@ export default class ClubDataEvent extends IClubDataComponent {
         msg["clubID"] = this.clubID;
         msg["clientMaxEventID"] = this.nClientMaxEventID ;
         msg["state"] = eEventState.eEventState_Processed ; 
-        this.getClub().sendMsg(msg,eMsgType.MSG_CLUB_REQ_EVENTS,eMsgPort.ID_MSG_PORT_CLUB,this.clubID ) ;
+        let selfID = ClientApp.getInstance().getClientPlayerData().getSelfUID();
+        this.getClub().sendMsg(msg,eMsgType.MSG_CLUB_REQ_EVENTS,eMsgPort.ID_MSG_PORT_CLUB,selfID ) ;
 
         msg["clientMaxEventID"] = 0 ;  // do not cache wait process event ;
         msg["state"] = eEventState.eEventState_WaitProcesse ;  // not process event ;
-        this.getClub().sendMsg(msg,eMsgType.MSG_CLUB_REQ_EVENTS,eMsgPort.ID_MSG_PORT_CLUB,this.clubID ) ;
+        this.getClub().sendMsg(msg,eMsgType.MSG_CLUB_REQ_EVENTS,eMsgPort.ID_MSG_PORT_CLUB,selfID ) ;
     }
 
     onMsg( msgID : number , msgData : Object ) : boolean
