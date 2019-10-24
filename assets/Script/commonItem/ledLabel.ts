@@ -58,11 +58,12 @@ export default class LedLabel extends cc.Component {
     }
 
     start () {
-        this.string = "断舍离哥哥真是一个好人啊。。太好了，好好好。。。。adlfjahgadfosfg";
+        //this.string = "断舍离哥哥真是一个好人啊。。太好了，好好好。。。。adlfjahgadfosfg";
     }
 
     private prepareMoveAction()
     {
+        this.pContent.node.stopAllActions();
         // start animation ;
         let nTargetX = -1 * this.pContent.node.getContentSize().width - this.pMaskBg.getContentSize().width * 0.5 ;
         let moveTime : number = ( this.pContent.node.getContentSize().width + this.pMaskBg.getContentSize().width ) / this.nMoveSpeed ;

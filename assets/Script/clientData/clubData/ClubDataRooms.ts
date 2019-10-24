@@ -2,6 +2,12 @@ import IClubDataComponent from "./IClubDataComponent";
 import { eMsgType, eMsgPort } from "../../common/MessageIdentifer";
 import * as _ from "lodash"
 import Utility from "../../globalModule/Utility";
+import IClubRoomsData, { IClubRoomsDataItem, ClubRoomItemPlayer } from "../../scene/mainScene/DlgClub/pannelRoom/IClubRoomsData";
+import IOpts from "../../opts/IOpts";
+import OptsSuZhou from "../../opts/OptsSuZhou";
+import ClientApp from "../../globalModule/ClientApp";
+import Network from "../../common/Network";
+import { SceneName } from "../../common/clientDefine";
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -12,13 +18,12 @@ import Utility from "../../globalModule/Utility";
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-export class RoomPeer
+export class RoomPeer extends ClubRoomItemPlayer
 {
-    nUID : number = 0 ;
-    isOnline : boolean = false ;
+ 
 }
 
-export class ClubRoomItem
+export class ClubRoomItem implements IClubRoomsDataItem
 {
     nRoomID : number = 0 ;
     vRoomPeers : RoomPeer[] = [] ;
@@ -31,15 +36,17 @@ export class ClubRoomItem
         return this.jsmsgBrife["opts"]["seatCnt"];
     }
 
-    get opts() : Object
+    get opts() : IOpts
     {
-        return this.jsmsgBrife["opts"] ;
+        let opts = new OptsSuZhou();
+        opts.parseOpts( this.jsmsgBrife["opts"] );
+        return opts ;
     }
     
     jsmsgBrife : Object = null ;
 }
  
-export default class ClubDataRooms extends IClubDataComponent {
+export default class ClubDataRooms extends IClubDataComponent implements IClubRoomsData {
 
     vRooms : ClubRoomItem[] = [] ;
 
@@ -69,7 +76,7 @@ export default class ClubDataRooms extends IClubDataComponent {
 
             this.vRooms.length = 0 ;
             let vRooms : number[] = msgData["fullRooms"] || [];
-            vRooms = vRooms.concat(msgData["emptyRooms"]) || [];
+            vRooms = vRooms.concat( msgData["emptyRooms"]  || [] );
             if ( vRooms.length == 0 )
             {
                 this.doInformDataRefreshed(true);
@@ -78,6 +85,11 @@ export default class ClubDataRooms extends IClubDataComponent {
 
             for ( let v of vRooms )
             {
+                if ( v == null )
+                {
+                    cc.error( "why have null elements" );
+                    continue ;
+                }
                 let p = new ClubRoomItem();
                 p.nRoomID = v ;
                 this.vRooms.push(p);
@@ -144,4 +156,65 @@ export default class ClubDataRooms extends IClubDataComponent {
         return null ;
     }
 
+    // interface IClubRoomsData
+    getRoomItems() : IClubRoomsDataItem[] 
+    {
+        return this.vRooms ;
+    }
+
+    canDimissRoom() : boolean 
+    {
+       return this.getClub().isSelfPlayerMgr() && this.vRooms.length > 0 ;
+    }
+
+    reqDissmissRoom( roomID : number ) : void 
+    {
+        let self = this ;
+        let msg = {} ;
+        let port = Utility.getMsgPortByRoomID(roomID);
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_APPLY_DISMISS_VIP_ROOM,port,roomID,( js : Object )=>{
+            let ret = js["ret"] ;
+            if ( ret == 0 )
+            {
+                self.fetchData(true) ;
+            }
+            else
+            {
+                Utility.showPromptText("error code = " + ret ) ;
+            }
+            return true ;
+        });
+    }
+
+    reqEnterRoom( roomID : number ) : void 
+    {
+        let msg = { } ;
+        msg["roomID"] = roomID;
+        msg["uid"] = ClientApp.getInstance().getClientPlayerData().getSelfUID();//ClientData.getInstance().selfUID;
+        let port = Utility.getMsgPortByRoomID( roomID );
+        if ( eMsgPort.ID_MSG_PORT_ALL_SERVER <= port || port < eMsgPort.ID_MSG_PORT_LUOMJ  )
+        {
+            Utility.showTip( "房间不存在或已经解散 code" + 0 );
+            return ;
+        }
+
+        Network.getInstance().sendMsg(msg,eMsgType.MSG_ENTER_ROOM,port,roomID,( msg : Object)=>
+        {
+            let ret = msg["ret"] ;
+            if ( ret )
+            {
+                if ( 8 == ret )
+                {
+                    Utility.showTip( "您的钻石不足，无法进入房间" + ret );
+                    return true;
+                }
+                Utility.showTip( "房间不存在或已经解散 code" + ret );
+                return true;
+            }
+            console.log( "set join room id = " + roomID );
+            ClientApp.getInstance().getClientPlayerData().getBaseData().stayInRoomID = roomID ;
+            cc.director.loadScene(SceneName.Scene_Room ) ;
+            return true ;
+        } );
+    }
 }

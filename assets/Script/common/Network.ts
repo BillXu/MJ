@@ -57,6 +57,12 @@ export default class Network{
 
     sendMsg( jsMsg : any , msgID : number, targetPort : number , targetID : number , callBack? : IOneMsgCallback ):boolean
     {
+        if ( this.mWebSocket == null )
+        {
+            cc.warn( "not set up network" );
+            return ;
+        }
+
         if ( this.mWebSocket.readyState != WebSocket.OPEN )
         {
             cc.error( "socket is not open , can not send msgid = " + msgID );

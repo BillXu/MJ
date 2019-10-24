@@ -15,13 +15,26 @@ export interface IRecorderEntry
     vOffsets : PlayerOffsetItem[] ;
     strTime : string ;
 }
+
+export interface IRecorderOneRound extends IRecorderEntry
+{
+    replayID : number ;
+}
+
+export interface IRecorderRoom extends IRecorderEntry
+{
+    roomID : number ;
+    rule : string;
+    sieralNum : number; 
+    vSingleRoundRecorders : IRecorderOneRound[];
+}
  
 export class PlayerOffsetItem   {
     uid : number = 0 ;
     offset : number = 0 ;
 }
 
-export class RecorderSinglRoundEntry implements IRecorderEntry
+export class RecorderSinglRoundEntry implements IRecorderOneRound
 {
     replayID : number = 0 ;
     strTime : string = "" ;
@@ -42,19 +55,19 @@ export class RecorderSinglRoundEntry implements IRecorderEntry
     }
 }
 
-export class RecorderRoomEntry implements IRecorderEntry
+export class RecorderRoomEntry implements IRecorderRoom
 {
     roomID : number = 0 ;
-    opts : Object = 0 ;
+    rule : string = "";
     strTime : string = "" ;
     sieralNum : number = 0 ; 
     vOffsets : PlayerOffsetItem[] = [] ;
-    vSingleRoundRecorders : RecorderSinglRoundEntry[] = [] ;
+    vSingleRoundRecorders : IRecorderOneRound[] = [] ;
 
     parseData( jsData : Object )
     {
         this.roomID = jsData["roomID"] ;
-        this.opts = jsData["opts"];
+        this.rule = "rule default";//jsData["opts"];
         this.sieralNum = jsData["sieralNum"];
         let t = jsData["time"] ;
         let pDate = new Date(t * 1000 ) ;

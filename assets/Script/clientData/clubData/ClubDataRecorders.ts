@@ -1,5 +1,6 @@
 import IClubDataComponent from "./IClubDataComponent";
-import RecorderData from "../RecorderData";
+import RecorderData, { IRecorderRoom } from "../RecorderData";
+import IClubRecorderData from "../../scene/mainScene/DlgClub/pannelRecorder/IClubRecorderData";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -12,7 +13,7 @@ import RecorderData from "../RecorderData";
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
  
-export default class ClubDataRecorder extends IClubDataComponent {
+export default class ClubDataRecorder extends IClubDataComponent implements IClubRecorderData {
 
     vRecorder : RecorderData = null ;
 
@@ -32,4 +33,10 @@ export default class ClubDataRecorder extends IClubDataComponent {
         let self = this ;
         this.vRecorder.fetchData( ( data : RecorderData )=>{ self.doInformDataRefreshed(true) ;} );
     } 
+
+    // interface IClubRecorderData
+    getRecorderItems() : IRecorderRoom[] 
+    {
+        return this.vRecorder.vRecorder ; 
+    }
 }

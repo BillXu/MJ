@@ -101,35 +101,68 @@ export default class ListView extends cc.Component {
     }
 
     // 数据变更了需要进行更新UI显示, 可只更新某一条.
-    public notifyUpdate(updateIndex?: number[]) {
+    public notifyUpdate( isScorllInit : boolean = true ) {
         if (this.adapter == null) {
             return;
         }
-        if (updateIndex && updateIndex.length > 0) {
-            updateIndex.forEach(i => {
-                if (this._filledIds.hasOwnProperty(i)) {
-                    delete this._filledIds[i];
-                }
-            })
-        } else {
-            Object.keys(this._filledIds).forEach(key => {
-                delete this._filledIds[key];
-            })
-        }
+
+        Object.keys(this._filledIds).forEach(key => {
+            delete this._filledIds[key];
+        })
+
         this.recycleAll();
         this.lastStartIndex = -1;
+        let corllPos = 0 ;
         if (this.horizontal) {
+            corllPos = this.content.x ;
             this.content.width = this.adapter.getCount() * (this._itemWidth + this.spacing) + this.spacing;
         } else {
+            corllPos = this.content.y ;
             this.content.height = this.adapter.getCount() * (this._itemHeight + this.spacing) + this.spacing; // get total content height
         }
-        //console.log( this.content.y +" befor = " + this.content.getParent().height + " anchor = " + this.content.getParent().anchorY );
-        this.scrollView.scrollToTop();
-        //console.log( this.content.y +" after = " + this.content.getParent().height + " anchor = " + this.content.getParent().anchorY );
-        // add by bill xu , 此处必须手动赋值，否自会因为精度问题，导致界面不刷新，scrollTop 并不能真正滑倒最顶部会有0.0000001的误差,
-        // 所以手动赋值，赋值不能代替scrollToTop函数，因为函数内部会做一些通知类的事情
+        cc.log( "cur pos = " + corllPos );
+        if ( isScorllInit )
         {
-            this.content.y = this.content.getParent().height * this.content.getParent().anchorY;
+            //console.log( this.content.y +" befor = " + this.content.getParent().height + " anchor = " + this.content.getParent().anchorY );
+            this.scrollView.scrollToTop();
+            //console.log( this.content.y +" after = " + this.content.getParent().height + " anchor = " + this.content.getParent().anchorY );
+            // add by bill xu , 此处必须手动赋值，否自会因为精度问题，导致界面不刷新，scrollTop 并不能真正滑倒最顶部会有0.0000001的误差,
+            // 所以手动赋值，赋值不能代替scrollToTop函数，因为函数内部会做一些通知类的事情
+            {
+                this.content.y = this.content.getParent().height * this.content.getParent().anchorY;
+            }
+            return ;
+        }
+
+
+        if ( this.horizontal )
+        {
+
+        }
+        else
+        { 
+            let mini = this.content.getParent().height * ( 1- this.content.getParent().anchorY ) ;
+            let max = this.content.height - this.content.getParent().height * this.content.getParent().anchorY;
+            if ( max < mini )
+            {
+                max = mini ;
+                //cc.log( "max = mini" )
+            }
+
+            if ( corllPos <= mini )
+            {
+                corllPos = mini ;
+                //cc.log( "reach mini" );
+            }
+
+            if ( corllPos >= max )
+            {
+                corllPos = max ;
+                //cc.log( "reach max" );
+            }
+            
+            this.content.y = corllPos ;
+            //cc.log( "content cur pos = " + corllPos );
         }
     }
 
@@ -195,6 +228,36 @@ export default class ListView extends cc.Component {
             }
         })
         return recycles;
+    }
+
+    // add by bill 
+    private recycleItems( updateIndex?: number[] )
+    {
+        if (updateIndex == null || updateIndex.length == 0 )
+        {
+            return ;
+        }
+
+        const children = this.content.children;
+        const recycles : cc.Node[] = [] ;
+        children.forEach(item => {
+
+            let idx = item["_tag"] ;
+            for ( let ci = 0 ; ci < updateIndex.length ; ++ci )
+            {
+                if ( idx == updateIndex[ci] )
+                {
+                    recycles.push(item);
+                    break ;
+                }
+            }
+        })
+
+        let self = this ;
+        recycles.forEach(item => {
+            item.removeFromParent();
+            self._items.put(item);
+        })
     }
 
     private recycleAll() {
@@ -331,6 +394,27 @@ export abstract class AbsAdapter {
 
     public getItem(posIndex: number): any {
         return this.dataSet[posIndex];
+    }
+
+    public deleteItem( posIndex : number ) : any
+    {
+        if ( posIndex < this.dataSet.length )
+        {
+            this.dataSet.splice(posIndex,1) ;
+        }
+    }
+
+    public updateItem( posIndex : number, item : any ) : any
+    {
+        if ( posIndex < this.dataSet.length )
+        {
+            this.dataSet[posIndex] = item ;
+        }
+    }
+
+    public pushItem( item : any )
+    {
+        this.dataSet.push(item);
     }
 
     public _getView(item: cc.Node, posIndex: number): cc.Node {

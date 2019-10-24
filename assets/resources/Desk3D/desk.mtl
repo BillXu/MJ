@@ -7,8 +7,8 @@
     "__uuid__": "392d2d0c-23a1-495b-a571-7d32e3c07ab2"
   },
   "_defines": {
-    "USE_MODEL": true,
-    "USE_TEXTURE": true
+    "USE_TEXTURE": true,
+    "USE_MODEL": true
   },
   "_props": {
     "texture": {

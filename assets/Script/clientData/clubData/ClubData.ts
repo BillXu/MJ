@@ -9,6 +9,7 @@ import ClubDataRooms from "./ClubDataRooms";
 import Network from "../../common/Network";
 import ClientPlayerClubs from "../ClientPlayerClubs";
 import ClientApp from "../../globalModule/ClientApp";
+import { IClubListDataItem } from "../../scene/mainScene/DlgClub/clubList/IClubListData";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -19,7 +20,7 @@ import ClientApp from "../../globalModule/ClientApp";
 // Learn life-cycle callbacks:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-export default class ClubData {
+export default class ClubData implements IClubListDataItem {
     
     private _ClubID : number = 0 ;
     private _PlayerClubs : ClientPlayerClubs = null ;
@@ -98,6 +99,21 @@ export default class ClubData {
         return <ClubDataMembers>this.vClubDataComponents[eClubDataComponent.eClub_Members] ;
     }
 
+    getClubRooms() : ClubDataRooms
+    {
+        return <ClubDataRooms>this.vClubDataComponents[eClubDataComponent.eClub_Rooms] ;
+    }
+
+    getClubRecorder() : ClubDataRecorder
+    {
+        return <ClubDataRecorder>this.vClubDataComponents[eClubDataComponent.eClub_Recorders] ;
+    }
+
+    fetchCompData( type : eClubDataComponent , isForce : boolean ) : void
+    {
+        this.vClubDataComponents[type].fetchData(isForce);
+    }
+
     onDestry()
     {
         for ( let v of Object.keys(this.vClubDataComponents) )
@@ -108,32 +124,22 @@ export default class ClubData {
         this.vClubDataComponents = {} ;
     }
 
-    doDeleteThisClub()
-    {
-        this._PlayerClubs.deleteClub(this.getClubID()) ;
-    }
-
-    doChangeName( name : string )
-    {
-        this.getClubBase().name = name ;
-        this.onDataRefreshed(this.getClubBase()) ;
-    }
-
-    doChangeNotice( notice : string )
-    {
-        this.getClubBase().notice = notice ;
-        this.onDataRefreshed(this.getClubBase()) ;
-    }
-
     isSelfPlayerMgr()
     {
         let slefID = ClientApp.getInstance().getClientPlayerData().getSelfUID();
         return this.getClubBase().isPlayerMgr(slefID) ;
     }
 
-    isSelfPlayerOwner()
+    // interface IClubListDataItem 
+    get clubID() : number
     {
-        let slefID = ClientApp.getInstance().getClientPlayerData().getSelfUID();
-        return this.getClubBase().creatorUID == slefID ;
+        return this.getClubID();
     }
+
+    get clubName() : string
+    {
+        return this.getClubBase().name;
+    }
+
+    isCurrentSelected : boolean = false ;
 }

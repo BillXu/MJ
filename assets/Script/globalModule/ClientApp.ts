@@ -201,33 +201,36 @@ export default class ClientApp extends IModule {
                     // let pEvent = new cc.Event.EventCustom(ev,true) ;
                     // pEvent.detail = clubID;
                     // cc.systemEvent.dispatchEvent(pEvent);
+                    this.getClientPlayerData().getClubs().addClub(clubID);
                 }
             }
             break;
             case eMailType.eMail_ClubBeKick:
             {
-                // let clubID : number = deail["clubID"] ;
+                 let clubID : number = deail["clubID"] ;
                 // this.onDoLevedClub(clubID);
-                // let str = "您被俱乐部：" + deail["clubName"] + " 的管理员请出了俱乐部";
-                // Utility.showPromptText(str);
+                let str = "您被俱乐部：" + deail["clubName"] + " 的管理员请出了俱乐部";
+                Utility.showPromptText(str);
 
                 // let ev : any = clientEvent.event_leave_club ;
                 // let pEvent = new cc.Event.EventCustom(ev,true) ;
                 // pEvent.detail = clubID;
                 // cc.systemEvent.dispatchEvent(pEvent);
+                this.getClientPlayerData().getClubs().deleteClub(clubID);
             }
             break;
             case eMailType.eMail_ClubDismiss:
             {
-                // let clubID : number = deail["clubID"] ;
+                let clubID : number = deail["clubID"] ;
                 // this.onDoLevedClub(clubID);
-                // let str = "您所在的俱乐部：" + deail["clubName"] + " 已经解散了。";
-                // Utility.showPromptText(str);
+                let str = "您所在的俱乐部：" + deail["clubName"] + " 已经解散了。";
+                Utility.showPromptText(str);
                 
                 // let ev : any = clientEvent.event_leave_club ;
                 // let pEvent = new cc.Event.EventCustom(ev,true) ;
                 // pEvent.detail = clubID;
                 // cc.systemEvent.dispatchEvent(pEvent);
+                this.getClientPlayerData().getClubs().deleteClub(clubID);
             }
             break;
         }

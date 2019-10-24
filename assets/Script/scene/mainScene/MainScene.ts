@@ -2,7 +2,6 @@ import IModule from "../../common/IModule";
 import Utility from "../../globalModule/Utility";
 import DlgJoinRoomOrClub from "./dlgJoinRoomOrClub";
 import LayerBackground from "./LayerBackground";
-import DlgClub from "./club/dlgClub";
 import ClientApp from "../../globalModule/ClientApp";
 import { eMsgType, eMsgPort } from "../../common/MessageIdentifer";
 import { SceneName } from "../../common/clientDefine";
@@ -38,8 +37,8 @@ export default class MainScene extends IModule {
     @property(LayerBackground)
     pBackground : LayerBackground = null ;
 
-    @property(DlgClub)
-    pDlgClub : DlgClub = null ;
+    @property(DlgBase)
+    pDlgClub : DlgBase = null ;
 
     @property(DlgBase)
     pDlgSetting: DlgBase = null;
@@ -140,7 +139,7 @@ export default class MainScene extends IModule {
     {
         this.pBackground.hide();
         let self = this ;
-        this.pDlgClub.showDlg( null ,null,(dlg : DlgCreateRoom)=>{ self.pBackground.show();});
+        this.pDlgClub.showDlg( null ,null,(dlg : DlgBase)=>{ self.pBackground.show();});
         Utility.audioBtnClick();
     }
 

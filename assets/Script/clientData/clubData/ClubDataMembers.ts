@@ -3,6 +3,8 @@ import { eMsgPort, eMsgType } from "../../common/MessageIdentifer";
 import Utility from "../../globalModule/Utility";
 import ClientApp from "../../globalModule/ClientApp";
 import { eClubPrivilige } from "./ClubDefine"
+import IClubMemberData, { IClubMemberDataItem } from "../../scene/mainScene/DlgClub/pannelMember/IClubMemberData";
+import * as _ from "lodash" 
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -14,12 +16,12 @@ import { eClubPrivilige } from "./ClubDefine"
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-export class ClubMember
+export class ClubMember implements IClubMemberDataItem
 {
     uid : number = 0 ;
     privliage : number = 0 ;
     private _members : ClubDataMembers = null ;
-    get isCanDownPrivlige() : boolean
+    get canDowngrade() : boolean
     {
         let selfUID = ClientApp.getInstance().getClientPlayerData().getSelfUID();
         if ( this.uid == selfUID )
@@ -36,12 +38,24 @@ export class ClubMember
         return mem.privliage > this.privliage && mem.privliage > eClubPrivilige.eClubPrivilige_Normal;
     }
 
-    get isCanUpPrivilige() : boolean
+    get canUpgrade() : boolean
     {
-        return this.isCanDownPrivlige ;
+        let selfUID = ClientApp.getInstance().getClientPlayerData().getSelfUID();
+        if ( this.uid == selfUID )
+        {
+            return false ;
+        }
+
+        let mem = this._members.getClubMember(selfUID);
+        if ( mem == null )
+        {
+            return false ;
+        }
+
+        return mem.privliage > this.privliage && mem.privliage <= eClubPrivilige.eClubPrivilige_Normal;
     }
 
-    get isCanKickOut() : boolean
+    get canBeKick() : boolean
     {
         let selfUID = ClientApp.getInstance().getClientPlayerData().getSelfUID();
         if ( this.uid == selfUID )
@@ -62,9 +76,11 @@ export class ClubMember
     {
         this._members = d ;
     }
+
+    isOnline : boolean = true ;
 }
 
-export default class ClubDataMembers extends IClubDataComponent {
+export default class ClubDataMembers extends IClubDataComponent implements IClubMemberData {
 
     vMembers : ClubMember[] = [] ;
     fetchData( isforce : boolean ) : void
@@ -89,12 +105,7 @@ export default class ClubDataMembers extends IClubDataComponent {
             if ( clubID == null )
             {
                 Utility.showTip("MSG_CLUB_REQ_PLAYERS msg must have clubID key , inform server add it") ;
-                return true;
-            }
-
-            if ( this.clubID != clubID )
-            {
-                return false ;
+                //return true;
             }
 
             let vM : Object[] = msgData["players"] ;
@@ -119,6 +130,38 @@ export default class ClubDataMembers extends IClubDataComponent {
             }
             return true ;
         }
+
+        if ( eMsgType.MSG_CLUB_KICK_PLAYER == msgID )
+        {
+            let ret = msgData["ret"] ;
+            let verror = ["操作成功","该玩家不是俱乐部会员","权限不足","","错误玩家对象"] ;
+            if ( ret < verror.length )
+            {
+                Utility.showPromptText(verror[ret]);
+            }
+            else
+            {
+                Utility.showPromptText( "error code " + ret );
+            }
+            this.fetchData( 0 != ret ) ;
+            return true ;
+        }
+
+        if ( eMsgType.MSG_CLUB_UPDATE_PRIVILIGE == msgID )
+        {
+            let ret = msgData["ret"] ;
+            let verror = ["操作成功","权限不足","管理员数量超过限制","该玩家不是俱乐部会员","错误玩家对象","权限相同"] ;
+            if ( ret < verror.length )
+            {
+                Utility.showPromptText(verror[ret]);
+            }
+            else
+            {
+                Utility.showPromptText( "error code " + ret );
+            }
+            this.fetchData( 0 != ret ) ;
+            return true ;
+        }
         return false ;
     }
 
@@ -132,5 +175,38 @@ export default class ClubDataMembers extends IClubDataComponent {
             }
         }
         return null ;
+    }
+
+    // interface IClubMemberData
+    getMembers() : IClubMemberDataItem[] 
+    {
+        return this.vMembers ;
+    }
+
+    reqKickMember( uid : number ) : void 
+    {
+        let msg = {} ;
+        msg["clubID"] = this.clubID;
+        msg["kickUID"] = uid ;
+        this.sendClubMsg( eMsgType.MSG_CLUB_KICK_PLAYER , msg ) ;
+        _.remove(this.vMembers,( a :ClubMember )=>{ return a.uid == uid ;}) ;
+        return ;
+    }
+
+    reqSetMemberPriviliage( uid : number , privliage : eClubPrivilige ) : void 
+    {
+        let p = this.getClubMember( uid ) ;
+        if ( p == null )
+        {
+            Utility.showPromptText( "player is not in club" );
+            return ;
+        }
+        p.privliage = privliage ;
+
+        let msg = {} ;
+        msg["clubID"] = this.clubID;
+        msg["playerUID"] = uid ;
+        msg["privilige"] = privliage ;
+        this.sendClubMsg( eMsgType.MSG_CLUB_UPDATE_PRIVILIGE , msg ) ;
     }
 }

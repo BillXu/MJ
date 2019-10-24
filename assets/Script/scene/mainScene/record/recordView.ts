@@ -13,7 +13,7 @@ import recordCell from "./recordCell"
 import listView from "../../../commonItem/ListView"
 import { AbsAdapter } from "../../../commonItem/ListView"
 import * as _ from "lodash"
-import { RecorderSinglRoundEntry, RecorderRoomEntry, IRecorderEntry } from "../../../clientData/RecorderData";
+import { IRecorderEntry, IRecorderOneRound, IRecorderRoom } from "../../../clientData/RecorderData";
 @ccclass
 export default class RecordView extends cc.Component {
 
@@ -71,12 +71,13 @@ class listviewAdpter extends AbsAdapter
             comp.rule = "" ;
             if ( this.isShowReplayBtn ) // single room detail
             {
-                comp.roomID = "回放码: " + (<RecorderSinglRoundEntry>pRecorder).replayID ;
+                comp.roomID = "回放码: " + (<IRecorderOneRound>pRecorder).replayID ;
                 comp.rule = "第" + (posIndex + 1 ) + "局" ;
             }
             else
             {
-                comp.roomID = "房号: " + (<RecorderRoomEntry>pRecorder).roomID ;
+                comp.roomID = "房号: " + (<IRecorderRoom>pRecorder).roomID ;
+                comp.rule = (<IRecorderRoom>pRecorder).rule ;
             }
         
             comp.idx = posIndex ;

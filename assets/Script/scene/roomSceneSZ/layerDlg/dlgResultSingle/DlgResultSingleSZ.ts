@@ -55,6 +55,7 @@ export default class DlgResultSingleSZ extends DlgBase {
             v.mCardHold.mFactory = this.mFactory ;
             v.mCardMing.mFactroy = this.mFactory ;
         }
+        this.mBtnTotalResult.active = false ;
     }
 
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void )

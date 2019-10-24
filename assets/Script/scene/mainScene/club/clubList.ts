@@ -11,7 +11,6 @@
 const {ccclass, property} = cc._decorator;
 import listView from "../../../commonItem/ListView"
 import { AbsAdapter } from "../../../commonItem/ListView"
-import ClubListItem from "./clubListItem"
 import OptsJoinOrCreate from "./dlgJoinOrCreate"
 import DlgJoinRoomOrClub from "../dlgJoinRoomOrClub"
 import DlgCreateClubTip from "./dlgCreateClubTip";
@@ -23,6 +22,7 @@ import ClubData from "../../../clientData/clubData/ClubData";
 import ClientApp from "../../../globalModule/ClientApp";
 import DlgCreateRoom from "../dlgCreateRoom/DlgCreateRoom";
 import IOpts from "../../../opts/IOpts";
+import ClubListItem from "../DlgClub/clubList/clubListItem";
 class clubItemData
 {
     name : string = "" ;

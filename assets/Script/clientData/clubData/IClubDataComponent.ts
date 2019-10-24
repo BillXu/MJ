@@ -1,4 +1,6 @@
 import ClubData from "./ClubData";
+import { eMsgPort } from "../../common/MessageIdentifer";
+import ClientApp from "../../globalModule/ClientApp";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -54,6 +56,11 @@ export default abstract class IClubDataComponent  {
     onMsg( msgID : number , msgData : Object ) : boolean 
     {
         return false ;
+    }
+
+    sendClubMsg( msgID : number , msgData : Object )
+    {
+        this._ClubData.sendMsg(msgData,msgID,eMsgPort.ID_MSG_PORT_CLUB,ClientApp.getInstance().getClientPlayerData().getSelfUID()) ;
     }
 
     onDestroy()

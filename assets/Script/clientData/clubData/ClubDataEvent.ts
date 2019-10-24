@@ -6,6 +6,9 @@ import ClubData from "./ClubData"
 import PlayerInfoDataCacher from "../PlayerInfoDataCacher";
 import PlayerInfoData from "../playerInfoData";
 import ClientApp from "../../globalModule/ClientApp";
+import IClubMessageData, { IClubMessageDataItem } from "../../scene/mainScene/DlgClub/layerDlg/DlgMessage/IClubMessageData";
+import ResultTotalData from "../../scene/roomScene/roomData/ResultTotalData";
+import IClubLogData, { IClubLogDataItem } from "../../scene/mainScene/DlgClub/pannelLog/IClubLogData";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -16,7 +19,7 @@ import ClientApp from "../../globalModule/ClientApp";
 // Learn life-cycle callbacks:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-export class ClubEvent
+export class ClubEvent implements IClubMessageDataItem , IClubLogDataItem
 {
     eventID : number = 0 ;
     logEventType : eClubEvent = eClubEvent.eClubEvent_Max;
@@ -39,6 +42,11 @@ export class ClubEvent
     get eventString() : string 
     {
         return this._eventString ;
+    }
+
+    get messageContent() : string
+    {
+        return this.eventString ;
     }
 
     constructEventString() : boolean
@@ -136,9 +144,21 @@ export class ClubEvent
         this._eventString = this._eventString.replace(replace,data.name) ;
         return this._eventString.localeCompare(old) != 0 ;
     }
+
+    // interface IClubLogDataItem
+    get logContent() : string
+    {
+        return this.eventString;
+    } 
+
+    get logTimeStr() : string
+    {
+        return this.timeStr;
+    }
+    
 } ;
 
-export default class ClubDataEvent extends IClubDataComponent {
+export default class ClubDataEvent extends IClubDataComponent implements IClubMessageData,IClubLogData {
 
     private nClientMaxEventID : number = 0 ;
     vEventLog : ClubEvent[] = [] ;
@@ -152,6 +172,11 @@ export default class ClubDataEvent extends IClubDataComponent {
 
     fetchData( isforce : boolean ) : void
     {
+        if ( this.getClub().isSelfPlayerMgr() == false )
+        {
+            return ;
+        }
+        
         if ( false == isforce && false == this.isDataOutOfDate() )
         {
             this.doInformDataRefreshed( false );
@@ -162,16 +187,34 @@ export default class ClubDataEvent extends IClubDataComponent {
         msg["clubID"] = this.clubID;
         msg["clientMaxEventID"] = this.nClientMaxEventID ;
         msg["state"] = eEventState.eEventState_Processed ; 
-        let selfID = ClientApp.getInstance().getClientPlayerData().getSelfUID();
-        this.getClub().sendMsg(msg,eMsgType.MSG_CLUB_REQ_EVENTS,eMsgPort.ID_MSG_PORT_CLUB,selfID ) ;
+        this.sendClubMsg(eMsgType.MSG_CLUB_REQ_EVENTS,msg ) ;
 
         msg["clientMaxEventID"] = 0 ;  // do not cache wait process event ;
         msg["state"] = eEventState.eEventState_WaitProcesse ;  // not process event ;
-        this.getClub().sendMsg(msg,eMsgType.MSG_CLUB_REQ_EVENTS,eMsgPort.ID_MSG_PORT_CLUB,selfID ) ;
+        this.sendClubMsg(eMsgType.MSG_CLUB_REQ_EVENTS,msg) ;
     }
 
     onMsg( msgID : number , msgData : Object ) : boolean
     {
+        if ( eMsgType.MSG_CLUB_PROCESS_EVENT == msgID )
+        {
+            let ret = msgData["ret"] ;
+            let error = [ "已经处理","事件不存在","已经被其他管理员处理了","权限不足","你没有登录","参数错误" ];
+            if ( ret < error.length )
+            {
+                Utility.showPromptText(error[ret]) ;
+                if ( 0 == ret )
+                {
+                    this.fetchData(true) ;
+                }
+            }
+            else
+            {
+                Utility.showTip("error code = " + ret ) ;
+            }
+            return true ;
+        }
+
         if ( eMsgType.MSG_CLUB_REQ_EVENTS == msgID )
         {
             let clubID : number = msgData["clubID"] ;
@@ -271,5 +314,28 @@ export default class ClubDataEvent extends IClubDataComponent {
     doProcessedEvent( eventID : number )
     {
         
+    }
+
+    // interface IClubMessageData
+    getMessageItems() : IClubMessageDataItem[]
+    {
+        return this.vEvents;
+    }
+
+    // interface IClubLogData
+    getLogItems() : IClubLogDataItem[] 
+    {
+        return this.vEventLog ;
+    }
+
+    reqProcessMessage( eventID : number , isAgree : boolean ) : boolean 
+    {
+        let msg = {} ;
+        msg["eventID"] = eventID;
+        msg["detial"] = {} ;
+        msg["detial"]["isAgree"] = isAgree ? 1 : 0 ;
+        msg["clubID"] = this.clubID;
+        this.sendClubMsg( eMsgType.MSG_CLUB_PROCESS_EVENT,msg ) ;
+        return true ;
     }
 }

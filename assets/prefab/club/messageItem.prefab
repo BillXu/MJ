@@ -57,20 +57,6 @@
       "x": 0.5,
       "y": 0.5
     },
-    "_position": {
-      "__type__": "cc.Vec3",
-      "x": 4,
-      "y": 46,
-      "z": 0
-    },
-    "_scale": {
-      "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_skewX": 0,
     "_skewY": 0,
     "_zIndex": 0,
@@ -81,6 +67,22 @@
       "x": 0,
       "y": 0,
       "z": 0
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float32Array",
+      "array": [
+        4,
+        46,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
     }
   },
   {
@@ -119,20 +121,6 @@
       "x": 0,
       "y": 0.5
     },
-    "_position": {
-      "__type__": "cc.Vec3",
-      "x": -428.2,
-      "y": 1.9,
-      "z": 0
-    },
-    "_scale": {
-      "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_skewX": 0,
     "_skewY": 0,
     "_zIndex": 0,
@@ -143,6 +131,22 @@
       "x": 0,
       "y": 0,
       "z": 0
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float32Array",
+      "array": [
+        -428.20001220703125,
+        1.899999976158142,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
     }
   },
   {
@@ -220,20 +224,6 @@
       "x": 0.5,
       "y": 0.5
     },
-    "_position": {
-      "__type__": "cc.Vec3",
-      "x": 395,
-      "y": -3,
-      "z": 0
-    },
-    "_scale": {
-      "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_skewX": 0,
     "_skewY": 0,
     "_zIndex": 0,
@@ -244,6 +234,22 @@
       "x": 0,
       "y": 0,
       "z": 0
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float32Array",
+      "array": [
+        395,
+        -3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
     }
   },
   {
@@ -402,20 +408,6 @@
       "x": 0.5,
       "y": 0.5
     },
-    "_position": {
-      "__type__": "cc.Vec3",
-      "x": 257,
-      "y": -3,
-      "z": 0
-    },
-    "_scale": {
-      "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "_rotationX": 0,
-    "_rotationY": 0,
     "_skewX": 0,
     "_skewY": 0,
     "_zIndex": 0,
@@ -426,6 +418,22 @@
       "x": 0,
       "y": 0,
       "z": 0
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float32Array",
+      "array": [
+        257,
+        -3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
     }
   },
   {
