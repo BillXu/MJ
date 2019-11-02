@@ -1,6 +1,6 @@
-import ILayer from "../ILayer";
-import MJRoomData from "../roomData/MJRoomData";
 import ClientApp from "../../../globalModule/ClientApp";
+import ILayerRoomInfo from "../ILayerRoomInfo";
+import IRoomSceneData, { IRoomInfoData } from "../IRoomSceneData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -15,7 +15,7 @@ import ClientApp from "../../../globalModule/ClientApp";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerRoomInfo extends ILayer {
+export default class LayerRoomInfo extends cc.Component implements ILayerRoomInfo {
 
     @property(cc.Label)
     roomID: cc.Label = null;
@@ -43,6 +43,7 @@ export default class LayerRoomInfo extends ILayer {
 
     _leftMJCnt : number = 0 ;
 
+    mData : IRoomInfoData = null ;
     get leftMJCardCnt() : number
     {
         return this._leftMJCnt ;
@@ -61,20 +62,26 @@ export default class LayerRoomInfo extends ILayer {
 
     }
 
-    refresh( data : MJRoomData ) : void
+    refresh( data : IRoomSceneData ) : void 
     {
+        this.mData = data.getRoomInfoData();
         this.unscheduleAllCallbacks();
-        this.roomID.string = data.mBaseData.roomID.toString() ;
-        this.baseScore.string = data.mOpts.baseScore.toString() ;
-        this.rules.string = data.mOpts.ruleDesc ;
-        this.leftMJCardCnt = data.mBaseData.leftMJCnt ;
+        this.roomID.string = this.mData.getRoomID().toString() ;
+        this.baseScore.string = "1" ;
+        this.rules.string = this.mData.getRule() ;
+        this.leftMJCardCnt = this.mData.getLeftMJCnt() ;
         this.version.string = ClientApp.getInstance().getConfigMgr().getClientConfig().VERSION;
         
         this.schedule(this.refreshTime,60,cc.macro.REPEAT_FOREVER,0);
         this.schedule(this.refreshBatteryLevel,300,cc.macro.REPEAT_FOREVER,0);
     }
 
-    onGameStart() : void 
+    onGameStart() : void
+    {
+
+    }
+
+    onGameEnd()
     {
 
     }

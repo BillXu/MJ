@@ -1,5 +1,3 @@
-import MJCard from "../layerCards3D/cards/MJCard";
-import { eMJActType, eMJCardType } from "../roomDefine";
 import DlgEatOpts from "./DlgEatOpts";
 
 // Learn TypeScript:
@@ -23,8 +21,7 @@ export default class DlgGangOpts extends cc.Component {
     @property([cc.Sprite])
     mCardsSprite : cc.Sprite[] = [] ;
 
-    @property([cc.Component.EventHandler])
-    mOnDlgResult : cc.Component.EventHandler[] = [] ;  // ( chosedCard : number )
+    mOnDlgResult : ( chosedCard : number )=>void = null ;  // ( chosedCard : number )
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -33,8 +30,9 @@ export default class DlgGangOpts extends cc.Component {
 
     }
 
-    showDlg( gangCards : number[] )
+    showDlg( gangCards : number[] , lpCallback : ( chosedCard : number )=>void  )
     {
+        this.mOnDlgResult = lpCallback ;
         this.node.active = true ;
         this.mOptsCardNodes.forEach( ( c : cc.Node )=>{ c.active = false ;} );
         for ( let idx = 0 ; idx < gangCards.length ; ++idx )
@@ -48,7 +46,10 @@ export default class DlgGangOpts extends cc.Component {
     onClickCardBtn( event : cc.Event.EventTouch )
     {
         let node : cc.Node  = event.currentTarget ;
-        cc.Component.EventHandler.emitEvents(this.mOnDlgResult,parseInt(node.name));
+        if ( this.mOnDlgResult != null )
+        {
+            this.mOnDlgResult( parseInt(node.name) );
+        }
         this.node.active = false ;
     }
     // update (dt) {}

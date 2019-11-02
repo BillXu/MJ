@@ -1,4 +1,5 @@
 import { ResultItem } from "../../roomData/ResultSingleData";
+import { ISingleResultDlgDataItem } from "../ILayerDlgData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -77,8 +78,9 @@ export default class DlgResultSingleItem extends cc.Component {
         p.node.active = true ;
     }
 
-    setInfo( data : ResultItem )
+    setInfo( dataI : ISingleResultDlgDataItem )
     {
+        let data = dataI as ResultItem ;
         this.gangScore = data.mGangScore ;
         this.huScore = data.mHuScore ;
         this.sumFinal = data.mOffset ;

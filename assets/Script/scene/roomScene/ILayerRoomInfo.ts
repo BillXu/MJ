@@ -1,4 +1,4 @@
-import MJRoomScene from "../roomScene/MJRoomScene";
+import IRoomLayer from "./IRoomLayer";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -10,15 +10,8 @@ import MJRoomScene from "../roomScene/MJRoomScene";
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+ 
+export default interface ILayerRoomInfo extends IRoomLayer  {
 
-@ccclass
-export default class MJRoomSceneSZ extends MJRoomScene {
-
-    onLoad ()
-    {
-        super.onLoad();
-    }
-
-    // update (dt) {}
+    leftMJCardCnt : number ;
 }

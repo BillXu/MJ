@@ -52,6 +52,11 @@ export default class LabelTimer extends cc.Component {
             this.mCurTime == this.mLimit
         }
 
+        if ( this.mLabel == null )
+        {
+            cc.error( "why label is null ?" );
+            return ;
+        }
         this.mLabel.string = "" + this.mCurTime;
     }
     // LIFE-CYCLE CALLBACKS:

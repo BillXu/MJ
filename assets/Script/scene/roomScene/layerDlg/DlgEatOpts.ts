@@ -1,5 +1,5 @@
-import { eEatType, eMJActType, eMJCardType } from "../roomDefine";
-import MJCard from "../layerCards3D/cards/MJCard";
+import { eEatType, eMJCardType } from "../roomDefine";
+import MJCard from "../layerCards/cards3D/MJCard";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -22,8 +22,7 @@ export default class DlgEatOpts extends cc.Component {
     @property([cc.Sprite])
     mCards : cc.Sprite[] = [] ;
 
-    @property( [cc.Component.EventHandler])
-    mOnDlgResult : cc.Component.EventHandler[] = [] ;  // ( eatType : eEatType , nTargetCard : number )
+    mOnDlgResult : ( eatType : eEatType )=>void = null ;  // ( eatType : eEatType , nTargetCard : number )
     
     private mTargetCard : number = 0 ;
     // LIFE-CYCLE CALLBACKS:
@@ -38,12 +37,16 @@ export default class DlgEatOpts extends cc.Component {
     {
         let node : cc.Node = event.currentTarget ;
         console.log( "click gruop node name = " + node.name );
-        cc.Component.EventHandler.emitEvents(this.mOnDlgResult,parseInt(node.name),this.mTargetCard );
+        if ( this.mOnDlgResult != null )
+        {
+            this.mOnDlgResult( parseInt(node.name) );
+        }
         this.node.active = false ;
     }
 
-    showDlg( vEatOpts : eEatType[], nTargetCard : number )
+    showDlg( vEatOpts : eEatType[], nTargetCard : number, lpCallBack : ( eatType : eEatType )=>void )
     {
+        this.mOnDlgResult = lpCallBack ;
         this.mTargetCard = nTargetCard ;
         this.node.active = true ;
         this.mGroups.forEach( ( n : cc.Node )=>{ n.active = false ;} ) ;

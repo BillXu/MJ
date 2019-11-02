@@ -1,5 +1,5 @@
 import DlgResultSingleItem from "./DlgResultSingleItem";
-import ResultSingleData from "../../roomData/ResultSingleData";
+import { ISingleResultDlgData } from "../ILayerDlgData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -28,8 +28,7 @@ export default class DlgResultSingle extends cc.Component {
     @property(cc.Node)
     mBtnShowAll : cc.Node = null ;
     // LIFE-CYCLE CALLBACKS:
-    @property( [cc.Component.EventHandler ] )
-    onDlgResult : cc.Component.EventHandler[] = [] ; // ( isShowAll : bool )
+    onDlgResult : ( isShowAll : boolean ) =>void = null ; // ( isShowAll : bool )
     // onLoad () {}
 
     start () {
@@ -37,25 +36,28 @@ export default class DlgResultSingle extends cc.Component {
     }
 
     // update (dt) {}
-    showDlg( selfSvrIdx : number , result : ResultSingleData )
+    showDlg( data : ISingleResultDlgData , lpCallBack : ( isShowAll : boolean ) =>void )
     {
+        this.onDlgResult = lpCallBack ;
         this.mItems.forEach( ( item : DlgResultSingleItem )=>{ item.node.active = false ;} );
-        if ( result.mIsLiuJu )
+        if ( data.isLiuJu() )
         {
             this.mLiuJuNode.active = true ;
             return ;
         }
         this.mLiuJuNode.active = false ;
 
-        let selfIdx = selfSvrIdx < 0 ? 0 : selfSvrIdx ;
-        for ( let v of result.mResults )
+        let selfIdx = data.getSelfIdx();
+        selfIdx = selfIdx < 0 ? 0 : selfIdx ;
+        let vResults = data.getResultItems();
+        for ( let v of vResults )
         {
             if ( v.isEmpty() )
             {
                 continue ;
             }
 
-            let clientIdx = ( v.mIdx - selfIdx + this.mItems.length ) % this.mItems.length ;
+            let clientIdx = ( v.idx - selfIdx + this.mItems.length ) % this.mItems.length ;
             this.mItems[clientIdx].node.active = true ;
             this.mItems[clientIdx].setInfo(v) ;
         }
@@ -78,7 +80,11 @@ export default class DlgResultSingle extends cc.Component {
     {
         this.closeDlg();
         let isShowAll : boolean = parseInt( isAll ) == 1 ;
-        cc.Component.EventHandler.emitEvents( this.onDlgResult,isShowAll  );
+        if ( this.onDlgResult != null )
+        {
+            this.onDlgResult( isShowAll );
+        }
+        //cc.Component.EventHandler.emitEvents( this.onDlgResult,isShowAll  );
     }
 
     setBtn( isAll : boolean )

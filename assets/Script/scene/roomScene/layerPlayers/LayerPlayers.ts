@@ -1,13 +1,12 @@
-import ILayer from "../ILayer";
-import MJRoomData from "../roomData/MJRoomData";
-import RoomPlayer, { eRoomPlayerState } from "./RoomPlayer";
 import { eChatMsgType } from "../roomDefine";
-import MJPlayerData from "../roomData/MJPlayerData";
 import Prompt from "../../../globalModule/Prompt";
 import VoiceManager from "../../../sdk/VoiceManager";
 import PlayerInteractEmoji from "./PlayerInteractEmoji";
 import MJRoomScene from "../MJRoomScene";
-import OptsSuZhou from "../../../opts/OptsSuZhou";
+import ILayerPlayers from "../ILayerPlayers";
+import IRoomSceneData, { ILayerPlayersData, IRoomPlayerData } from "../IRoomSceneData";
+import IRoomPlayer from "./IRoomPlayer";
+import RoomPlayer from "./RoomPlayer";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -22,10 +21,11 @@ import OptsSuZhou from "../../../opts/OptsSuZhou";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerPlayers extends ILayer {
+export default class LayerPlayers extends cc.Component implements ILayerPlayers {
 
-    @property( [RoomPlayer] )
-    mPlayers : RoomPlayer[] = [] ;
+    @property([cc.Node])
+    mPlayerNodes : cc.Node[] = [] ;
+    mPlayers : IRoomPlayer[] = [] ;
 
     @property(cc.Node)
     mBankIcon : cc.Node = null ;
@@ -36,8 +36,8 @@ export default class LayerPlayers extends ILayer {
     @property(PlayerInteractEmoji)
     mInteractEmoji : PlayerInteractEmoji = null ;
     
-    protected mRoomData : MJRoomData = null ;
     mScene : MJRoomScene = null ;
+    mData : ILayerPlayersData = null ;
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () 
@@ -61,14 +61,13 @@ export default class LayerPlayers extends ILayer {
             case VoiceManager.EVENT_QUEUE_PLAY_FINISH:
             {
                 let uid : number = jsDetail["uid"] ;
-                let p = this.mRoomData.getPlayerDataByUID( uid );
-                if ( p == null )
+                let clientIdx = this.mData.getPlayerClientIdxByUID( uid );
+                if ( clientIdx == -1 )
                 {
                     cc.error( "player is null , how to play voice" );
                     return ;
                 }
-                let clientIdx = this.mRoomData.svrIdxToClientIdx(p.mPlayerBaseData.svrIdx);
-
+            
                 if ( eventID == VoiceManager.EVENT_QUEUE_START_PLAY )
                 {
                     this.mPlayers[clientIdx].startChatVoice();
@@ -85,113 +84,22 @@ export default class LayerPlayers extends ILayer {
     }
 
     start () {
-
-    }
-
-    refresh( data : MJRoomData ) : void 
-    {
-        this.mRoomData = data ;
-        let nselfIdx = data.getSelfIdx();
-        let isSelfSitDown = nselfIdx != -1 ;
-        for ( let svrIdx = 0 ; svrIdx < this.mPlayers.length ; ++svrIdx )
+        
+        for ( let idx = 0 ; idx < this.mPlayerNodes.length ; ++idx )
         {
-            let clientIdx = data.svrIdxToClientIdx(svrIdx);
-            if ( clientIdx >= this.mPlayers.length )
-            {
-                cc.error( "invlid svridx and client idx " + svrIdx + " c = " + clientIdx );
-                continue ;
-            }
-            
-            this.mPlayers[clientIdx].mSvrIdx = svrIdx;
-            if ( data.mPlayers[svrIdx] == null || data.mPlayers[svrIdx].isEmpty() )
-            {
-                this.mPlayers[clientIdx].state = isSelfSitDown == false ? eRoomPlayerState.RPS_WaitSitDown : eRoomPlayerState.RPS_Empty ;
-            }
-            else
-            {
-                this.mPlayers[clientIdx].state = eRoomPlayerState.RPS_Normal ;
-                this.mPlayers[clientIdx].setInfo( data.mPlayers[svrIdx].mPlayerBaseData );
-                this.onPlayerRefreshHuaCnt( svrIdx,data.mPlayers[svrIdx].mPlayerCard.vBuedHua.length );
-                this.mPlayers[clientIdx].isReady = data.mBaseData.isInGamingState() == false  && data.mPlayers[svrIdx].mPlayerBaseData.isReady ;
-            }
-        }
-
-        if ( this.mRoomData.mBaseData.isInGamingState() )
-        {
-            this.setBankerIdx( data.mBaseData.bankerIdx ) ;
-        }
-        this.mBtnReady.active = this.mRoomData.mBaseData.isInGamingState() == false && isSelfSitDown && data.mPlayers[nselfIdx].mPlayerBaseData.isReady == false ;
-
-        this.refreshPlayerChips();
-    }
-
-    refreshPlayerChips()
-    {
-        for ( let svrIdx = 0 ; svrIdx < this.mPlayers.length ; ++svrIdx )
-        {
-            let clientIdx = this.mRoomData.svrIdxToClientIdx(svrIdx);
-            if ( clientIdx >= this.mPlayers.length || this.mRoomData.mPlayers[svrIdx] == null || this.mRoomData.mPlayers[svrIdx].isEmpty() )
-            {
-                cc.error( "invlid svridx and client idx " + svrIdx + " c = " + clientIdx );
-                continue ;
-            }
-            
-            this.mPlayers[clientIdx].mSvrIdx = this.mRoomData.mPlayers[svrIdx].mPlayerBaseData.chip;
- 
-        }
-    }
-
-    setBankerIdx( svrIdx : number )
-    {
-        let clientIdx = this.mRoomData.svrIdxToClientIdx(svrIdx);
-        if ( clientIdx >= this.mPlayers.length )
-        {
-            return ;
-        }
-        let targetPos = this.mBankIcon.parent.convertToNodeSpaceAR( this.mPlayers[clientIdx].bankIconWorldPos ) ; 
-        cc.tween(this.mBankIcon).to(0.3, { position: targetPos }, { easing: 'sineOut'}).start() ;
-    }
-
-    onPlayerStandUp( idx : number ) : void
-    {
-        let nselfIdx = this.mRoomData.getSelfIdx();
-        if ( idx == nselfIdx || -1 == nselfIdx )
-        {
-            this.refresh(this.mRoomData);
-            return ;
-        }
-
-        let clientIdx = this.mRoomData.svrIdxToClientIdx( nselfIdx );
-        this.mPlayers[clientIdx].state = nselfIdx == -1 ? eRoomPlayerState.RPS_WaitSitDown : eRoomPlayerState.RPS_Empty ;
-    }
-
-    onPlayerReady( idx : number ) : void 
-    {
-        let clientIdx = this.mRoomData.svrIdxToClientIdx( idx );
-        this.mPlayers[clientIdx].isReady = true ;
-        if ( idx == this.mRoomData.getSelfIdx() )
-        {
-            this.mBtnReady.active = false ;
+            this.mPlayers.push( this.mPlayerNodes[idx].getComponent(RoomPlayer) );
         }
     }
 
     onPlayerNetStateChanged( playerIdx : number , isOnline : boolean ) : void 
     {
-        let clientIdx = this.mRoomData.svrIdxToClientIdx( playerIdx );
+        let clientIdx = this.mData.svrIdxToClientIdx( playerIdx );
         this.mPlayers[clientIdx].isOnline = isOnline ;
-    }
-
-    onPlayerRefreshHuaCnt( playerSvrIdx : number , huaCnt : number )
-    {
-        let playerIdx = this.mRoomData.svrIdxToClientIdx( playerSvrIdx );
-        this.mPlayers[playerIdx].huaCnt = huaCnt ;
-        let keep = ( this.mRoomData.mOpts as OptsSuZhou ).ruleMode == 1 ? 2 : 3 ;
-        this.mPlayers[playerIdx].huaCntColor = cc.Color.GREEN.fromHEX( huaCnt > keep ? "#00f200" : "#c96b82" ) ;
     }
 
     onPlayerChatMsg( playerIdx : number , type : eChatMsgType , strContent : string ) : void 
     {
-        let clientIdx = this.mRoomData.svrIdxToClientIdx(playerIdx);
+        let clientIdx = this.mData.svrIdxToClientIdx(playerIdx);
         if ( clientIdx >= this.mPlayers.length )
         {
             Prompt.promptText( "没有坐下的玩家不能说话" );
@@ -220,7 +128,7 @@ export default class LayerPlayers extends ILayer {
         }
     }
 
-    onPlayerInteractEmoji( InvokeIdx : number , targetIdx : number , emoji : string ) : void 
+    onInteractEmoji( InvokeIdx : number , targetIdx : number , emoji : string ) : void 
     {
         let orgPos : cc.Vec2 = null ;
         let dstPos : cc.Vec2 = null ;
@@ -248,36 +156,144 @@ export default class LayerPlayers extends ILayer {
         this.mInteractEmoji.playInteractEmoji(emoji,orgPos,dstPos) ;
     }
 
-    onPlayerSitDown( p : MJPlayerData ) : void
+    onPlayerSitDown( p : IRoomPlayerData ) : void
     {
-        if ( p.mPlayerBaseData.svrIdx == this.mRoomData.getSelfIdx() )
+        if ( p.svrIdx == this.mData.getSelfIdx() )
         {
-            this.refresh( this.mRoomData );
+            this.localRefresh();
             return ;
         }
 
-        let clientIdx = this.mRoomData.svrIdxToClientIdx(p.mPlayerBaseData.svrIdx);
-        this.mPlayers[clientIdx].state = eRoomPlayerState.RPS_Normal ;
-        this.mPlayers[clientIdx].setInfo(p.mPlayerBaseData);
-        this.mPlayers[clientIdx].isReady = p.mPlayerBaseData.isReady && this.mRoomData.mBaseData.isInGamingState();
+        let clientIdx = this.mData.svrIdxToClientIdx(p.svrIdx);
+        this.mPlayers[clientIdx].refresh(p) ;
     }
 
-    onGameStart() : void 
+    onPlayerStandUp( idx : number ) : void 
+    {
+        let nselfIdx = this.mData.getSelfIdx();
+        if ( idx == nselfIdx || -1 == nselfIdx )
+        {
+            this.localRefresh();
+            return ;
+        }
+
+        let clientIdx = this.mData.svrIdxToClientIdx( nselfIdx );
+        this.mPlayers[clientIdx].refresh(null);
+        this.mPlayers[clientIdx].waitSitDown();
+    }
+
+    onPlayerReady( idx : number ) : void 
+    {
+        let clientIdx = this.mData.svrIdxToClientIdx( idx );
+        this.mPlayers[clientIdx].isReady = true ;
+        if ( idx == this.mData.getSelfIdx() )
+        {
+            this.mBtnReady.active = false ;
+        }
+    }
+
+    refresh( data : IRoomSceneData ) : void 
+    {
+        this.mData = data.getLayerPlayersData() ;
+        this.localRefresh();
+    }
+
+    onGameStart() : void
     {
         for ( let p of this.mPlayers )
         {
             p.isReady = false ;
         }
-        this.setBankerIdx( this.mRoomData.mBaseData.bankerIdx );
+        this.setBankerIdx( this.mData.getBankerIdx() );
+    }
+
+    onGameEnd()
+    {
+        this.refreshPlayerChips();
+    }
+
+    //---interface end ;
+    protected localRefresh()
+    {
+        let nselfIdx = this.mData.getSelfIdx();
+        let isSelfSitDown = nselfIdx != -1 ;
+        let vPlayersData = this.mData.getPlayersData();
+        for ( let svrIdx = 0 ; svrIdx < this.mPlayers.length ; ++svrIdx )
+        {
+            let clientIdx = this.mData.svrIdxToClientIdx(svrIdx);
+            if ( clientIdx >= this.mPlayers.length )
+            {
+                cc.error( "invlid svridx and client idx " + svrIdx + " c = " + clientIdx );
+                continue ;
+            }
+            
+            this.mPlayers[clientIdx].mSvrIdx = svrIdx;
+            if ( vPlayersData[svrIdx] == null || vPlayersData[svrIdx].isEmpty() )
+            {
+                this.mPlayers[clientIdx].refresh(null);
+                if ( isSelfSitDown == false )
+                {
+                    this.mPlayers[clientIdx].waitSitDown();
+                }
+            }
+            else
+            {
+                this.mPlayers[clientIdx].refresh(vPlayersData[svrIdx]) ;
+            }
+        }
+
+        this.setBankerIdx( this.mData.getBankerIdx() ) ;
+        this.mBtnReady.active = this.mData.isShowReadyBtn();
+    }
+
+    protected refreshPlayerChips() : void 
+    {
+        let vPlayersData = this.mData.getPlayersData();
+        for ( let svrIdx = 0 ; svrIdx < this.mPlayers.length ; ++svrIdx )
+        {
+            let clientIdx = this.mData.svrIdxToClientIdx(svrIdx);
+            if ( clientIdx >= this.mPlayers.length || vPlayersData[svrIdx] == null || vPlayersData[svrIdx].isEmpty() )
+            {
+                cc.error( "invlid svridx and client idx " + svrIdx + " c = " + clientIdx );
+                continue ;
+            }
+            
+            this.mPlayers[clientIdx].chip = vPlayersData[svrIdx].chip;
+ 
+        }
+    }
+
+    protected setBankerIdx( svrIdx : number )
+    {
+        if ( svrIdx < 0 || svrIdx >= this.mPlayers.length )
+        {
+            return ;
+        }
+
+        let clientIdx = this.mData.svrIdxToClientIdx(svrIdx);
+        if ( clientIdx >= this.mPlayers.length )
+        {
+            return ;
+        }
+        let targetPos = this.mBankIcon.parent.convertToNodeSpaceAR( this.mPlayers[clientIdx].bankIconWorldPos ) ; 
+        cc.tween(this.mBankIcon).to(0.3, { position: targetPos }, { easing: 'sineOut'}).start() ;
+    }
+
+    onPlayerRefreshHuaCnt( playerSvrIdx : number , huaCnt : number )
+    {
+        let playerIdx = this.mData.svrIdxToClientIdx( playerSvrIdx );
+        this.mPlayers[playerIdx].huaCnt = huaCnt ;
+        //let keep = ( this.mRoomData.mOpts as OptsSuZhou ).ruleMode == 1 ? 2 : 3 ;
+        //this.mPlayers[playerIdx].huaCntColor = cc.Color.GREEN.fromHEX( huaCnt > keep ? "#00f200" : "#c96b82" ) ;
     }
 
     onClickPlayer( isSitDown : boolean , arg : number )
     {
         if ( isSitDown )
         {
-            if ( this.mRoomData.getSelfIdx() == -1 )
+            if ( this.mData.getSelfIdx() == -1 )
             {
-                this.mRoomData.doClickedSitDown(arg) ;
+                this.mData.reqSitDown(arg); ;
             }
         }
         else
@@ -290,7 +306,7 @@ export default class LayerPlayers extends ILayer {
 
     onBtnSetReady()
     {
-        this.mRoomData.doReady();
+        this.mData.reqSetReady();
     }
     // update (dt) {}
 }

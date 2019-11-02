@@ -1,5 +1,5 @@
-import { eMJCardType, eMJActType, eCardSate } from "../../../roomDefine";
 import MJCard, { MJCardState } from "./MJCard";
+import { eMJCardType } from "../../roomDefine";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -25,7 +25,6 @@ export default class MJFactory extends cc.Component {
     
     @property()
     containFeng : boolean = false ;
-    
     @property()
     containJian : boolean = false ;
     

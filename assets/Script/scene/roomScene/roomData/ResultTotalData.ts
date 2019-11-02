@@ -1,3 +1,6 @@
+import { ITotalResultDlgDataItem, ITotalResultDlgData } from "../layerDlg/ILayerDlgData";
+import MJRoomData from "./MJRoomData";
+
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -12,7 +15,7 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 
-export class ResultTotalDataItem 
+export class ResultTotalDataItem  implements ITotalResultDlgDataItem
 {
     uid : number = 0 ;
     huCnt : number = 0 ;
@@ -23,12 +26,18 @@ export class ResultTotalDataItem
     waitTime : number = 0 ;
 }
 
-export default class ResultTotalData {
+export default class ResultTotalData implements ITotalResultDlgData {
 
     mResults : ResultTotalDataItem[] = [];
     mBigWinerUID : number[] = [] ;
     mApplyDismissID : number = 0 ;
     mTuHaoID : number[] = [] ;
+
+    mRoomData : MJRoomData = null ;
+    init( data : MJRoomData )
+    {
+        this.mRoomData = data ;
+    }
 
     isRecived() : boolean
     {
@@ -84,5 +93,54 @@ export default class ResultTotalData {
                 this.mBigWinerUID.push(item.uid );
             }
         }
+    }
+
+    get roomID() : number
+    {
+        return this.mRoomData.getRoomID();
+    } 
+
+    get ruleDesc() : string 
+    {
+        return this.mRoomData.getRule();
+    }
+
+    isPlayerApplyDismiss( uid : number ) : boolean 
+    {
+        return this.mApplyDismissID == uid;
+    }
+
+    isPlayerRoomOwner( uid : number ) : boolean 
+    {
+        return false ;
+    }
+
+    isPlayerBigWiner( uid : number ) : boolean 
+    {
+        for ( let v of this.mBigWinerUID )
+        {
+            if ( v == uid )
+            {
+                return true ;
+            }
+        }
+        return false ;
+    }
+
+    isPlayerTuHao( uid : number ) : boolean 
+    {
+        for ( let v of this.mTuHaoID )
+        {
+            if ( v == uid )
+            {
+                return true ;
+            }
+        }
+        return false ;
+    }
+
+    getResultItems() : ITotalResultDlgDataItem[] 
+    {
+        return this.mResults ;
     }
 }

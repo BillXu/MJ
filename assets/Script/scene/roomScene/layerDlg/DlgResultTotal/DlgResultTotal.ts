@@ -5,6 +5,7 @@ import MJRoomData from "../../roomData/MJRoomData";
 import * as _ from "lodash"
 import WechatManager, { eWechatShareDestType } from "../../../../sdk/WechatManager";
 import { SceneName } from "../../../../common/clientDefine";
+import { ITotalResultDlgData } from "../ILayerDlgData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -40,20 +41,21 @@ export default class DlgResultTotal extends DlgBase {
 
     }
 
-    refreshDlg( data : MJRoomData , result : ResultTotalData )
+    refreshDlg( data : ITotalResultDlgData )
     {
-        this.mRoomID.string = "房间号：" + data.mBaseData.roomID ;
+        this.mRoomID.string = "房间号：" + data.roomID ;
         this.mDateTime.string = (new Date()).toLocaleString("zh-CN") ;
-        this.mRule.string = data.mOpts.ruleDesc ;
+        this.mRule.string = data.ruleDesc ;
 
         this.mItems.forEach( ( item : DlgResultTotalItem )=>{ item.node.active = false ;} ) ;
-        for ( let idx = 0  ; idx < result.mResults.length ; ++idx )
+        let vReuslts = data.getResultItems();
+        for ( let idx = 0  ; idx < vReuslts.length ; ++idx )
         {
             let p =  this.mItems[idx];
-            let pd = result.mResults[idx] ;
+            let pd = vReuslts[idx] ;
             p.node.active = true ;
             p.setDataItem( pd ) ;
-            p.refreshIcons( result.mApplyDismissID == pd.uid,pd.uid == data.mBaseData.ownerID, _.find(result.mBigWinerUID,( n : number )=>{ return pd.uid == n ;}) != null , _.find(result.mTuHaoID,( n : number )=>{ return pd.uid == n ;} ) != null ) ;
+            p.refreshIcons( data.isPlayerApplyDismiss(pd.uid),data.isPlayerRoomOwner(pd.uid), data.isPlayerBigWiner(pd.uid), data.isPlayerTuHao( pd.uid ) ) ;
         }
     }
 

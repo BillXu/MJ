@@ -1,4 +1,4 @@
-import MJRoomScene from "../roomScene/MJRoomScene";
+import { IRoomPlayerData } from "../IRoomSceneData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -9,16 +9,18 @@ import MJRoomScene from "../roomScene/MJRoomScene";
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-
-const {ccclass, property} = cc._decorator;
-
-@ccclass
-export default class MJRoomSceneSZ extends MJRoomScene {
-
-    onLoad ()
-    {
-        super.onLoad();
-    }
-
-    // update (dt) {}
+export default interface IRoomPlayer {
+    isOnline : boolean ;
+    mSvrIdx : number ;
+    chip : number ;
+    huaCnt : number ;
+    worldPosEmoji : cc.Vec2 ;
+    bankIconWorldPos : cc.Vec2 ;
+    isReady : boolean ;
+    refresh( data : IRoomPlayerData ) : void ;
+    setChatEmoji( strContent : string ) : void ;
+    setChatText( strContent : string ) : void ;
+    startChatVoice() : void ;
+    stopChatVoice() : void ;
+    waitSitDown() : void ;
 }

@@ -4,6 +4,7 @@ import MJRoomData from "../roomData/MJRoomData";
 import Prompt from "../../../globalModule/Prompt";
 import PlayerInfoDataCacher from "../../../clientData/PlayerInfoDataCacher";
 import * as _ from "lodash"
+import { IDissmissDlgData } from "./ILayerDlgData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -35,22 +36,22 @@ export default class DlgDismiss extends DlgBase {
     @property(cc.Label)
     mTimer : cc.Label = null ;
 
-    @property( [cc.Component.EventHandler] )
-    mOnDlgResult : cc.Component.EventHandler[] = [] ;  // ( isAgree : bool )
-
     @property(cc.Node)
     mResponeButton : cc.Node = null ;
 
     mLeftTime : number = 0 ;
+
+    mData : IDissmissDlgData = null ;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
 
-    showDlgDismiss( data : MJRoomData )
+    showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void )
     {
-        super.showDlg(null,null,null);
-        let applyIdx = data.mBaseData.applyDismissIdx ;
-        if ( applyIdx >= this.mPlayerInfos.length || applyIdx < 0 || applyIdx >= data.mPlayers.length )
+        super.showDlg(pfResult,jsUserData,pfOnClose);
+        this.mData = jsUserData as IDissmissDlgData ;
+        let applyIdx = this.mData.applyPlayerIdx ;
+        if ( applyIdx >= this.mPlayerInfos.length || applyIdx < 0 || applyIdx >= this.mData.playerCnt )
         {
             Prompt.promptText( "invalid idx = " + applyIdx + " can not dismiss" );
             this.closeDlg();
@@ -58,8 +59,8 @@ export default class DlgDismiss extends DlgBase {
         }
     
         // set up desc
-        let applayerr = PlayerInfoDataCacher.getInstance().getPlayerInfoByID(data.mPlayers[applyIdx].mPlayerBaseData.uid) ;
-        let applyerName =  "uid=" + data.mPlayers[applyIdx].mPlayerBaseData.uid ;
+        let applayerr = PlayerInfoDataCacher.getInstance().getPlayerInfoByID( this.mData.applyPlayerUID ) ;
+        let applyerName =  "uid=" + this.mData.applyPlayerUID ;
         if ( applayerr != null )
         {
             applyerName = applayerr.name ;
@@ -67,7 +68,7 @@ export default class DlgDismiss extends DlgBase {
         this.mDesc.string = "用户【"+ applyerName +"】请求解散房间，是否同意? (超过300秒默认同意)" ;
 
         // set players info ;
-        let seatCnt = data.mOpts.seatCnt ;
+        let seatCnt = this.mData.seatCnt ;
         for ( let idx = 0 ; idx < this.mPlayerInfos.length ; ++idx )
         {
             this.mPlayerInfos[idx].node.active = idx < seatCnt ;
@@ -78,29 +79,29 @@ export default class DlgDismiss extends DlgBase {
                 continue ;
             }
 
-            let p = data.mPlayers[idx];
-            if ( p == null || p.isEmpty() )
+            let uid = this.mData.getPlayerUIDByIdx( idx );
+            if ( -1 == uid )
             {
                 continue ;
             }
 
-            this.mPlayerInfos[idx].refreshInfo( p.mPlayerBaseData.uid );
+            this.mPlayerInfos[idx].refreshInfo( uid );
             this.mWaitIcons[idx].active = applyIdx != idx ;
             this.mAgreeIcons[idx].active = !this.mWaitIcons[idx].active ;
         }
         
-        for ( let idx = 0 ; idx < data.mBaseData.agreeDismissIdx.length ; ++idx )
+        let vAgreeIdxs = this.mData.getAgreedPlayerIdxs();
+        for ( let idx = 0 ; idx < vAgreeIdxs.length ; ++idx )
         {
-            this.onPlayerRespone( data.mBaseData.agreeDismissIdx[idx],true );
+            this.onPlayerRespone( vAgreeIdxs[idx],true );
         }
 
         // set operater button ;
-        let selfIdx = data.getSelfIdx();
-        this.mResponeButton.active = selfIdx != applyIdx && ( _.find(data.mBaseData.agreeDismissIdx,( idx : number )=>{ return selfIdx == idx ;}) == null );
+        this.mResponeButton.active = this.mData.isSelfResponed() == false;
         
         // timer ;
         this.unscheduleAllCallbacks();
-        this.mLeftTime = data.mBaseData.dimissRoomLeftTime ;
+        this.mLeftTime = this.mData.getLeftTime() ;
         this.schedule( this.onTimerCountDown,1,this.mLeftTime,0);
         this.onTimerCountDown();
     }
@@ -136,8 +137,12 @@ export default class DlgDismiss extends DlgBase {
     onClickResponeButton( event : cc.Event.EventTouch, isAgrre : string )
     {
         let bIsAgree : boolean = parseInt( isAgrre ) == 1 ;
-        cc.Component.EventHandler.emitEvents( this.mOnDlgResult,bIsAgree );
         this.mResponeButton.active = false ;
+        this.mData.reqRespone(bIsAgree);
+        if ( bIsAgree == false )
+        {
+            this.closeDlg();
+        }
     }
 
     closeDlg()

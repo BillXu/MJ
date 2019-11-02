@@ -12,8 +12,12 @@ import PlayerInfoDataCacher from "../../../clientData/PlayerInfoDataCacher";
 import * as _ from "lodash"
 import { eMJActType, eChatMsgType, eEatType } from "../roomDefine";
 import GPSManager from "../../../sdk/GPSManager";
-import ResultSingleData from "./ResultSingleData";
+import { PlayerActedCard } from "./MJPlayerCardData";
+import IRoomSceneData, { ILayerPlayersData, IRoomInfoData, IRoomPlayerData } from "../IRoomSceneData";
+import ILayerDlgData, { IDissmissDlgData, ISingleResultDlgData, ITotalResultDlgData, ILocationDlgData } from "../layerDlg/ILayerDlgData";
+import ILayerCardsData, { IPlayerCardData } from "../layerCards/ILayerCardsData";
 import ResultTotalData from "./ResultTotalData";
+import ResultSingleData from "./ResultSingleData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -28,14 +32,15 @@ import ResultTotalData from "./ResultTotalData";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default abstract class MJRoomData extends IModule {
+export default abstract class MJRoomData extends IModule implements IRoomInfoData ,ILayerPlayersData ,ILayerCardsData ,ILayerDlgData,IDissmissDlgData,ILocationDlgData,IRoomSceneData {
 
     mOpts : IOpts = null ;
     mBaseData : MJRoomBaseData = null ;
     mPlayers : MJPlayerData[] = [] ;
     mSceneDelegate : IRoomDataDelegate = null ; 
-    mSinglResultData : any = null ;
-    mTotalResultData : ResultTotalData = new ResultTotalData();
+    mSinglResultData : ISingleResultDlgData = null ;
+    mTotalResultData : ITotalResultDlgData = null;
+
 
     protected init()
     {
@@ -93,7 +98,7 @@ export default abstract class MJRoomData extends IModule {
             break ;
             case eMsgType.MSG_ROOM_PLAYER_INFO:
             {
-                var vMsgPlayers : Object[] = msg["players"] ;
+                let vMsgPlayers : Object[] = msg["players"] ;
                 if ( vMsgPlayers != null )
                 {
                     for ( const item of vMsgPlayers )
@@ -210,7 +215,7 @@ export default abstract class MJRoomData extends IModule {
             case eMsgType.MSG_PLAYER_WAIT_ACT_ABOUT_OTHER_CARD:
             {
                 this.mBaseData.otherCanActCard = msg["cardNum"];
-                this.mSceneDelegate.showActOptsAboutOtherCard(msg["acts"]);
+                this.mSceneDelegate.showActOpts(msg["acts"]);
             }
             break;
             case eMsgType.MSG_ROOM_MQMJ_WAIT_ACT_AFTER_CP:
@@ -219,17 +224,21 @@ export default abstract class MJRoomData extends IModule {
                 let vAct : eMJActType[] = [] ;
                 let v : Object[] = msg["acts"] ;
                 v.forEach( n => vAct.push( n["act"] ) );
-                this.mSceneDelegate.showActOptsWhenRecivedCards( vAct ) ;
+                this.mSceneDelegate.showActOpts( vAct ) ;
             }
             break;
             case eMsgType.MSG_ROOM_MQMJ_PLAYER_HU:
             {
                 let isZiMo : boolean = msg["isZiMo"] == 1 ;
                 let huCard : number  = msg["huCard"] ;
+                let acted = new PlayerActedCard();
+                acted.eAct = eMJActType.eMJAct_Hu ;
+                acted.nTargetCard = huCard ;
                 if ( isZiMo )
                 {
                     let huIdx : number = msg["detail"]["huIdx"] ;
-                    this.mSceneDelegate.onPlayerActHu(huIdx,huCard,huIdx );
+                    acted.nInvokerIdx = huIdx ;
+                    this.mSceneDelegate.onPlayerActed(huIdx,acted);
                 }
                 else
                 {
@@ -237,7 +246,8 @@ export default abstract class MJRoomData extends IModule {
                     for ( const v of vHuPlayers )
                     {
                         let idx : number = v["idx"];
-                        this.mSceneDelegate.onPlayerActHu(idx,huCard,this.mBaseData.lastChuIdx ) ;
+                        acted.nInvokerIdx = this.mBaseData.lastChuIdx ;
+                        this.mSceneDelegate.onPlayerActed(idx,acted);
                     }
                 }
             }
@@ -255,32 +265,32 @@ export default abstract class MJRoomData extends IModule {
             break ;
             case eMsgType.MSG_ROOM_SCMJ_GAME_END:
             {
-                this.mSinglResultData.parseResult(msg);
-                for ( const item of this.mPlayers )
-                {
-                    if ( null == item || item.isEmpty() )
-                    {
-                        continue ;
-                    }
+                // this.mSinglResultData.parseResult(msg);
+                // for ( const item of this.mPlayers )
+                // {
+                //     if ( null == item || item.isEmpty() )
+                //     {
+                //         continue ;
+                //     }
 
-                    let pr = this.mSinglResultData.mResults[item.mPlayerBaseData.svrIdx];
+                //     let pr = this.mSinglResultData.mResults[item.mPlayerBaseData.svrIdx];
                     
-                    if ( pr.isEmpty() == false )
-                    {
-                        item.mPlayerBaseData.chip = pr.mFinalChip ;
-                        item.mPlayerCard.vHoldCard.length = 0 ;
-                        item.mPlayerCard.vHoldCard = item.mPlayerCard.vHoldCard.concat(pr.mAnHoldCards );
-                    }
-                }
-
-                this.mSceneDelegate.onGameEnd(this.mSinglResultData) ;
+                //     if ( pr.isEmpty() == false )
+                //     {
+                //         item.mPlayerBaseData.chip = pr.mFinalChip ;
+                //         item.mPlayerCard.vHoldCard.length = 0 ;
+                //         item.mPlayerCard.vHoldCard = item.mPlayerCard.vHoldCard.concat(pr.mAnHoldCards );
+                //     }
+                // }
+                this.getSingleResultDlgData().parseResult(msg);
+                this.mSceneDelegate.onGameEnd() ;
                 this.endGame();
             }
             break ;
             case eMsgType.MSG_ROOM_GAME_OVER:
             {
-                this.mTotalResultData.parseResult(msg);
-                this.mSceneDelegate.onRoomOvered( this.mTotalResultData ) ;
+                this.getTotalResultDlgData().parseResult(msg);
+                this.mSceneDelegate.onRoomOvered() ;
                 this.mBaseData.isRoomOver = true ;
             }
             break ;
@@ -367,7 +377,7 @@ export default abstract class MJRoomData extends IModule {
             return false ;
         }
 
-        this.mPlayers[idx].parsePlayer(jsInfo); 
+        this.mPlayers[idx].parsePlayer(jsInfo,this); 
         this.mPlayers[idx].mPlayerBaseData.isSelf = ClientApp.getInstance().getClientPlayerData().getSelfUID() == this.mPlayers[idx].mPlayerBaseData.uid ;
         this.mPlayers[idx].mPlayerBaseData.isSitDownBeforSelf = isRealSitDown == false || this.getSelfIdx() == -1;
         if ( isRealSitDown )
@@ -437,9 +447,9 @@ export default abstract class MJRoomData extends IModule {
                     cc.error("chi act do not have invoker idx key ");
                     invokerIdx = (svrIdx - 1 + this.mOpts.seatCnt) % this.mOpts.seatCnt ;
                 }
-                roomPlayer.mPlayerCard.onEat(targetCard,withA,withB,invokerIdx) ;
                 this.mPlayers[invokerIdx].mPlayerCard.removeChu(targetCard);
-                this.mSceneDelegate.onPlayerActChi(svrIdx,targetCard,withA,withB, invokerIdx ) ;
+                let acted = roomPlayer.mPlayerCard.onEat(targetCard,withA,withB,invokerIdx) ;
+                this.mSceneDelegate.onPlayerActed(svrIdx,acted);
             }
             break ;
             case eMJActType.eMJAct_Peng:
@@ -449,24 +459,24 @@ export default abstract class MJRoomData extends IModule {
                     cc.error("peng act do not have invoker idx key ");
                     break;
                 }
-                roomPlayer.mPlayerCard.onPeng(targetCard,invokerIdx) ;
                 this.mPlayers[invokerIdx].mPlayerCard.removeChu(targetCard);
-                this.mSceneDelegate.onPlayerActPeng(svrIdx,targetCard,invokerIdx ) ;
+                let acted = roomPlayer.mPlayerCard.onPeng(targetCard,invokerIdx) ;
+                this.mSceneDelegate.onPlayerActed(svrIdx,acted);
             }
             break ;
             case eMJActType.eMJAct_AnGang:
             {
-                roomPlayer.mPlayerCard.onAnGang(targetCard,msg["gangCard"] );
+                let acted = roomPlayer.mPlayerCard.onAnGang(targetCard,msg["gangCard"] );
                 this.mBaseData.leftMJCnt -= 1 ;
-                this.mSceneDelegate.onPlayerActAnGang(svrIdx,targetCard,msg["gangCard"] );
+                this.mSceneDelegate.onPlayerActed(svrIdx,acted);
             }
             break;
             case eMJActType.eMJAct_BuGang_Done:
             case eMJActType.eMJAct_BuGang:
             {
                 this.mBaseData.leftMJCnt -= 1 ;
-                roomPlayer.mPlayerCard.onBuGang(targetCard,msg["gangCard"] ) ;
-                this.mSceneDelegate.onPlayerActBuGang(svrIdx,targetCard,msg["gangCard"] );
+                let acted = roomPlayer.mPlayerCard.onBuGang(targetCard,msg["gangCard"] ) ;
+                this.mSceneDelegate.onPlayerActed(svrIdx,acted);
             }
             break;
             case eMJActType.eMJAct_MingGang:
@@ -477,9 +487,9 @@ export default abstract class MJRoomData extends IModule {
                     cc.error("mingGang act do not have invoker idx key ");
                     break;
                 }
-                roomPlayer.mPlayerCard.onMingGang(targetCard,msg["gangCard"],invokerIdx) ;
                 this.mPlayers[invokerIdx].mPlayerCard.removeChu(targetCard);
-                this.mSceneDelegate.onPlayerActMingGang(svrIdx,targetCard,invokerIdx,msg["gangCard"] );
+                let acted = roomPlayer.mPlayerCard.onMingGang(targetCard,msg["gangCard"],invokerIdx) ;
+                this.mSceneDelegate.onPlayerActed(svrIdx,acted);
             }
             break;
             case eMJActType.eMJAct_Hu:
@@ -495,14 +505,19 @@ export default abstract class MJRoomData extends IModule {
                 {
                     this.mPlayers[invokerIdx].mPlayerCard.removeChu(targetCard);
                 }
-                this.mSceneDelegate.onPlayerActHu(svrIdx,targetCard,invokerIdx ) ;
+
+                let acted = new PlayerActedCard();
+                acted.eAct = eMJActType.eMJAct_Hu ;
+                acted.nTargetCard = targetCard ;
+                acted.nInvokerIdx = invokerIdx ;
+                this.mSceneDelegate.onPlayerActed(svrIdx,acted);
             }
             break ;
             case eMJActType.eMJAct_BuHua:
             {
-                roomPlayer.mPlayerCard.onBuHua(targetCard,msg["gangCard"] );
+                let acted = roomPlayer.mPlayerCard.onBuHua(targetCard,msg["gangCard"] );
                 this.mBaseData.leftMJCnt -= 1 ;
-                this.mSceneDelegate.onPlayerActBuHua(svrIdx,targetCard,msg["gangCard"] );
+                this.mSceneDelegate.onPlayerActed(svrIdx,acted);
             }
             break;
             default:
@@ -544,6 +559,7 @@ export default abstract class MJRoomData extends IModule {
                 item.mPlayerCard.onRecivedHoldCard(null,this.mBaseData.bankerIdx == item.mPlayerBaseData.svrIdx ? 14 : 13 );
             }
         }
+        this.mBaseData.curActSvrIdx = this.mBaseData.bankerIdx ;
         this.mSceneDelegate.onDistributedCards();
     }
 
@@ -559,18 +575,6 @@ export default abstract class MJRoomData extends IModule {
         }
     }
  
-    getSelfIdx() : number
-    {
-        for ( const item of this.mPlayers )
-        {
-            if ( item != null && item.isEmpty() == false && item.mPlayerBaseData.isSelf )
-            {
-                return item.mPlayerBaseData.svrIdx ;
-            }
-        }
-        return -1 ;
-    }
-
     getPlayerDataByUID( uid : number ) : MJPlayerData
     {
         for ( const item of this.mPlayers )
@@ -583,92 +587,92 @@ export default abstract class MJRoomData extends IModule {
         return null ;
     }
 
-    protected doChoseDoActAboutOtherCard( act : eMJActType )
-    {
-        if ( act != eMJActType.eMJAct_Chi )
-        {
-            let msg = {} ;
-            msg["actType"] = act ;
-            msg["card"] = this.mBaseData.otherCanActCard ;
-            this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
-            return ;
-        }
+    // protected doChoseDoActAboutOtherCard( act : eMJActType )
+    // {
+    //     if ( act != eMJActType.eMJAct_Chi )
+    //     {
+    //         let msg = {} ;
+    //         msg["actType"] = act ;
+    //         msg["card"] = this.mBaseData.otherCanActCard ;
+    //         this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
+    //         return ;
+    //     }
 
-        // check if have eat option ;
-        var player = this.mPlayers[this.getSelfIdx()];
-        let vL : eEatType[] = []; 
-        player.mPlayerCard.getEatOpts(vL,this.mBaseData.otherCanActCard ) ;
-        if ( vL.length == 1 )
-        {
-            this.doChoseEatType(vL[0]);
-        }
-        else
-        {
-            // show chose eat type result ;
-            this.mSceneDelegate.showEatOpts( vL,this.mBaseData.otherCanActCard );
-        }
-    }
+    //     // check if have eat option ;
+    //     var player = this.mPlayers[this.getSelfIdx()];
+    //     let vL : eEatType[] = []; 
+    //     player.mPlayerCard.getEatOpts(vL,this.mBaseData.otherCanActCard ) ;
+    //     if ( vL.length == 1 )
+    //     {
+    //         this.doChoseEatType(vL[0]);
+    //     }
+    //     else
+    //     {
+    //         // show chose eat type result ;
+    //         this.mSceneDelegate.showEatOpts( vL,this.mBaseData.otherCanActCard );
+    //     }
+    // }
 
-    protected doChoseActAboutRecievedCard( act : eMJActType,chuCard : number = null ) : boolean
-    {
-        let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
-        let card = 0;
-        switch ( act )
-        {
-            case eMJActType.eMJAct_BuGang:
-            case eMJActType.eMJAct_AnGang:
-            {
-                let gangOpts : number[] = [];
-                playerCard.getGangOpts(gangOpts);
-                if ( gangOpts.length == 1 )
-                {
-                    this.doChosedGangCard(gangOpts[0]) ;
-                }
-                else
-                {
-                    // show chose gang card dlg ;
-                    this.mSceneDelegate.showGangOpts(gangOpts);
-                }
-            }
-            return;
-            case eMJActType.eMJAct_Hu:
-            case eMJActType.eMJAct_Pass:
-            {
+    // protected doChoseActAboutRecievedCard( act : eMJActType,chuCard : number = null ) : boolean
+    // {
+    //     let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
+    //     let card = 0;
+    //     switch ( act )
+    //     {
+    //         case eMJActType.eMJAct_BuGang:
+    //         case eMJActType.eMJAct_AnGang:
+    //         {
+    //             let gangOpts : number[] = [];
+    //             playerCard.getGangOpts(gangOpts);
+    //             if ( gangOpts.length == 1 )
+    //             {
+    //                 this.doChosedGangCard(gangOpts[0]) ;
+    //             }
+    //             else
+    //             {
+    //                 // show chose gang card dlg ;
+    //                 this.mSceneDelegate.showGangOpts(gangOpts);
+    //             }
+    //         }
+    //         return;
+    //         case eMJActType.eMJAct_Hu:
+    //         case eMJActType.eMJAct_Pass:
+    //         {
 
-            }
-            break;
-            case eMJActType.eMJAct_Chu:
-            {
-                card = chuCard ;
-            }
-            break;
-            default:
-            cc.log( "unknown act for recived card = " + act );
-            return ;
-        }
+    //         }
+    //         break;
+    //         case eMJActType.eMJAct_Chu:
+    //         {
+    //             card = chuCard ;
+    //         }
+    //         break;
+    //         default:
+    //         cc.log( "unknown act for recived card = " + act );
+    //         return ;
+    //     }
 
-        let msg = {} ;
-        msg["actType"] = act ;
-        msg["card"] = card ;
-        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
-    }
+    //     let msg = {} ;
+    //     msg["actType"] = act ;
+    //     msg["card"] = card ;
+    //     this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
+    // }
 
-    doChosedAct( act : eMJActType, chuCard : number = null ) : boolean
-    {
-        let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
-        if ( act == eMJActType.eMJAct_Chu || playerCard.vHoldCard.length % 3 == 2 )
-        {
-            return this.doChoseActAboutRecievedCard(act,chuCard);
-        }
-        else
-        {
-            this.doChoseDoActAboutOtherCard(act);
-        }
+    // doChosedAct( act : eMJActType, chuCard : number = null ) : boolean
+    // {
+    //     let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
+    //     if ( act == eMJActType.eMJAct_Chu || playerCard.vHoldCard.length % 3 == 2 )
+    //     {
+    //         return this.doChoseActAboutRecievedCard(act,chuCard);
+    //     }
+    //     else
+    //     {
+    //         this.doChoseDoActAboutOtherCard(act);
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
     
-    doChosedGangCard( cardForGang : number ) // must be anGang or bu Gang ;
+    protected doChosedGangCard( cardForGang : number ) // must be anGang or bu Gang ;
     {
         let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
 
@@ -685,7 +689,7 @@ export default abstract class MJRoomData extends IModule {
         this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
     }
 
-    doChoseEatType( type : eEatType ) : void
+    protected doChoseEatType( type : eEatType ) : void
     {
         let v : number[] = [];
         let nTargetCard = this.mBaseData.otherCanActCard ;
@@ -722,40 +726,6 @@ export default abstract class MJRoomData extends IModule {
     {
         jsMsg["dstRoomID"] = this.mBaseData.roomID;
         return this.sendMsg(jsMsg,msgID,Utility.getMsgPortByRoomID(this.mBaseData.roomID),this.mBaseData.roomID );
-    }
-
-    doClickedSitDown( svrIdx : number ) : void
-    {
-        let msg = {};
-        msg["idx"] = svrIdx ;
-        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_SIT_DOWN) ;
-    }
-
-    doApplyLeave() : void
-    {
-        let msg = {} ;
-        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_LEAVE_ROOM) ;
-    }
-
-    doApplyDismissRoom() : void
-    {
-        // send msg ;
-        let msg = {} ;
-        this.sendRoomMsg(msg,eMsgType.MSG_APPLY_DISMISS_VIP_ROOM) ;
-    }
-
-    doReplyDismiss( isAgree : boolean )
-    {
-        // send msg ;
-        let msg = {} ;
-        msg["reply"] = isAgree ? 1 : 0 ;
-        this.sendRoomMsg(msg,eMsgType.MSG_REPLY_DISSMISS_VIP_ROOM_APPLY) ;
-    }
-
-    doReady()
-    {
-        let msg = {} ;
-        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_SET_READY) ;
     }
 
     reqActList() : void
@@ -796,41 +766,6 @@ export default abstract class MJRoomData extends IModule {
     //     }
     //     return cnt ;
     // }
-
-    doSendPlayerChat( type : eChatMsgType , strContent : string )
-    {
-        if ( this.getSelfIdx() == -1 )
-        {
-            Prompt.promptText( "您没有坐下，不能发言。" );
-            return ;
-        }
-
-        let msg = {};
-        msg["type"] = type ;
-        msg["content"] = strContent ;
-        this.sendRoomMsg( msg,eMsgType.MSG_PLAYER_CHAT_MSG ) ;
-    }
-
-    doSendPlayerInteractEmoji( targetIdx : number , emojiName : string )
-    {
-        let self = this.getSelfIdx();
-        if ( self == -1 )
-        {
-            Prompt.promptText( "您没有坐下，不能发言。" );
-            return ;
-        }
-
-        if ( targetIdx == self )
-        {
-            Prompt.promptText( "互动表情不能发给自己。" );
-            return ;
-        }
-        
-        let msg = {};
-        msg["targetIdx"] = targetIdx ;
-        msg["emoji"] = emojiName ;
-        this.sendRoomMsg( msg,eMsgType.MSG_PLAYER_INTERACT_EMOJI ) ;
-    }
 
     doReplayLastVoice( playerUID : number ) : void
     {
@@ -888,7 +823,77 @@ export default abstract class MJRoomData extends IModule {
         return true ;
     }
 
-    svrIdxToClientIdx( svrIdx : number ) : number 
+    // interface IRoomSceneData
+    getRoomInfoData() : IRoomInfoData 
+    {
+        return this ;
+    }
+
+    getLayerPlayersData() : ILayerPlayersData 
+    {
+        return this ;
+    }
+
+    getLayerDlgData() : ILayerDlgData 
+    {
+        return this ;
+    }
+
+    getLayerCardsData() : ILayerCardsData 
+    {
+        return this ;
+    }
+
+    getMJCntAfterDistribute() : number 
+    {
+        return this.mBaseData.initCardCnt - ( this.mOpts.seatCnt * 13 + 1 );
+    }
+
+    // interface     IRoomInfoData ;
+    getLeftMJCnt() : number 
+    {
+        return this.mBaseData.leftMJCnt ;
+    }
+
+    getRoomID() : number 
+    {
+        return this.mBaseData.roomID;
+    }
+
+    getRule() : string 
+    {
+        return this.mOpts.getRuleDesc();
+    }
+
+    getTotalRound() : string 
+    {
+        return this.mOpts.roundCnt + "" ;
+    }
+
+    getCurRound() : string 
+    {
+        return (this.mOpts.roundCnt - this.mBaseData.leftCircle ) + "";
+    }
+
+    isCircle() : boolean 
+    {
+        return this.mOpts.isCircle ;
+    }
+
+    // interface ILayerPlayersData
+    getSelfIdx() : number 
+    {
+        for ( const item of this.mPlayers )
+        {
+            if ( item != null && item.isEmpty() == false && item.mPlayerBaseData.isSelf )
+            {
+                return item.mPlayerBaseData.svrIdx ;
+            }
+        }
+        return -1 ;
+    }
+
+    svrIdxToClientIdx(svrIdx : number ) : number 
     {
         let selfIdx = this.getSelfIdx() ;
         if ( -1 == selfIdx )
@@ -897,5 +902,359 @@ export default abstract class MJRoomData extends IModule {
         }
 
         return ( this.mBaseData.getMaxTableSeat() + svrIdx - selfIdx ) % this.mBaseData.getMaxTableSeat() ;
+    }
+
+    getPlayerClientIdxByUID( uid : number ) : number 
+    {
+        for ( const item of this.mPlayers )
+        {
+            if ( item != null && item.isEmpty() == false && item.mPlayerBaseData.uid == uid )
+            {
+                return item.svrIdx ;
+            }
+        }
+        return -1 ;
+    }
+
+    getBankerIdx() : number 
+    {
+        return this.mBaseData.bankerIdx ;
+    } 
+
+    getPlayersData() : IRoomPlayerData[] 
+    {
+        return this.mPlayers;
+    }
+
+    isShowReadyBtn() : boolean 
+    {
+        return this.mBaseData.isInGamingState() == false && this.getSelfIdx() != -1 && this.mPlayers[this.getSelfIdx()].isReady == false ;
+    }
+
+    reqSetReady() : void 
+    {
+        let msg = {} ;
+        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_SET_READY) ;
+    }
+
+    reqSitDown( svrIdx : number ) : number 
+    {
+        let msg = {};
+        msg["idx"] = svrIdx ;
+        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_SIT_DOWN) ;
+        return svrIdx ;
+    }
+
+    // interface ILayerCardsData
+    // getSelfIdx() : number 
+    // {
+
+    // }
+
+    getCurActIdx() : number  // -1 means not in game ;
+    {
+        if ( this.mBaseData.isInGamingState() == false )
+        {
+            return -1 ;
+        }
+        return this.mBaseData.curActSvrIdx ;
+    }
+
+    // getBankerIdx() : number 
+    // {
+    //     return this.mBaseData.bankerIdx ;
+    // }
+
+    getPlayerCardItems() : IPlayerCardData[]  // array idx = svridx , null == empty ;
+    {
+        return this.mPlayers ;
+    }
+
+    isReplay() : boolean 
+    {
+        return false ;
+    }
+
+    // interface ILayerDlgData
+    isShowDismissDlg() : boolean 
+    {
+        return this.mBaseData.applyDismissIdx != -1 ;
+    }
+
+    isSeatFull() : boolean 
+    {
+        let cnt = 0 ;
+        for ( let v of this.mPlayers )
+        {
+            if ( v == null || v.isEmpty() )
+            {
+                continue ;
+            }
+            ++cnt ;
+        }
+        return cnt == this.mOpts.seatCnt ;
+    }
+
+    getDismissDlgData() : IDissmissDlgData 
+    {
+        return this ;
+    }
+
+    getPlayerUIDByIdx( idx : number ) : number 
+    {
+        if ( this.mPlayers[idx] == null )
+        {
+            return -1 ;
+        }
+        return this.mPlayers[idx].uid ;
+    }
+
+    getGangOpts() : number[] 
+    {
+        let v : number[] = [] ;
+        let cards = this.mPlayers[this.getSelfIdx()].mPlayerCard ;
+        if ( cards.vHoldCard.length % 3 == 1 )
+        {
+            v.push( this.mBaseData.otherCanActCard );
+            return v;
+        }
+        
+        this.mPlayers[this.getSelfIdx()].mPlayerCard.getGangOpts(v) ;
+        return v ;
+    }
+
+    getEatOpts() : eEatType[] 
+    {
+        let v : eEatType[] = [] ;
+        this.mPlayers[this.getSelfIdx()].mPlayerCard.getEatOpts(v,this.getEatTargetCard());
+        return v ;
+    }
+
+    getEatTargetCard() : number 
+    {
+        return this.mBaseData.otherCanActCard ;
+    }
+
+    getLocationDlgData() : ILocationDlgData 
+    {
+        return this ;
+    }
+
+    getSingleResultDlgData() : ISingleResultDlgData 
+    {
+        if ( null == this.mSinglResultData )
+        {
+            this.mSinglResultData = new ResultSingleData();
+            (this.mSinglResultData as ResultSingleData).init(this);
+        }
+        return this.mSinglResultData ;
+    }
+
+    getTotalResultDlgData() : ITotalResultDlgData 
+    {
+        if ( this.mTotalResultData == null )
+        {
+            this.mTotalResultData = new ResultTotalData();
+            (this.mTotalResultData as ResultTotalData).init(this);
+        }
+        return this.mTotalResultData ;
+    }
+
+    reqAct( act : eMJActType , detail : any ) : void  // detail : gang card or eat type ; 
+    {
+        switch ( act )
+        {
+            case eMJActType.eMJAct_Chi:
+            {
+                this.doChoseEatType(detail);
+            }
+            break;
+            case eMJActType.eMJAct_Peng:
+            {
+                let msg = {} ;
+                msg["actType"] = act;
+                msg["card"] = this.mBaseData.otherCanActCard ;
+                this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
+            }
+            break ;
+            case eMJActType.eMJAct_AnGang:
+            case eMJActType.eMJAct_BuGang:
+            case eMJActType.eMJAct_MingGang:
+            {
+                let playerCard = this.mPlayers[this.getSelfIdx()].mPlayerCard;
+                if ( playerCard.vHoldCard.length % 3 == 2 )
+                {
+                    this.doChosedGangCard(detail) ;
+                }
+                else
+                {
+                    let msg = {} ;
+                    msg["actType"] = eMJActType.eMJAct_MingGang;
+                    msg["card"] = this.mBaseData.otherCanActCard ;
+                    this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
+                }
+            }
+            break ;
+            case eMJActType.eMJAct_Hu:
+            {
+                let msg = {} ;
+                msg["actType"] = eMJActType.eMJAct_Hu;
+                msg["card"] = this.mBaseData.otherCanActCard ;
+                this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
+            }
+            break ;
+            case eMJActType.eMJAct_Chu:
+            {
+                let msg = {} ;
+                msg["actType"] = eMJActType.eMJAct_Chu;
+                msg["card"] = detail ;
+                this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
+            }
+            break ;
+            default :
+            return ;
+        }
+    }
+
+    reqDoReady() : void 
+    {
+        this.reqSetReady();
+    }
+
+    reqSendInteractiveEmoji( targetUID : number , emojiName : string ) : void 
+    {
+        let self = this.getSelfIdx();
+        if ( self == -1 )
+        {
+            Prompt.promptText( "您没有坐下，不能发言。" );
+            return ;
+        }
+
+        let targetIdx = this.getPlayerClientIdxByUID(targetUID);
+        if ( targetIdx == self )
+        {
+            Prompt.promptText( "互动表情不能发给自己。" );
+            return ;
+        }
+        
+        let msg = {};
+        msg["targetIdx"] = targetIdx ;
+        msg["emoji"] = emojiName ;
+        this.sendRoomMsg( msg,eMsgType.MSG_PLAYER_INTERACT_EMOJI ) ;
+    }
+
+    reqSendChat( type : eChatMsgType , content : string ) : void 
+    {
+        if ( this.getSelfIdx() == -1 )
+        {
+            Prompt.promptText( "您没有坐下，不能发言。" );
+            return ;
+        }
+
+        let msg = {};
+        msg["type"] = type ;
+        msg["content"] = content ;
+        this.sendRoomMsg( msg,eMsgType.MSG_PLAYER_CHAT_MSG ) ;
+    }
+
+    reqApplyDismiss() : void 
+    {
+        // send msg ;
+        let msg = {} ;
+        this.sendRoomMsg(msg,eMsgType.MSG_APPLY_DISMISS_VIP_ROOM) ;
+    }
+
+    reqApplyLeave() : void 
+    {
+        let msg = {} ;
+        this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_LEAVE_ROOM) ;
+    }
+
+    // interface IDissmissDlgData
+    get applyPlayerIdx() : number 
+    {
+        return this.mBaseData.applyDismissIdx ;
+    }
+
+    get applyPlayerUID() : number 
+    {
+        return this.mPlayers[this.applyPlayerIdx].mPlayerBaseData.uid ;
+    }
+
+    get playerCnt() : number 
+    {
+        let cnt = 0 ;
+        for ( let v of this.mPlayers )
+        {
+            if ( v == null || v.isEmpty() )
+            {
+                continue ;
+            }
+            ++cnt ;
+        }
+        return cnt ;
+    }
+
+    get seatCnt(): number 
+    {
+        return this.mOpts.seatCnt ;
+    }
+
+    // getPlayerUIDByIdx( idx : number ) : number 
+    // {
+
+    // }
+    getAgreedPlayerIdxs() : number[] 
+    {
+        return this.mBaseData.agreeDismissIdx ;
+    }
+
+    isSelfResponed() : boolean 
+    {
+        let selfIdx = this.getSelfIdx();
+        for ( let v of this.mBaseData.agreeDismissIdx )
+        {
+            if ( v == selfIdx )
+            {
+                return true ;
+            }
+        }
+
+        return false ;
+    }
+
+    getLeftTime() : number 
+    {
+        return this.mBaseData.dimissRoomLeftTime ;
+    }
+
+    reqRespone( isAgree : boolean ) : number 
+    {
+        // send msg ;
+        let msg = {} ;
+        msg["reply"] = isAgree ? 1 : 0 ;
+        this.sendRoomMsg(msg,eMsgType.MSG_REPLY_DISSMISS_VIP_ROOM_APPLY) ;
+        return 0 ;
+    }
+
+    // interface IlocationDlgData
+    //seatCnt : number ;
+    //getSelfIdx() : number ;
+    getPlayerUIDs() : number[]   // when empty , uid = -1 ; , array with server idx ;
+    {
+        let vIDs : number[] = [] ;
+        for ( let v of this.mPlayers )
+        {
+            if ( v == null || v.isEmpty() )
+            {
+                vIDs.push( -1 );
+            }
+            else
+            {
+                vIDs.push( v.uid );
+            }
+        }
+
+        return vIDs ;
     }
 }

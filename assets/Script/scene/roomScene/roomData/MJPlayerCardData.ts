@@ -20,7 +20,7 @@ export class PlayerActedCard
     nTargetCard : number = 0 ;
     nInvokerIdx : number = -1;
     eDir : eArrowDirect = eArrowDirect.eDirect_Opposite;
-    vEatWithCards? : number[] ; // must contain 3 cards ;
+    vAddtionCards? : number[] ; // when eat , must contain 3 cards ;  when gang , only one card 
 }
 
 export class IPlayerCards
@@ -87,7 +87,7 @@ export class IPlayerCards
                 {
                     let tmp : number[] = [] ;
                     tmp = tmp.concat(ming["card"]);
-                    clientMing.vEatWithCards = tmp;
+                    clientMing.vAddtionCards = tmp;
                     tmp.sort( (a : number, b : number )=>{ return a - b ;} ) ;
                 }
                 clientMing.eDir = IPlayerCards.getDirection(playerIdx,clientMing.nInvokerIdx);
@@ -137,7 +137,7 @@ export class IPlayerCards
         this.vChuCards.push(nChu);
     }
 
-    onEat( targetCard : number , withA : number , withB : number , invokerIdx : number  )
+    onEat( targetCard : number , withA : number , withB : number , invokerIdx : number  ) : PlayerActedCard
     {
         let ret = this.removeHold(withA) && this.removeHold(withB); 
         if ( !ret )
@@ -150,10 +150,11 @@ export class IPlayerCards
         pMing.eAct = eMJActType.eMJAct_Chi ;
         pMing.nTargetCard = targetCard ;
         pMing.nInvokerIdx = invokerIdx ;
-        pMing.vEatWithCards = [ targetCard,withA,withB ] ;
-        pMing.vEatWithCards.sort( ( a : number , b : number )=>{ return a - b ;} ) ;
+        pMing.vAddtionCards = [ targetCard,withA,withB ] ;
+        pMing.vAddtionCards.sort( ( a : number , b : number )=>{ return a - b ;} ) ;
         pMing.eDir = IPlayerCards.getDirection( this.nPlayerIdx,invokerIdx );
         this.vMingCards.push(pMing);
+        return pMing ;
     }
 
     isHaveCard( card : number )
@@ -189,7 +190,7 @@ export class IPlayerCards
         return true ;
     }
 
-    onPeng( targetCard : number, invokerIdx : number )
+    onPeng( targetCard : number, invokerIdx : number ) : PlayerActedCard
     {
         this.removeHold(targetCard,2) ;
 
@@ -199,9 +200,10 @@ export class IPlayerCards
         pMing.nInvokerIdx = invokerIdx ;
         pMing.eDir = IPlayerCards.getDirection( this.nPlayerIdx,invokerIdx );
         this.vMingCards.push(pMing);
+        return pMing ;
     }
 
-    onMingGang( targetCard : number , newCard : number, invokerIdx : number )
+    onMingGang( targetCard : number , newCard : number, invokerIdx : number ) : PlayerActedCard
     {
         this.removeHold(targetCard,3) ;
 
@@ -209,43 +211,57 @@ export class IPlayerCards
         pMing.eAct = eMJActType.eMJAct_MingGang ;
         pMing.nTargetCard = targetCard ;
         pMing.nInvokerIdx = invokerIdx ;
+        pMing.vAddtionCards = [newCard] ;
         pMing.eDir = IPlayerCards.getDirection( this.nPlayerIdx,invokerIdx );
         this.vMingCards.push(pMing);
 
         this.onMo(newCard);
+        return pMing ;
     }
 
-    onBuGang( targetCard : number , newCard : number )
+    onBuGang( targetCard : number , newCard : number ) : PlayerActedCard 
     {
         this.removeHold(targetCard) ;
 
+        let p : PlayerActedCard = null ;
         this.vMingCards.forEach( ( card : PlayerActedCard)=>{
             if ( card.nTargetCard == targetCard && card.eAct == eMJActType.eMJAct_Peng )
             {
                 card.eAct = eMJActType.eMJAct_BuGang_Done ;
+                card.vAddtionCards = [newCard] ;
+                p = card ;
             }
         }) ;
 
         this.onMo(newCard);
+        return p ;
     }
 
-    onAnGang( targetCard : number , newCard : number )
+    onAnGang( targetCard : number , newCard : number ) : PlayerActedCard
     {
         this.removeHold(targetCard,4) ;
 
         let pMing = new PlayerActedCard() ; ;
         pMing.eAct = eMJActType.eMJAct_AnGang ;
         pMing.nTargetCard = targetCard ;
+        pMing.vAddtionCards = [ newCard ] ;
         this.vMingCards.push(pMing);
 
         this.onMo(newCard);
+        return pMing ;
     }
 
-    onBuHua( huaCard : number , newCard : number )
+    onBuHua( huaCard : number , newCard : number ) : PlayerActedCard 
     {
         this.vBuedHua.push(huaCard);
         this.removeHold(huaCard) ;
         this.onMo(newCard);
+
+        let pMing = new PlayerActedCard() ; ;
+        pMing.eAct = eMJActType.eMJAct_BuHua ;
+        pMing.nTargetCard = huaCard ;
+        pMing.vAddtionCards = [ newCard ] ;
+        return pMing ;
     }
 
     getMingCardInvokerIdx( card : number ) : number 

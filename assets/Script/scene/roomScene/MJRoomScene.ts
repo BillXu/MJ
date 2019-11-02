@@ -3,21 +3,24 @@ import IRoomDataDelegate from "./roomData/IRoomDataDelegate";
 import MJRoomBaseData from "./roomData/MJRoomBaseData";
 import MJPlayerData from "./roomData/MJPlayerData";
 import { eChatMsgType, eMJActType, eEatType } from "./roomDefine";
-import ResultSingleData from "./roomData/ResultSingleData";
 import ResultTotalData from "./roomData/ResultTotalData";
 import PlayerInfoData from "../../clientData/playerInfoData";
-import LayerRoomInfo from "./layerRoomInfo/LayerRoomInfo";
-import LayerDlg from "./layerDlg/LayerDlg";
-import LayerPlayers from "./layerPlayers/LayerPlayers";
 import ClientApp from "../../globalModule/ClientApp";
 import { SceneName } from "../../common/clientDefine";
 import Prompt from "../../globalModule/Prompt";
-import LayerPlayerCards from "./layerCards/LayerPlayerCards";
 import MJFactory from "./layerCards/cards3D/MJFactory";
 import MJCardFactory2D from "./layerCards/cards2D/MJCardFactory2D";
 import IResultSingleData from "../roomSceneSZ/layerDlg/dlgResultSingle/IResultSingleDate";
-import { ILayerDlg } from "./layerDlg/ILayerDlg";
-import ILayer from "./ILayer";
+import { PlayerActedCard } from "./roomData/MJPlayerCardData";
+import ILayerCards from "./ILayerCards";
+import IRoomSceneData, { IRoomPlayerData } from "./IRoomSceneData";
+import ILayerRoomInfo from "./ILayerRoomInfo";
+import ILayerPlayers from "./ILayerPlayers";
+import ILayerDlg from "./ILayerDlg";
+import LayerPlayerCards from "./layerCards/LayerPlayerCards";
+import LayerPlayers from "./layerPlayers/LayerPlayers";
+import LayerDlg from "./layerDlg/LayerDlg";
+import LayerRoomInfo from "./layerRoomInfo/LayerRoomInfo";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -39,46 +42,43 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
 
     @property(cc.Node)
     mLayerInfo : cc.Node = null ;
+    mLayerRoomInfo : ILayerRoomInfo = null ;
 
     @property(cc.Node)
-    mLayerDlg : cc.Node = null ;
+    mLayerDlgNode : cc.Node = null ;
+    mLayerDlg : ILayerDlg = null ;
 
     @property(cc.Node)
-    mLayerPlayers : cc.Node = null ;
+    mLayerPlayersNode : cc.Node = null ;
+    mLayerPlayers : ILayerPlayers = null ;
 
     @property(cc.Node)
     mLayerPlayerCard : cc.Node = null ;
+    mLayerCards : ILayerCards = null ;
 
-    layerDlg : ILayerDlg = null ;
+    get mData() : IRoomSceneData
+    {
+        return this.mRoomData ;
+    }
     // LIFE-CYCLE CALLBACKS:
 
-    get layerRoomInfo() : LayerRoomInfo
-    {
-        return this.mLayerInfo.getComponent(LayerRoomInfo) ;
-    }
-
-    get layerPlayers() : LayerPlayers
-    {
-        return this.mLayerPlayers.getComponent(LayerPlayers) ;
-    }
-
-    get layerPlayerCards() : LayerPlayerCards
-    {
-        return this.mLayerPlayerCard.getComponent(LayerPlayerCards) ;
-    }
-     
     onLoad () 
     {
+        //return ;
         // request info ;
         let self = this ;
         let roomID = ClientApp.getInstance().getClientPlayerData().getBaseData().stayInRoomID;
         cc.systemEvent.once( MJFactory.EVENT_FINISH_LOAD_CARD,()=>{ self.mRoomData.reqRoomInfo( roomID ) ;} ) ;
-        cc.systemEvent.once( MJCardFactory2D.EVENT_FINISH_LOAD_MJ,()=>{ self.mRoomData.reqRoomInfo( roomID ) ;} ) ;
+        //cc.systemEvent.once( MJCardFactory2D.EVENT_FINISH_LOAD_MJ,()=>{ self.mRoomData.reqRoomInfo( roomID ) ;} ) ;
     }
 
     start () {
         this.mRoomData.mSceneDelegate = this ;
-        this.layerPlayers.mScene = this ;
+        this.mLayerCards = this.mLayerPlayerCard.getComponent(LayerPlayerCards);
+        this.mLayerPlayers = this.mLayerPlayersNode.getComponent(LayerPlayers);
+        this.mLayerDlg = this.mLayerDlgNode.getComponent( LayerDlg );
+        this.mLayerRoomInfo = this.mLayerInfo.getComponent( LayerRoomInfo );
+        ( this.mLayerPlayers as LayerPlayers).mScene = this ;
     }
 
     onRecivedRoomInfo( info : MJRoomBaseData ) : void 
@@ -86,168 +86,124 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
 
     }
 
-    onPlayerSitDown( p : MJPlayerData ) : void 
+    onPlayerSitDown( p : IRoomPlayerData ) : void 
     {
-        this.layerPlayers.onPlayerSitDown( p ) ;
-        if ( p.mPlayerBaseData.svrIdx == this.mRoomData.getSelfIdx() )
+        this.mLayerPlayers.onPlayerSitDown( p ) ;
+        if ( p.svrIdx == this.mRoomData.getSelfIdx() )
         {
-            this.layerPlayerCards.setBottomSvrIdx( p.mPlayerBaseData.svrIdx );
+            this.mLayerCards.setBottomSvrIdx( p.svrIdx );
         }
     }
 
-    onRecivedAllPlayers( vPlayers : MJPlayerData[] ) : void
+    onRecivedAllPlayers( vPlayers : IRoomPlayerData[] ) : void
     {
-        this.layerRoomInfo.refresh( this.mRoomData );
-        let p : any = this.layerDlg ;
-        (p as ILayer ).refresh( this.mRoomData );
-        this.layerPlayers.refresh( this.mRoomData );
-        this.layerPlayerCards.refresh( this.mRoomData );
+        this.mLayerPlayers.refresh( this.mData );
+        this.mLayerRoomInfo.refresh( this.mData );
+        this.mLayerCards.refresh( this.mData );
+        this.mLayerDlg.refresh(this.mData) ;
     }
 
     onMJActError() : void
     {
-        this.layerPlayerCards.onMJActError();
+        this.mLayerCards.onMJActError();
     }
 
     onPlayerNetStateChanged( playerIdx : number , isOnline : boolean ) : void 
     {
-        this.layerPlayers.onPlayerNetStateChanged( playerIdx,isOnline ) ;
+        this.mLayerPlayers.onPlayerNetStateChanged( playerIdx,isOnline ) ;
     }
 
     onPlayerChatMsg( playerIdx : number , type : eChatMsgType , strContent : string ) : void
     {
-        this.layerPlayers.onPlayerChatMsg(playerIdx,type,strContent ) ;
+        this.mLayerPlayers.onPlayerChatMsg(playerIdx,type,strContent ) ;
     }
 
     onInteractEmoji( InvokeIdx : number , targetIdx : number , emoji : string ) : void 
     {
-        this.layerPlayers.onPlayerInteractEmoji( InvokeIdx,targetIdx,emoji );
+        this.mLayerPlayers.onInteractEmoji( InvokeIdx,targetIdx,emoji );
     }
 
     onPlayerStandUp( idx : number ) : void 
     {
-        this.layerPlayers.onPlayerStandUp( idx );
+        this.mLayerPlayers.onPlayerStandUp( idx );
     }
 
     onPlayerReady( idx : number ) : void 
     {
-        this.layerPlayers.onPlayerReady( idx ) ;
+        this.mLayerPlayers.onPlayerReady( idx ) ;
     }
 
     onDistributedCards() : void 
     {
-        this.layerPlayerCards.onDistributedCards();
-        let self = this;
-        self.layerRoomInfo.leftMJCardCnt = this.mRoomData.mBaseData.initCardCnt;
-        this.mRoomData.mPlayers.forEach( ( player : MJPlayerData )=>{ 
-            if ( player == null || player.isEmpty() )
-            {
-                return ;
-            }
-            self.layerRoomInfo.leftMJCardCnt -= player.mPlayerCard.vHoldCard.length ;
-        } ) ;
+        this.mLayerCards.onDistributedCards();
+        this.mLayerRoomInfo.leftMJCardCnt = this.mData.getMJCntAfterDistribute();
     }
 
     onPlayerActMo( idx : number , card : number ) : void 
     {
-        this.layerPlayerCards.onPlayerActMo( idx , card ) ;
-        --this.layerRoomInfo.leftMJCardCnt;
+        this.mLayerCards.onPlayerActMo( idx , card ) ;
+        --this.mLayerRoomInfo.leftMJCardCnt;
     }
 
     onPlayerActChu( idx : number , card : number ) : void 
     {
-        this.layerPlayerCards.onPlayerActChu( idx , card ) ;
+        this.mLayerCards.onPlayerActChu( idx , card ) ;
     }
 
-    showActOptsAboutOtherCard( vActs : eMJActType[] ) : void 
+    showActOpts( vActs : eMJActType[] ) : void 
     {
-        this.layerDlg.showDlgActOpts(vActs) ;
+        this.mLayerDlg.showActOpts(vActs) ;
     }
 
-    onPlayerActChi( idx : number , card : number , withA : number , withB : number, invokeIdx : number ) : void 
+    onPlayerActed( idx : number , actedData : PlayerActedCard )
     {
-        this.layerPlayerCards.onPlayerActChi( idx, card, withA, withB,invokeIdx ) ;
-    }
-
-    onPlayerActPeng( idx : number , card : number, invokeIdx : number ) : void 
-    {
-        this.layerPlayerCards.onPlayerActPeng( idx, card, invokeIdx ) ;
-    }
-
-    onPlayerActMingGang( idx : number , card : number, invokeIdx : number, newCard : number ) : void 
-    {
-        this.layerPlayerCards.onPlayerActMingGang( idx, card, invokeIdx, newCard ) ;
-        --this.layerRoomInfo.leftMJCardCnt;
-    }
-
-    onPlayerActAnGang( idx : number , card : number , NewCard : number ) : void 
-    {
-        this.layerPlayerCards.onPlayerActAnGang( idx, card, NewCard ) ;
-        --this.layerRoomInfo.leftMJCardCnt;
-    }
-
-    onPlayerActBuHua( idx : number , huaCard : number , NewCard : number ) : void
-    {
-        this.layerPlayerCards.onPlayerActBuHua( idx, huaCard, NewCard ) ;
-        --this.layerRoomInfo.leftMJCardCnt;
-        this.layerPlayers.onPlayerRefreshHuaCnt(idx,this.mRoomData.mPlayers[idx].mPlayerCard.vBuedHua.length ) ;
-    }
-
-    onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void 
-    {
-        this.layerPlayerCards.onPlayerActBuGang( idx, card, NewCard );
-        --this.layerRoomInfo.leftMJCardCnt;
-    }
-
-    onPlayerActHu( idx : number, card : number , invokeIdx : number ) : void 
-    {
-        this.layerPlayerCards.onPlayerActHu( idx, card, invokeIdx );
-    }
-
-    showActOptsWhenRecivedCards( vActs : eMJActType[] ) : void 
-    {
-        this.layerDlg.showDlgActOpts(vActs) ;
-    }
-
-    showEatOpts( vEatOpts : eEatType[] , ntargetCard : number ) : void 
-    {
-        this.layerDlg.showDlgEatOpts( vEatOpts,ntargetCard ) ;
-    }
-
-    showGangOpts( vGangOpts : number[] ) : void 
-    {
-        this.layerDlg.showDlgGangOpts( vGangOpts ) ;
+        this.mLayerCards.onPlayerActed(idx,actedData);
+        switch ( actedData.eAct )
+        {
+            case eMJActType.eMJAct_AnGang:
+            case eMJActType.eMJAct_BuGang:
+            case eMJActType.eMJAct_MingGang:
+            case eMJActType.eMJAct_BuHua:
+            case eMJActType.eMJAct_BuGang_Done:
+            {
+                --this.mLayerRoomInfo.leftMJCardCnt ;
+            }
+            break ;
+            default:
+            break ;
+        }
     }
 
     onGameStart() : void 
     {
-        this.layerRoomInfo.onGameStart();
-        let p : any = this.layerDlg ;
-        p.onGameStart();
-        this.layerPlayers.onGameStart();
-        this.layerPlayerCards.onGameStart();
+        this.mLayerPlayers.onGameStart();
+        this.mLayerRoomInfo.onGameStart();
+        this.mLayerCards.onGameStart();
+        this.mLayerDlg.onGameStart();
     }
 
-    onGameEnd( result : IResultSingleData  ) : void 
+    onGameEnd() : void 
     {
-        this.layerDlg.showDlgResultSingle( result ) ;
-        this.layerPlayers.refreshPlayerChips();
-        this.layerPlayerCards.showHoldCardAfterGameEnd() ;
+        this.mLayerDlg.showDlgResultSingle() ;
+        this.mLayerPlayers.onGameEnd();
+        this.mLayerRoomInfo.onGameEnd();
+        this.mLayerCards.onGameEnd();
+        this.mLayerDlg.onGameEnd();
     }
 
-    onRoomOvered( result : ResultTotalData ) : void 
+    onRoomOvered() : void 
     {
-        this.layerDlg.showDlgResultTotal( result ,this.mRoomData ) ;
+        this.mLayerDlg.showDlgResultTotal() ;
     }
 
     onApplyDismisRoom( idx : number ) : void 
     {
-        this.layerDlg.showDlgDismiss( this.mRoomData ) ;
+        this.mLayerDlg.onApplyDismisRoom(idx) ;
     }
 
     onReplayDismissRoom( idx : number , isAgree : boolean ) : void 
     {
-        this.layerDlg.onReplayDismissRoom( idx,isAgree ) ;
+        this.mLayerDlg.onReplayDismissRoom( idx,isAgree ) ;
     }
 
     onRoomDoClosed( isDismissed : boolean ) : void 
@@ -270,13 +226,13 @@ export default class MJRoomScene extends cc.Component implements IRoomDataDelega
 
     onExchangedSeat() : void 
     {
-        this.layerPlayers.refresh( this.mRoomData ) ;
-        this.layerPlayerCards.refresh( this.mRoomData );
+        this.mLayerPlayers.refresh( this.mData ) ;
+        this.mLayerCards.refresh( this.mData );
     }
 
     // not delegate funciton 
     showDlgPlayerInfo( targetPlayerUID : number )
     {
-        this.layerDlg.showDlgPlayerInfo( targetPlayerUID ) ;
+        this.mLayerDlg.showDlgPlayerInfo( targetPlayerUID ) ;
     }
 }

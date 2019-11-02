@@ -23,7 +23,7 @@ let SceneName =
     Scene_Load : "loading",
     Scene_login : "login",
     Scene_Main : "main",
-    Scene_Room : "roomSuZhou",
+    Scene_Room : "room3D",
     Scene_Replay : "replay",
 }
 

@@ -1,5 +1,6 @@
 import PlayerInfoItem from "../../../../commonItem/PlayerInfoItem";
 import { ResultTotalDataItem } from "../../roomData/ResultTotalData";
+import { ITotalResultDlgDataItem } from "../ILayerDlgData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -59,8 +60,9 @@ export default class DlgResultTotalItem extends cc.Component {
 
     }
 
-    setDataItem( data : ResultTotalDataItem )
+    setDataItem( dataTI : ITotalResultDlgDataItem )
     {
+        let data = dataTI as ResultTotalDataItem ;
         this.mPlayerInfo.refreshInfo(data.uid);
         this.huPaiCnt.string = data.huCnt + "" ;
         this.gangPaiCnt.string = data.gangCnt + "" ;

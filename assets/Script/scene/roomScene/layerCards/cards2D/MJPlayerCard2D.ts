@@ -1,9 +1,10 @@
-import { IPlayerCards } from "../../roomData/MJPlayerCardData";
+import { IPlayerCards, PlayerActedCard } from "../../roomData/MJPlayerCardData";
 import { eArrowDirect, eMJActType } from "../../roomDefine";
 import IPlayerMJCard, { MJPlayerCardHoldDelegate } from "../IPlayerMJCard";
 import MJCardChu2D from "./MJCardChu2D";
 import MJCardMing2D from "./MJCardMing2D";
 import MJPlayerCardHold from "./MJPlayerCardHold";
+import { IPlayerCardData } from "../ILayerCardsData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -18,7 +19,7 @@ import MJPlayerCardHold from "./MJPlayerCardHold";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class MJPlayerCard2D extends IPlayerMJCard {
+export default class MJPlayerCard2D extends cc.Component implements IPlayerMJCard {
 
     @property
     posIdx : number = 0 ;
@@ -37,17 +38,13 @@ export default class MJPlayerCard2D extends IPlayerMJCard {
 
     isReplay : boolean = false ;
 
+    mData : IPlayerCardData = null ;
+
     onLoad ()
     {
         this.chuCards.posIdx = this.posIdx ;
         this.mingCards.posIdx = this.posIdx ;
         this.holdCards.posIdx = this.posIdx ;
-        this.holdCards.isReplay = this.isReplay ;
-    }
-
-    setIsReplay( isReplay : boolean ) : void
-    {
-        this.isReplay = isReplay ;
     }
 
     setHoldCardDelegate( delegate : MJPlayerCardHoldDelegate )
@@ -62,11 +59,18 @@ export default class MJPlayerCard2D extends IPlayerMJCard {
         }
     }
 
-    onRefresh( cardData : IPlayerCards ) : void 
+    onRefresh( cardData : IPlayerCardData ,isReplay : boolean , isSelf : boolean ) : void 
     {
-        this.chuCards.refresh(cardData.vChuCards);
-        this.mingCards.refresh( cardData.vMingCards );
-        this.holdCards.refresh( cardData.vHoldCard ) ;
+        this.mData = cardData ;
+        this.isReplay = isReplay ;
+        this.holdCards.isReplay = this.isReplay ;
+        this.chuCards.refresh(cardData.getChus());
+        this.mingCards.refresh( cardData.getMings() );
+        this.holdCards.refresh( cardData.getHolds() ) ;
+        if ( isSelf && isReplay == false )
+        {
+            this.holdCards.mReqChuCallBack = this.onSelfChu.bind(this);
+        }
         this.layoutMingAndHold();
     }
 
@@ -77,81 +81,12 @@ export default class MJPlayerCard2D extends IPlayerMJCard {
         this.holdCards.clear();
     }
 
-    showHoldAfterHu( card : number[] , huCard : number ) : void 
+    showHoldAfterHu() : void 
     {
-
-    }
-
-    onEat( withA : number , withB : number , target : number,dir : eArrowDirect ) : void 
-    {
-        this.holdCards.removeCard(withA);
-        this.holdCards.removeCard(withB);
-        this.mingCards.addMingCards([withA,target,withB],eMJActType.eMJAct_Chi,dir);
-        this.layoutMingAndHold();
-    }
-
-    onPeng( num : number , dir : eArrowDirect ) : void 
-    {
-        this.holdCards.removeCard( num,2 );
-        this.mingCards.addMingCards([num,num,num],eMJActType.eMJAct_Peng,dir);
-        this.layoutMingAndHold();
-    }
-
-    onMingGang( num : number , dir : eArrowDirect, newCard : number, cardWallPos : cc.Vec3 ) : void 
-    {
-        this.holdCards.removeCard( num,3 );
-        this.mingCards.addMingCards([num,num,num],eMJActType.eMJAct_MingGang,dir);
-        this.holdCards.onMo(newCard);
-        this.layoutMingAndHold();
-    }
-
-    onAnGang( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void 
-    {
-        this.holdCards.removeCard( num,4 );
-        this.mingCards.addMingCards([num,num,num],eMJActType.eMJAct_MingGang,null );
-        this.holdCards.onMo(newCard);
-        this.layoutMingAndHold();
-    }
-
-    onBuHua( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void
-    {
-        this.holdCards.removeCard( num);
-        this.holdCards.onMo(newCard);
-        this.layoutMingAndHold();
-    }
-
-    onBuGang( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void 
-    {
-        this.holdCards.removeCard( num,1 );
-        this.mingCards.onBuGang(num) ;
-        this.holdCards.onMo(newCard);
-    }
-
-    onHu( num : number , isZiMo : boolean ) : void 
-    {
-        this.holdCards.onHu( num, isZiMo ) ;
-    }
-
-    onMo( newCard : number , cardWallPos : cc.Vec3 ) : void 
-    {
-        this.holdCards.onMo(newCard);
-    }
-
-    onDistribute( newCards : number[] ) : void 
-    {
-        this.holdCards.onDistributeCard( newCards );
-        this.layoutMingAndHold();
-    }
-
-    onChu( chuCard : number ) : cc.Vec2 | cc.Vec3 
-    {
-        let p = this.holdCards.removeCard(chuCard);
-        return this.chuCards.addCard(chuCard,p ) ;
-    }
-
-    onSelfChu( chuCard : number , ptWorldPost : cc.Vec2 | cc.Vec3 ) : cc.Vec2 | cc.Vec3 
-    {
-        return this.chuCards.addCard(chuCard,<cc.Vec2>ptWorldPost ) ;
+        let isreplay = this.isReplay ;
+        this.holdCards.isReplay = true ;
+        this.holdCards.refresh( this.mData.getHolds() ) ;
+        this.holdCards.isReplay = isreplay ;
     }
 
     onChuCardBePengGangHu( cardNum : number ) : void 
@@ -163,6 +98,127 @@ export default class MJPlayerCard2D extends IPlayerMJCard {
     {
         this.mingCards.switchCardHighLight( cardNum,isEnable );
         this.chuCards.switchCardHighLight( cardNum, isEnable );
+    }
+
+    onDistributedCards() : void 
+    {
+        this.holdCards.onDistributeCard( this.mData.getHolds() );
+        this.layoutMingAndHold();
+    }
+
+    onActMo( newCard : number ) : void 
+    {
+        this.holdCards.onMo(newCard);
+    }
+
+    onActChu( chuCard : number ) : void 
+    {
+        let p = this.holdCards.removeCard(chuCard);
+        this.chuCards.addCard(chuCard,p ) ;
+    }
+
+    onActed( actedData : PlayerActedCard )
+    {
+        switch ( actedData.eAct )
+        {
+            case eMJActType.eMJAct_Chi:
+            {
+                for ( let v of actedData.vAddtionCards )
+                {
+                    if ( v != actedData.nTargetCard )
+                    {
+                        this.holdCards.removeCard( actedData.nTargetCard )
+                    }
+                }
+                this.mingCards.addMingCards(actedData.vAddtionCards,eMJActType.eMJAct_Chi,actedData.eDir);
+                this.layoutMingAndHold();
+            }
+            break ;
+            case eMJActType.eMJAct_Peng:
+            {
+                this.onPeng( actedData.nTargetCard,actedData.eDir );
+            }
+            break;
+            case eMJActType.eMJAct_MingGang:
+            {
+                this.onMingGang( actedData.nTargetCard, actedData.eDir, actedData.vAddtionCards[0] ) ;
+            }
+            break;
+            case eMJActType.eMJAct_AnGang:
+            {
+                this.onAnGang( actedData.nTargetCard, actedData.vAddtionCards[0] );
+            }
+            break;
+            case eMJActType.eMJAct_BuGang:
+            case eMJActType.eMJAct_BuGang_Done:
+            {
+                this.onBuGang(actedData.nTargetCard,actedData.vAddtionCards[0] ) ;
+            }
+            break;
+            case eMJActType.eMJAct_Hu:
+            {
+                this.onHu(actedData.nTargetCard, false )  ;
+            }
+            break ;
+            default:
+            {
+                cc.error( "unknown act type = " + actedData.eAct );
+                return ;
+            }
+            break ;
+        }
+    }
+
+    protected onPeng( num : number , dir : eArrowDirect ) : void 
+    {
+        this.holdCards.removeCard( num,2 );
+        this.mingCards.addMingCards([num,num,num],eMJActType.eMJAct_Peng,dir);
+        this.layoutMingAndHold();
+    }
+
+    protected onMingGang( num : number , dir : eArrowDirect, newCard : number ) : void 
+    {
+        this.holdCards.removeCard( num,3 );
+        this.mingCards.addMingCards([num,num,num],eMJActType.eMJAct_MingGang,dir);
+        this.holdCards.onMo(newCard);
+        this.layoutMingAndHold();
+    }
+
+    protected onAnGang( num : number , newCard : number) : void 
+    {
+        this.holdCards.removeCard( num,4 );
+        this.mingCards.addMingCards([num,num,num],eMJActType.eMJAct_MingGang,null );
+        this.holdCards.onMo(newCard);
+        this.layoutMingAndHold();
+    }
+
+    protected onBuHua( num : number , newCard : number ) : void
+    {
+        this.holdCards.removeCard( num);
+        this.holdCards.onMo(newCard);
+        this.layoutMingAndHold();
+    }
+
+    protected onBuGang( num : number , newCard : number ) : void 
+    {
+        this.holdCards.removeCard( num,1 );
+        this.mingCards.onBuGang(num) ;
+        this.holdCards.onMo(newCard);
+    }
+
+    protected onHu( num : number , isZiMo : boolean ) : void 
+    {
+        this.holdCards.onHu( num, isZiMo ) ;
+    }
+
+    onSelfChu( chuCard : number , ptWorldPost : cc.Vec2 ) : boolean
+    {
+        if ( this.mData.reqChu(chuCard) == false )
+        {
+            return false ;
+        }
+        this.chuCards.addCard(chuCard,ptWorldPost ) ;
+        return true ;
     }
 
     protected layoutMingAndHold()

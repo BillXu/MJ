@@ -1,9 +1,11 @@
-import MJCard, { MJCardState } from "./MJCard";
 import MJFactory from "./MJFactory";
-import { eArrowDirect, eMJActType } from "../../roomDefine";
-import { IPlayerCards } from "../../roomData/MJPlayerCardData";
-import LayerPlayerCards from "../LayerPlayerCards";
 import IPlayerMJCard, { MJPlayerCardHoldDelegate } from "../IPlayerMJCard";
+import MJCardHold3D from "./MJCardHold3D";
+import MJCardChu3D from "./MJCardChu3D";
+import MJCardMing3D from "./MJCardMing3D";
+import { IPlayerCardData } from "../ILayerCardsData";
+import { PlayerActedCard } from "../../roomData/MJPlayerCardData";
+import { eMJActType } from "../../roomDefine";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -17,696 +19,348 @@ import IPlayerMJCard, { MJPlayerCardHoldDelegate } from "../IPlayerMJCard";
 
 const {ccclass, property} = cc._decorator;
 
-class MingCardGroup 
-{
-    cards : MJCard[] = [] ;
-    gangUpCards : MJCard = null ;
-    actType : eMJActType = 0 ;
-    dir : eArrowDirect = 0 ;
-} ;
-
 @ccclass
-export default class PlayerMJCard extends IPlayerMJCard {
+export default class PlayerMJCard extends cc.Component implements IPlayerMJCard {
 
     @property(MJFactory)
     mFacotry : MJFactory = null ;
 
-    protected mChuCards : MJCard[] = [] ;
-    protected mHoldCards : MJCard[] = [] ;
-    protected mMingCards : MingCardGroup[] = [] ;
-
-    protected mCurSelectHoldMJ : MJCard = null ;
-
     @property
-    mHoldMingMargin : number = 20 ;
+    mMingHoldMargin : number = 20 ;
 
-    @property(cc.Node)
-    mHoldAnNode : cc.Node = null ;
+    @property(MJCardHold3D)
+    mHold : MJCardHold3D = null ;
+
+    @property(MJCardChu3D)
+    mChu : MJCardChu3D = null ;
+
+    @property( MJCardMing3D )
+    mMing : MJCardMing3D = null ;
 
     mDelegate : MJPlayerCardHoldDelegate = null ; 
-
-    get holdCardPosZ() : number
-    {
-        return this.mHoldAnNode.z ;
-    }
-
-    get holdCardPosY() : number
-    {
-        return this.mHoldAnNode.y ;
-    }
-
-    @property(cc.Node)
-    mHoldMingNode : cc.Node = null ;
-
-    @property(cc.Node)
-    mChuNodeStart : cc.Node = null
-
-    get chuCardStartX() : number 
-    {
-        return this.mChuNodeStart.x ;
-    }
-
-    get chuCardStartZ() : number
-    {
-        return this.mChuNodeStart.z ;
-    }
-
-    @property([cc.Component.EventHandler])
-    mHandleChuPai : cc.Component.EventHandler[] = [] ; // ( chuCard : MJCard )
-    
-    protected mIsReplayState = false ;
-    protected _isSelf : boolean = false ;
-    set isSelf( self : boolean )
-    {
-        this._isSelf = self ;
-        var canvas = cc.find('Canvas');
-        if ( this.isSelf )
-        {
-            canvas.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
-            canvas.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-            canvas.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
-        }
-        else
-        {
-            canvas.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
-            canvas.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-            canvas.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
-        }
-    }
-
-    get isSelf()
-    {
-        return this._isSelf && this.mIsReplayState == false;
-    }
-    protected mSelfCamera : cc.Camera = null ;
-    protected mClickDownCard : MJCard = null ;
+    mData : IPlayerCardData = null ;
+    mIsReply : boolean = false ;
+    mIsSelf : boolean = false ;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
 
     start () {
-        this.mHoldAnNode.active = this.mChuNodeStart.active = false ;
-        this.mHoldMingNode.removeAllChildren();
+    
     }
 
-    protected removeHold( cardNum : number , cnt : number = 1 ) : cc.Vec3 
-    {
-        if ( this.mCurSelectHoldMJ != null && cardNum == this.mCurSelectHoldMJ.cardNum )
-        {
-            let pos = this.mCurSelectHoldMJ.node.position ;
-            let selIdx = this.mHoldCards.indexOf(this.mCurSelectHoldMJ) ;
-            if ( selIdx == -1 )
-            {
-                cc.error( "in hold card num can not find cardnum = " + cardNum );
-                return cc.Vec3.ZERO ;
-            }
+    // setHoldCardDelegate( del : MJPlayerCardHoldDelegate )
+    // {
+    //     this.mDelegate = del ;
+    // }
 
-            this.mHoldCards.splice(selIdx,1);
-            this.mFacotry.recycleMJ( this.mCurSelectHoldMJ );
-            --cnt ;
-            this.mCurSelectHoldMJ = null ;
-            if ( cnt <= 0 )
-            {
-                return pos ;
-            }
-        }
+    // showHoldAfterHu( card : number[] , huCard : number ) : void
+    // {
+    //     for ( const iterator of this.mHoldCards )
+    //     {
+    //         this.mFacotry.recycleMJ(iterator);
+    //     }
+    //     this.mHoldCards.length = 0 ;
+    //     let r = this.mIsReplayState;
+    //     this.mIsReplayState = true ;
+    //     this.onDistribute(card) ;
+    //     if ( card.length % 3 == 2 && huCard != 0 ) // really hu 
+    //     {
+    //         this.removeHold(huCard) ;
+    //         this.relayoutHoldCards();
+    //         this.onMo(huCard,null) ;
+    //     }
+    //     this.mIsReplayState = r ;
+    // }
 
-        if ( this.isSelf || this.mIsReplayState  )
-        {
-            while ( cnt > 0 )
-            {
-                let findIdx = -1 ;
-                this.mHoldCards.every( ( v : MJCard, idx : number )=>{
-                    if ( v.cardNum == cardNum )
-                    {
-                        findIdx = idx ;
-                        return false ;
-                    }
-                    return true ;
-                } ) ;
+    // onEat( withA : number , withB : number , target : number,dir : eArrowDirect ) : void 
+    // {
+    //     this.removeHold(withA);
+    //     this.removeHold(withB);
 
-                if ( -1 == findIdx )
-                {
-                    cc.error( "can not find card to remove error = " + cardNum );
-                    return cc.Vec3.ZERO ;
-                }
-                
-                let removeCard = this.mHoldCards[findIdx] ;
-                this.mHoldCards.splice(findIdx,1);
-                this.mFacotry.recycleMJ(removeCard);
-                --cnt ;
-                if ( 0 == cnt )
-                {
-                    return removeCard.node.position ;
-                }
-            }
-            return cc.Vec3.ZERO ;
-        }
-        else
-        {
-            while ( cnt > 0 && this.mHoldCards.length > 0 )
-            {
-                var removeCard = this.mHoldCards.pop();
-                this.mFacotry.recycleMJ(removeCard);
-                --cnt ;
-                if ( 0 == cnt )
-                {
-                    return removeCard.node.position ;
-                }
-            }
-        }
+    //     let m = new MingCardGroup();
+    //     m.actType = eMJActType.eMJAct_Chi ;
+    //     m.dir = eArrowDirect.eDirect_Opposite ;
+    //     m.cards.push( this.mFacotry.getMJ( withA, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.cards.push( this.mFacotry.getMJ( withB, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.cards.push( this.mFacotry.getMJ( target, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     this.mMingCards.push(m);
 
-        return cc.Vec3.ZERO ;
-    }
+    //     this.relayoutHoldCards();
+    // }
 
-    protected relayoutHoldCards()
-    {
-        if ( this.mHoldCards.length == 0 )
-        {
-            return ;
-        }
+    // onPeng( num : number , dir : eArrowDirect ) : void 
+    // {
+    //     this.removeHold(num,2);
 
-        let xMargin = this.mHoldMingMargin ;
-        let xAnHoldMargin = 0 ;
-        let startX = -0.5 * ( this.mMingCards.length * 3 * ( MJCard.MODEL_X_SIZE + xMargin ) + this.mHoldCards.length * ( this.mHoldCards[0].world_x_Size + xAnHoldMargin ) ); 
-        this.mHoldMingNode.x = startX ;
-        this.mHoldMingNode.eulerAngles = new cc.Vec3( this.isSelf ? 30 : 0 ,0,0);
-        // layout ming cards ;
-        let startMing = 0 ;
-        for ( let ming of this.mMingCards )
-        {
-            switch ( ming.actType )
-            {
-                case eMJActType.eMJAct_Chi:
-                case eMJActType.eMJAct_Peng:
-                {
-                    startMing = this.layoutPartGroup(startMing,ming.cards,ming.dir ) + xMargin ;
-                }
-                break;
-                case eMJActType.eMJAct_AnGang:
-                case eMJActType.eMJAct_MingGang:
-                case eMJActType.eMJAct_BuGang:
-                {
-                    startMing = this.layoutPartGroup(startMing,ming.cards,ming.dir ) + xMargin ;
-                    let pos = ming.cards[1].node.position;
-                    pos.y += ming.gangUpCards.world_y_Size;
-                    ming.gangUpCards.node.position = pos ;
-                    ming.gangUpCards.isSelf = this.isSelf ;
-                }
-                break;
-            }
-        }
+    //     let m = new MingCardGroup();
+    //     m.actType = eMJActType.eMJAct_Peng ;
+    //     m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.dir = dir ;
+    //     this.mMingCards.push(m);
 
-        // layout hold cards ;
-        startX += startMing ; //this.mMingCards.length * 3 * ( MJCard.MODEL_X_SIZE + xMargin ) ;
-        this.mHoldCards.sort( ( a : MJCard , b : MJCard )=>{ return a.cardNum - b.cardNum ; } ) ;
-        startX += this.mHoldCards[0].world_x_Size * 0.5 ;
-        for ( const hmj of this.mHoldCards )
-        {
-             hmj.node.position = new cc.Vec3( startX, this.holdCardPosY,this.holdCardPosZ );
-             startX += ( xAnHoldMargin + hmj.world_x_Size );
-             //cc.log( "hold pos = " + hmj.node.position );
-        }
-    }
+    //     this.relayoutHoldCards();
+    // }
 
-    protected layoutPartGroup( x : number , mjCards : MJCard[] , dir : eArrowDirect ) : number 
-    {
-        if ( mjCards.length != 3 )
-        {
-            cc.error( "ming group must 3 = " + mjCards[0].cardNum );
-            return x ;
-        }
+    // onMingGang( num : number , dir : eArrowDirect, newCard : number, cardWallPos : cc.Vec3 ) : void 
+    // {
+    //     this.removeHold(num,3);
 
-        mjCards.forEach( (mj : MJCard )=>{ mj.isSelf = this.isSelf ; } )
+    //     let m = new MingCardGroup();
+    //     m.actType = eMJActType.eMJAct_MingGang ;
+    //     m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) ;
+    //     m.dir = dir ;
+    //     this.mMingCards.push(m);
 
-        var card = mjCards[0] ;
-        if ( dir == eArrowDirect.eDirect_Left )
-        {
-            card.node.eulerAngles =  new cc.Vec3(0,270,0 ); ;
+    //     this.relayoutHoldCards();
+    //     this.onMo(newCard,cardWallPos);
+    // }
 
-            x += card.world_z_Size * 0.5 ;
-            card.node.position = new cc.Vec3(x ,0,0 );
-            x += card.world_z_Size * 0.5 ;
-        }
-        else
-        {
-            x += card.world_x_Size * 0.5 ;
-            card.node.position = new cc.Vec3(x,0,0 );
-            x += card.world_x_Size * 0.5 ;
-        }
+    // onAnGang( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void 
+    // {
+    //     this.removeHold(num,4);
 
-        // card 2
-        card = mjCards[1] ;
-        x += card.world_x_Size * 0.5 ;
-        card.node.position = new cc.Vec3(x,0,0 );
-        x += card.world_x_Size * 0.5 ;
+    //     let m = new MingCardGroup();
+    //     m.actType = eMJActType.eMJAct_AnGang ;
+    //     m.dir = eArrowDirect.eDirect_Opposite ;
+    //     m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
+    //     m.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_COVER,this.mHoldMingNode ) ;
+    //     this.mMingCards.push(m);
 
-        // card 3
-        card = mjCards[2] ; 
-        if ( dir == eArrowDirect.eDirect_Righ )
-        {
-            card.node.eulerAngles =  new cc.Vec3(0,90,0 ); 
+    //     this.relayoutHoldCards();
+    //     this.onMo(newCard,cardWallPos);
+    // }
 
-            x += card.world_z_Size * 0.5 ;
-            card.node.position = new cc.Vec3(x,0,0 );
-            x += card.world_z_Size * 0.5 ;
-        }
-        else
-        {
-            x += card.world_x_Size * 0.5 ;
-            card.node.position = new cc.Vec3(x,0,0 );
-            x += card.world_x_Size * 0.5 ;
-        }
-        return x ;
-    }
+    // onBuHua( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void 
+    // {
 
-    protected getChuCardPos( idx : number ) : cc.Vec3
-    {
-        let nCntPerRow = 7 ;
-        let xMargin = 1;
-        let zMargin = 2 ;
+    // }
 
-        let startX = this.chuCardStartX ;//-1 * nCntPerRow * 0.5 * ( MJCard.MODEL_X_SIZE + xMargin ) + 0.5 * MJCard.MODEL_X_SIZE ;
-        let startZ = this.chuCardStartZ ;
+    // onBuGang( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void
+    // {
+    //     for ( let v of this.mMingCards )
+    //     {
+    //         if ( v.actType != eMJActType.eMJAct_Peng )
+    //         {
+    //             continue ;
+    //         }
 
+    //         if ( v.cards[0].cardNum != num )
+    //         {
+    //             continue ;
+    //         }
 
-        var rowIdx = (idx + nCntPerRow ) / nCntPerRow -1;
-        rowIdx = Math.floor(rowIdx);
-        var colIdx = Math.floor( idx % nCntPerRow ) ;
-        var posTarget = new cc.Vec3( startX + colIdx * ( MJCard.MODEL_X_SIZE + xMargin ), MJCard.MODEL_Y_SIZE * 0.5, startZ + ( MJCard.MODEL_Z_SIZE + zMargin ) * rowIdx ) ;
-        cc.log( "chu target card = " + posTarget );
-        return posTarget;
-    }
+    //         v.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) ;
+    //         let vpos = v.cards[1].node.position ;
+    //         vpos.y += v.gangUpCards.world_y_Size ;
+    //         v.gangUpCards.node.position = vpos ;
+    //         v.actType = eMJActType.eMJAct_BuGang;
+    //         break ;
+    //     }
 
-    // self player card module 
-    onTouchStart( event : cc.Event.EventTouch )
-    {
-        if ( event.touch.getLocation().y > 120 )
-        {
-            this.mClickDownCard = null ;
-            return ;
-        }
+    //     this.removeHold(num);
+    //     this.relayoutHoldCards();
+    //     this.onMo(newCard,cardWallPos);
+    // }
 
-        cc.log( "onTouchStart of touch pos : " + event.touch.getLocation() );
-        this.mClickDownCard = this.rayCastCard( event.touch.getLocation() );
-        if ( this.mClickDownCard == null )
-        {
-            return ;
-        }
-    }
+    // onHu( num : number , isZiMo : boolean ) : void
+    // {
+    //     if ( isZiMo )
+    //     {
+    //         let v = this.mHoldCards[this.mHoldCards.length -1 ];
+    //         if ( v.cardNum == num )
+    //         {
+    //             v.curState = MJCardState.FACE_UP ;
+    //             let p = v.node.position ;
+    //             p.y = v.world_y_Size * 0.5;
+    //             v.node.position = p ;
+    //         }
+    //         else
+    //         {
+    //             let last = this.mHoldCards.pop();
+    //             v = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) ;
+    //             let p = last.node.position ;
+    //             p.y = v.world_y_Size * 0.5;
+    //             v.node.position = p ;
+    //             this.mHoldCards.push(v);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         let last = this.mHoldCards[this.mHoldCards.length -1 ];
+    //         let v = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) ;
+    //         let p = last.node.position ;
+    //         p.y = v.world_y_Size * 0.5;
+    //         p.x += v.world_x_Size * 1.5 ;
+    //         v.node.position = p ;
+    //         this.mHoldCards.push(v);
+    //     }
+    // }
 
-    onTouchMove( event : cc.Event.EventTouch )
-    {
+    // onChu( chuCard : number ) : cc.Vec2 | cc.Vec3 
+    // {
+    //     let pos = this.removeHold(chuCard);
+    //     let chuMJ = this.mFacotry.getMJ(chuCard,MJCardState.FACE_UP,this.node ) ;
+    //     chuMJ.node.position = pos ;
+    //     let chuPos = this.getChuCardPos( this.mChuCards.length );
+    //     cc.tween(chuMJ.node)
+    //     .to( 0.15, { position: chuPos } )
+    //     .start() ;
+    //     this.mChuCards.push(chuMJ);
+    //     this.relayoutHoldCards();
+    //     return this.node.convertToWorldSpaceAR(chuPos) ;
+    // }
 
-    }
+    // onSelfChu( chuCard : number , ptWorldPost : cc.Vec2 | cc.Vec3 ) :  cc.Vec2 | cc.Vec3  
+    // {
+    //     let chuMJ = this.mFacotry.getMJ(chuCard,MJCardState.FACE_UP,this.node ) ;
+    //     chuMJ.node.position = this.node.convertToNodeSpaceAR(ptWorldPost) ;
+    //     let chuPos = this.getChuCardPos( this.mChuCards.length );
+    //     cc.tween(chuMJ.node)
+    //     .to( 0.15, { position: chuPos } )
+    //     .start() ;
+    //     this.mChuCards.push(chuMJ);
+    //     this.relayoutHoldCards();
+    //     return this.node.convertToWorldSpaceAR(chuPos) ;
+    // }
 
-    onTouchEnd( event : cc.Event.EventTouch )
-    {
-        if ( this.mClickDownCard == null )
-        {
-            cc.log( "no click card" );
-            return ;
-        }
-
-        let pc = this.rayCastCard( event.touch.getLocation() );
-        if ( pc != this.mClickDownCard )
-        {
-            cc.log( "not the same card , so skip it" );
-            return ;
-        }
-
-        if ( null != this.mCurSelectHoldMJ && this.mCurSelectHoldMJ != this.mClickDownCard )
-        {
-            let pos = this.mCurSelectHoldMJ.node.position ;
-            pos.y = 0 ;
-            this.mCurSelectHoldMJ.node.position = pos ;
-        }
-
-        let isInvokeChuCallBack = this.mCurSelectHoldMJ == this.mClickDownCard;
-
-        this.mCurSelectHoldMJ = this.mClickDownCard ;
-        this.mClickDownCard = null ;
-        let pos = this.mCurSelectHoldMJ.node.position ;
-        pos.y = this.mCurSelectHoldMJ.world_y_Size * 0.2;
-        this.mCurSelectHoldMJ.node.position = pos ;
-
-        if ( isInvokeChuCallBack ) // double clicked ;
-        {
-            this.mClickDownCard = null ;
-            //cc.Component.EventHandler.emitEvents(this.mHandleChuPai,this.mCurSelectHoldMJ );
-            if ( this.mDelegate && this.mDelegate.onSelfRequestChuCard( this.mCurSelectHoldMJ.cardNum, this.mCurSelectHoldMJ.node.convertToWorldSpaceAR( new cc.Vec3(0,0,0)) ) )
-            {
-                this.mFacotry.recycleMJ(this.mCurSelectHoldMJ) ;
-            }
-            return ;
-        }
-    }
-
-    protected rayCastCard( pos : cc.Vec2 ) : MJCard
-    {
-        if ( this.mSelfCamera == null )
-        {
-            this.mSelfCamera = cc.find("3D/opeateCamer/SelfCamera").getComponent(cc.Camera);
-        }
-
-        let ray = this.mSelfCamera.getRay(pos) ;
-        let results = cc.geomUtils.intersect.raycast(this.node, ray);
-        	
-        if ( results.length > 0 ) 
-        {
-            // results[0].node.opacity = 100;
- 
-            return results[0].node.getComponent(MJCard);
-            //let distance = results[0].distance;
-            
-            // let d = cc.vmath.vec3.normalize(cc.v3(), ray.d);
-            // let p = cc.vmath.vec3.scaleAndAdd(cc.v3(), ray.o, d, distance);
-            // this.mesh.position = p;
-        }
-        return null ;
-    }
-
-    // interface     IPlayerMJCard
-    setIsReplay( isReplay : boolean ) : void 
-    {
-        this.mIsReplayState = isReplay ;
-    }
-
+    // update (dt) {}
+    // interface iplayerMJcard 
     setHoldCardDelegate( del : MJPlayerCardHoldDelegate )
     {
         this.mDelegate = del ;
     }
 
-    onRefresh( cardData : IPlayerCards ) : void 
+    onRefresh( cardData : IPlayerCardData, isReplay : boolean , isSelf : boolean ) : void 
     {
-        this.clear();
-        let self = this ;
-        // hold 
-        this.onDistribute(cardData.vHoldCard) ;
+        this.mIsReply = isReplay ;
+        this.mIsSelf = isSelf ;
+        this.mData = cardData ;
+        this.mChu.mFacotry = this.mFacotry ;
+        this.mHold.mFacotry = this.mFacotry ;
+        this.mMing.mFacotry = this.mFacotry ;
+        this.mMing.refresh( cardData.getMings() ) ;
+        this.mChu.refresh( cardData.getChus() );
+        this.mHold.refresh( cardData.getHolds(),isReplay,isSelf );
+        if ( isSelf && isReplay == false )
+        {
+            this.mHold.mChuPaiCallBack = this.selfRequestChu.bind(this);
+        }
+        this.layoutHoldAndMing();
+    }
 
-        // chu 
-        cardData.vChuCards.forEach( n=>{
-            let chuMJ = self.mFacotry.getMJ(n,MJCardState.FACE_UP,self.node ) ;
-            chuMJ.node.position = self.getChuCardPos( self.mChuCards.length ) ;
-            self.mChuCards.push(chuMJ);
-        } ) ;
-
-        // hold ming 
-        cardData.vMingCards.forEach( v=>{
-            let m = new MingCardGroup();
-            m.actType = v.eAct ;
-            m.dir = v.eDir ;
-            switch ( m.actType )
-            {
-                case eMJActType.eMJAct_Chi:
-                {
-                    m.cards.push( this.mFacotry.getMJ( v.vEatWithCards[0], MJCardState.FACE_UP,this.mHoldMingNode ) );
-                    m.cards.push( this.mFacotry.getMJ( v.vEatWithCards[1], MJCardState.FACE_UP,this.mHoldMingNode ) );
-                    m.cards.push( this.mFacotry.getMJ( v.nTargetCard, MJCardState.FACE_UP,this.mHoldMingNode ) );
-                    this.mMingCards.push(m);
-                }
-                break;
-                default:
-                {
-                    let ncnt = 3 ;
-                    while ( ncnt-- )
-                    {
-                        m.cards.push( this.mFacotry.getMJ( v.nTargetCard, MJCardState.FACE_UP,this.mHoldMingNode ) );
-                    }
-
-                    if ( eMJActType.eMJAct_Peng != m.actType )
-                    {
-                        m.gangUpCards = this.mFacotry.getMJ( v.nTargetCard, v.eAct == eMJActType.eMJAct_AnGang ? MJCardState.FACE_COVER : MJCardState.FACE_UP,this.mHoldMingNode ) ;
-                    }
-                    this.mMingCards.push(m);
-                }
-            }
-        }) ;
-
-        this.relayoutHoldCards();
+    protected selfRequestChu( number : number , ptWorldPos : cc.Vec3 ) : boolean 
+    {
+        if ( this.mData.reqChu(number) == false )
+        {
+            return false ;
+        }
+        this.mChu.addChuCard(number,ptWorldPos ) ;
+        return true ;
     }
 
     clear() : void 
     {
-        for ( const iterator of this.mChuCards )
-        {
-            this.mFacotry.recycleMJ(iterator);
-        }
-        this.mChuCards.length = 0 ;
-
-        for ( const iterator of this.mHoldCards )
-        {
-            this.mFacotry.recycleMJ(iterator);
-        }
-        this.mHoldCards.length = 0 ;
-
-        for ( const iterator of this.mMingCards )
-        {
-            let self = this ;
-            iterator.cards.forEach( ( v : MJCard )=>{ self.mFacotry.recycleMJ(v) ;} ) ;
-            if ( iterator.gangUpCards != null )
-            {
-                self.mFacotry.recycleMJ( iterator.gangUpCards );
-            }
-        }
-
-        this.mMingCards.length = 0 ;
-        this.mCurSelectHoldMJ = null ;
+        this.mChu.clear();
+        this.mHold.clear();
+        this.mMing.clear();
     }
 
-    showHoldAfterHu( card : number[] , huCard : number ) : void
+    showHoldAfterHu() : void 
     {
-        for ( const iterator of this.mHoldCards )
-        {
-            this.mFacotry.recycleMJ(iterator);
-        }
-        this.mHoldCards.length = 0 ;
-        let r = this.mIsReplayState;
-        this.mIsReplayState = true ;
-        this.onDistribute(card) ;
-        if ( card.length % 3 == 2 && huCard != 0 ) // really hu 
-        {
-            this.removeHold(huCard) ;
-            this.relayoutHoldCards();
-            this.onMo(huCard,null) ;
-        }
-        this.mIsReplayState = r ;
-    }
-
-    onEat( withA : number , withB : number , target : number,dir : eArrowDirect ) : void 
-    {
-        this.removeHold(withA);
-        this.removeHold(withB);
-
-        let m = new MingCardGroup();
-        m.actType = eMJActType.eMJAct_Chi ;
-        m.dir = eArrowDirect.eDirect_Opposite ;
-        m.cards.push( this.mFacotry.getMJ( withA, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.cards.push( this.mFacotry.getMJ( withB, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.cards.push( this.mFacotry.getMJ( target, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        this.mMingCards.push(m);
-
-        this.relayoutHoldCards();
-    }
-
-    onPeng( num : number , dir : eArrowDirect ) : void 
-    {
-        this.removeHold(num,2);
-
-        let m = new MingCardGroup();
-        m.actType = eMJActType.eMJAct_Peng ;
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.dir = dir ;
-        this.mMingCards.push(m);
-
-        this.relayoutHoldCards();
-    }
-
-    onMingGang( num : number , dir : eArrowDirect, newCard : number, cardWallPos : cc.Vec3 ) : void 
-    {
-        this.removeHold(num,3);
-
-        let m = new MingCardGroup();
-        m.actType = eMJActType.eMJAct_MingGang ;
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) ;
-        m.dir = dir ;
-        this.mMingCards.push(m);
-
-        this.relayoutHoldCards();
-        this.onMo(newCard,cardWallPos);
-    }
-
-    onAnGang( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void 
-    {
-        this.removeHold(num,4);
-
-        let m = new MingCardGroup();
-        m.actType = eMJActType.eMJAct_AnGang ;
-        m.dir = eArrowDirect.eDirect_Opposite ;
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.cards.push( this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) );
-        m.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_COVER,this.mHoldMingNode ) ;
-        this.mMingCards.push(m);
-
-        this.relayoutHoldCards();
-        this.onMo(newCard,cardWallPos);
-    }
-
-    onBuHua( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void 
-    {
-
-    }
-
-    onBuGang( num : number , newCard : number, cardWallPos : cc.Vec3 ) : void
-    {
-        for ( let v of this.mMingCards )
-        {
-            if ( v.actType != eMJActType.eMJAct_Peng )
-            {
-                continue ;
-            }
-
-            if ( v.cards[0].cardNum != num )
-            {
-                continue ;
-            }
-
-            v.gangUpCards = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.mHoldMingNode ) ;
-            let vpos = v.cards[1].node.position ;
-            vpos.y += v.gangUpCards.world_y_Size ;
-            v.gangUpCards.node.position = vpos ;
-            v.actType = eMJActType.eMJAct_BuGang;
-            break ;
-        }
-
-        this.removeHold(num);
-        this.relayoutHoldCards();
-        this.onMo(newCard,cardWallPos);
-    }
-
-    onHu( num : number , isZiMo : boolean ) : void
-    {
-        if ( isZiMo )
-        {
-            let v = this.mHoldCards[this.mHoldCards.length -1 ];
-            if ( v.cardNum == num )
-            {
-                v.curState = MJCardState.FACE_UP ;
-                let p = v.node.position ;
-                p.y = v.world_y_Size * 0.5;
-                v.node.position = p ;
-            }
-            else
-            {
-                let last = this.mHoldCards.pop();
-                v = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) ;
-                let p = last.node.position ;
-                p.y = v.world_y_Size * 0.5;
-                v.node.position = p ;
-                this.mHoldCards.push(v);
-            }
-        }
-        else
-        {
-            let last = this.mHoldCards[this.mHoldCards.length -1 ];
-            let v = this.mFacotry.getMJ( num, MJCardState.FACE_UP,this.node ) ;
-            let p = last.node.position ;
-            p.y = v.world_y_Size * 0.5;
-            p.x += v.world_x_Size * 1.5 ;
-            v.node.position = p ;
-            this.mHoldCards.push(v);
-        }
-    }
-
-    onMo( newCard : number , cardWallPos : cc.Vec3 ) : void
-    {
-        let mj = this.mFacotry.getMJ(newCard, this.mIsReplayState ? MJCardState.FACE_UP : MJCardState.FACE_USER,this.node ) ;
-        mj.isSelf = this.isSelf ;
-        this.mHoldCards.push(mj);
-
-        let pos = this.mHoldCards[this.mHoldCards.length -2 ].node.position;
-        pos.x += mj.world_x_Size * 1.5 ;
-        if ( null == cardWallPos )
-        {
-            mj.node.position = pos ;
-            return ;
-        }
-
-        // a move animation to hold ;
-        let posLocal = new cc.Vec3();
-        this.node._invTransformPoint(posLocal,cardWallPos );
-        mj.node.position = posLocal ;
-        cc.tween(mj.node).to( 0.15, { position: pos} ) ;
-    }
-
-    onDistribute( newCards : number[] ) : void 
-    {
-        for (const iterator of newCards ) 
-        {
-            let mj = this.mFacotry.getMJ(iterator, this.mIsReplayState ? MJCardState.FACE_UP : MJCardState.FACE_USER,this.node ) ;
-            if ( mj == null )
-            {
-                cc.error( "get mj failed = " + iterator );
-                continue ;
-            }
-
-            mj.isSelf = this.isSelf ;
-            this.mHoldCards.push(mj);
-        }
-
-        if ( this.mHoldCards.length == 0 )
-        {
-            return ;
-        }
-        this.relayoutHoldCards();
-    }
-
-    onChu( chuCard : number ) : cc.Vec2 | cc.Vec3 
-    {
-        let pos = this.removeHold(chuCard);
-        let chuMJ = this.mFacotry.getMJ(chuCard,MJCardState.FACE_UP,this.node ) ;
-        chuMJ.node.position = pos ;
-        let chuPos = this.getChuCardPos( this.mChuCards.length );
-        cc.tween(chuMJ.node)
-        .to( 0.15, { position: chuPos } )
-        .start() ;
-        this.mChuCards.push(chuMJ);
-        this.relayoutHoldCards();
-        return this.node.convertToWorldSpaceAR(chuPos) ;
-    }
-
-    onSelfChu( chuCard : number , ptWorldPost : cc.Vec2 | cc.Vec3 ) :  cc.Vec2 | cc.Vec3  
-    {
-        let chuMJ = this.mFacotry.getMJ(chuCard,MJCardState.FACE_UP,this.node ) ;
-        chuMJ.node.position = this.node.convertToNodeSpaceAR(ptWorldPost) ;
-        let chuPos = this.getChuCardPos( this.mChuCards.length );
-        cc.tween(chuMJ.node)
-        .to( 0.15, { position: chuPos } )
-        .start() ;
-        this.mChuCards.push(chuMJ);
-        this.relayoutHoldCards();
-        return this.node.convertToWorldSpaceAR(chuPos) ;
+        this.mHold.refresh(this.mData.getHolds(),true,false) ;
     }
 
     onChuCardBePengGangHu( cardNum : number ) : void 
     {
-        let p = this.mChuCards.pop();
-        if ( cardNum != p.cardNum )
-        {
-            cc.warn( "onChuCardBePengGangHu card = is not the same v = " + cardNum + " t = " + p.cardNum );
-        }
-        this.mFacotry.recycleMJ(p);
+        this.mChu.removeChuCard(cardNum);
     }
 
     switchCardHighLight( cardNum : number , isEnable : boolean ) : void 
     {
 
     }
-    // update (dt) {}
+    
+    onDistributedCards() : void 
+    {
+        this.mHold.distribute(this.mData.getHolds(), this.mIsReply , this.mIsSelf ) ;
+        let self = this ;
+        setTimeout(() => {
+            self.layoutHoldAndMing();
+        }, 3000);
+    }
+
+    onActMo( card : number ) : void
+    {
+        this.mHold.mo(card,this.mIsReply,this.mIsSelf );
+    }
+
+    onActChu( card : number ) : void
+    {
+        this.mChu.addChuCard(card,this.mHold.removeHold(card,1) ) ;
+    }
+
+    onActed( actedData : PlayerActedCard ) 
+    {
+        switch ( actedData.eAct )
+        {
+            case eMJActType.eMJAct_Chi:
+            {
+                for ( let v of actedData.vAddtionCards )
+                {
+                    if ( v != actedData.nTargetCard )
+                    {
+                        this.mHold.removeHold( v ) ;
+                    }
+                }
+            }
+            break ;
+            case eMJActType.eMJAct_Peng:
+            {
+                this.mHold.removeHold( actedData.nTargetCard , 2 )
+            }
+            break;
+            case eMJActType.eMJAct_MingGang:
+            {
+                this.mHold.removeHold( actedData.nTargetCard , 3 ) ;
+                this.mHold.mo(actedData.vAddtionCards[0],this.mIsReply,this.mIsSelf);
+            }
+            break;
+            case eMJActType.eMJAct_AnGang:
+            {
+                this.mHold.removeHold( actedData.nTargetCard , 4 ) ;
+                this.mHold.mo(actedData.vAddtionCards[0],this.mIsReply,this.mIsSelf);
+            }
+            break;
+            case eMJActType.eMJAct_BuGang:
+            case eMJActType.eMJAct_BuGang_Done:
+            {
+                this.mHold.removeHold( actedData.nTargetCard )
+                this.mMing.onBuGang(actedData.nTargetCard);
+                this.mHold.mo(actedData.vAddtionCards[0],this.mIsReply,this.mIsSelf);
+                return ; // can not add ming group ;
+            }
+            break;
+            default:
+            {
+                cc.error( "unknown act type = " + actedData.eAct );
+                return ;
+            }
+            break ;
+        }
+        this.mMing.addMingGroup(actedData);
+        this.layoutHoldAndMing();
+    }
+
+    protected layoutHoldAndMing()
+    {
+        this.mHold.node.position = cc.v3( this.mMing.node.x + this.mMing.getLength() + this.mMingHoldMargin, this.mHold.node.y,this.mHold.node.z );
+    }
 }

@@ -16,8 +16,7 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class DlgChat extends DlgBase {
 
-    @property([cc.Component.EventHandler])
-    mOnDlgResult : cc.Component.EventHandler[] = [] ; // ( isEmoji : bool , content : string )
+    mOnDlgResult : ( isEmoji : boolean , content : string )=>void = null ; // ( isEmoji : bool , content : string )
 
     mLastTime : number = 0 ;
     // LIFE-CYCLE CALLBACKS:
@@ -51,6 +50,10 @@ export default class DlgChat extends DlgBase {
             return ;
         }
         this.mLastTime = now ;
-        cc.Component.EventHandler.emitEvents(this.mOnDlgResult,isEmoji,str);
+        if ( this.mOnDlgResult != null )
+        {
+            this.mOnDlgResult( isEmoji,str );
+        }
+        //cc.Component.EventHandler.emitEvents(this.mOnDlgResult,isEmoji,str);
     }
 }

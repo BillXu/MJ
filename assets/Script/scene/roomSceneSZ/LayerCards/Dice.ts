@@ -35,7 +35,7 @@ export default class Dice extends cc.Component {
         this.vPathPoint.length = 0 ;
         for ( let n of this.mAniPath )
         {
-            let pos = n.position ; //n.parent.convertToWorldSpaceAR( n.position );
+            let pos : cc.Vec2 = n.position as cc.Vec2; //n.parent.convertToWorldSpaceAR( n.position );
             //pos = this.node.parent.convertToNodeSpaceAR( pos );
             this.vPathPoint.push(pos);
         }

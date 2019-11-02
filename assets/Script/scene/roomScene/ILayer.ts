@@ -1,4 +1,4 @@
-import MJRoomData from "./roomData/MJRoomData";
+import IRoomSceneData from "./IRoomSceneData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -10,8 +10,9 @@ import MJRoomData from "./roomData/MJRoomData";
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-export default abstract class ILayer extends cc.Component
+export default interface IRoomLayer
 {
-    abstract refresh( data : MJRoomData ) : void ;
-    abstract onGameStart() : void;
+    refresh( data : IRoomSceneData ) : void ;
+    onGameStart() : void;
+    onGameEnd();
 }

@@ -1,4 +1,4 @@
-import MJRoomScene from "../roomScene/MJRoomScene";
+import { PlayerActedCard } from "../roomData/MJPlayerCardData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -9,16 +9,19 @@ import MJRoomScene from "../roomScene/MJRoomScene";
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+export interface IPlayerCardData
+{
+    getHolds() : number[] ;
+    getChus() : number[] ;
+    getMings() : PlayerActedCard[] ;
+    reqChu( card : number ) : boolean ;
+}
 
-const {ccclass, property} = cc._decorator;
-
-@ccclass
-export default class MJRoomSceneSZ extends MJRoomScene {
-
-    onLoad ()
-    {
-        super.onLoad();
-    }
-
-    // update (dt) {}
+export default interface ILayerCardsData
+{
+    getSelfIdx() : number ;
+    getCurActIdx() : number ; // -1 means not in game ;
+    getBankerIdx() : number ;
+    getPlayerCardItems() : IPlayerCardData[] ; // array idx = svridx , null == empty ;
+    isReplay() : boolean ;
 }

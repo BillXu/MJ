@@ -1,5 +1,6 @@
 import PlayerInfoItem from "../../../commonItem/PlayerInfoItem";
-import MJPlayerBaseData from "../roomData/MJPlayerBaseData";
+import IRoomPlayer from "./IRoomPlayer";
+import { IRoomPlayerData } from "../IRoomSceneData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -12,7 +13,7 @@ import MJPlayerBaseData from "../roomData/MJPlayerBaseData";
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-export enum eRoomPlayerState
+enum eRoomPlayerState
 {
     RPS_Empty,
     RPS_WaitSitDown,
@@ -21,7 +22,7 @@ export enum eRoomPlayerState
 };
 
 @ccclass
-export default class RoomPlayer extends cc.Component {
+export default class RoomPlayer extends cc.Component implements IRoomPlayer {
 
     @property(PlayerInfoItem)
     mInfoItem : PlayerInfoItem = null;
@@ -62,47 +63,9 @@ export default class RoomPlayer extends cc.Component {
     @property([cc.Component.EventHandler])
     lpfPlayerCallBack : cc.Component.EventHandler[] = [] ;  // ( isSitDown : boolean , uid : number | mSvrIdx )
 
-    mSvrIdx : number = -1 ;
-    // LIFE-CYCLE CALLBACKS:
-
     onLoad ()
     {
         this.mBankIconPos.active = false ;
-    }
-
-    protected mWorlPosOfBankIcon : cc.Vec2 = null ;
-    get bankIconWorldPos() : cc.Vec2
-    {
-        if ( this.mWorlPosOfBankIcon == null )
-        {
-            this.mWorlPosOfBankIcon = this.mBankIconPos.parent.convertToWorldSpaceAR(cc.v2(this.mBankIconPos.position.x,this.mBankIconPos.position.y));
-        }
-        return this.mWorlPosOfBankIcon;
-    }
-
-    protected mWorldPosOfInteractEmoji = null ;
-    get worldPosEmoji() : cc.Vec2
-    {
-        if ( this.mWorldPosOfInteractEmoji == null )
-        {
-            this.mWorldPosOfInteractEmoji = this.mOfflineIcon.parent.convertToWorldSpaceAR(cc.v2(this.mOfflineIcon.position.x,this.mOfflineIcon.position.y));
-        }
-        return this.mWorldPosOfInteractEmoji;
-    }
-
-    get chip() : number
-    {
-        return parseInt(this.mChip.string);
-    }
-
-    set chip( n : number )
-    {
-        this.mChip.string = n.toString() ;
-    }
-
-    set huaCnt( cnt : number ) 
-    {
-        this.mHuaCnt.string = cnt + "" ;
     }
 
     set huaCntColor( clr : cc.Color )
@@ -151,21 +114,85 @@ export default class RoomPlayer extends cc.Component {
         return this.mState ;
     }
 
+    onClickBtnSitdown( c : Object , a : string )
+    {
+        cc.Component.EventHandler.emitEvents(this.lpfPlayerCallBack,true,this.mSvrIdx );
+    }
+
+    onClickHeadIcon( c : Object , b : string )
+    {
+        cc.Component.EventHandler.emitEvents(this.lpfPlayerCallBack,false,this.mInfoItem.getUID() );
+    }
+
+    // update (dt) {}
+    // interface IRoomPlayer
     set isOnline( isOnline : boolean )
     {
         this.mOfflineIcon.active = !isOnline ;
+    }
+
+    mSvrIdx : number = -1;
+    get chip() : number
+    {
+        return parseInt(this.mChip.string);
+    }
+
+    set chip( n : number )
+    {
+        this.mChip.string = n.toString() ;
+    }
+
+    set huaCnt( cnt : number ) 
+    {
+        this.mHuaCnt.string = cnt + "" ;
+    }
+
+    protected mWorlPosOfBankIcon : cc.Vec2 = null ;
+    get bankIconWorldPos() : cc.Vec2
+    {
+        if ( this.mWorlPosOfBankIcon == null )
+        {
+            this.mWorlPosOfBankIcon = this.mBankIconPos.parent.convertToWorldSpaceAR(cc.v2(this.mBankIconPos.position.x,this.mBankIconPos.position.y));
+        }
+        return this.mWorlPosOfBankIcon;
+    }
+
+    protected mWorldPosOfInteractEmoji = null ;
+    get worldPosEmoji() : cc.Vec2
+    {
+        if ( this.mWorldPosOfInteractEmoji == null )
+        {
+            this.mWorldPosOfInteractEmoji = this.mOfflineIcon.parent.convertToWorldSpaceAR(cc.v2(this.mOfflineIcon.position.x,this.mOfflineIcon.position.y));
+        }
+        return this.mWorldPosOfInteractEmoji;
     }
 
     set isReady( isReady : boolean )
     {
         this.mReadyIcon.active = isReady ;
     }
-    
-    setInfo( data : MJPlayerBaseData )
+
+    refresh( data : IRoomPlayerData ) : void 
     {
+        if ( data == null )
+        {
+            this.state = eRoomPlayerState.RPS_Empty ;
+            return ;
+        }
+        this.state = eRoomPlayerState.RPS_Normal ;
         this.mInfoItem.refreshInfo(data.uid) ;
         this.chip = data.chip;
         this.isOnline = data.isOnline ;
+        this.isReady = data.isReady ;
+    }
+
+    setChatEmoji( strEoji : string )
+    {
+        this.mEmoji.node.active = true ;
+        this.mEmoji.armatureName = strEoji;
+        this.mEmoji.playAnimation(strEoji,1) ;
+        let self = this ;
+        this.mEmoji.addEventListener(dragonBones.EventObject.COMPLETE,( e : cc.Event )=>{ self.mEmoji.node.active = false ;}) ;
     }
 
     setChatText( strContent : string )
@@ -192,23 +219,8 @@ export default class RoomPlayer extends cc.Component {
         this.mVoiceChat.node.parent.active = false ;
     }
 
-    setChatEmoji( strEoji : string )
+    waitSitDown() : void 
     {
-        this.mEmoji.node.active = true ;
-        this.mEmoji.armatureName = strEoji;
-        this.mEmoji.playAnimation(strEoji,1) ;
-        let self = this ;
-        this.mEmoji.addEventListener(dragonBones.EventObject.COMPLETE,( e : cc.Event )=>{ self.mEmoji.node.active = false ;}) ;
+        this.state = eRoomPlayerState.RPS_WaitSitDown ;
     }
-
-    onClickBtnSitdown( c : Object , a : string )
-    {
-        cc.Component.EventHandler.emitEvents(this.lpfPlayerCallBack,true,this.mSvrIdx );
-    }
-
-    onClickHeadIcon( c : Object , b : string )
-    {
-        cc.Component.EventHandler.emitEvents(this.lpfPlayerCallBack,false,this.mInfoItem.getUID() );
-    }
-    // update (dt) {}
 }

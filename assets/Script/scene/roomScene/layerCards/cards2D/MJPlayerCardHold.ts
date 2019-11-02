@@ -42,6 +42,7 @@ export default class MJPlayerCardHold extends cc.Component {
     private optNodeProperty : Object = { } ; // { node : cc.Node , state : eOptNodeState , orgPos : cc.Vec2 , waitClickTimer : -1  }
     private pOutstandNode : cc.Node = null ;
     mDelegate : MJPlayerCardHoldDelegate = null ; 
+    mReqChuCallBack : ( chuCard : number , ptWorldPost : cc.Vec2 ) => boolean = null ; 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad ()
@@ -422,7 +423,7 @@ export default class MJPlayerCardHold extends cc.Component {
 
         if ( pNode == this.pOutstandNode )
         {
-            if ( this.mDelegate && this.mDelegate.onSelfRequestChuCard( pNode.getComponent(MJCard2D).mCardNum, pNode.convertToWorldSpaceAR(cc.Vec2.ZERO) ) )
+            if ( this.mReqChuCallBack && this.mReqChuCallBack( pNode.getComponent(MJCard2D).mCardNum, pNode.convertToWorldSpaceAR(cc.Vec2.ZERO) ) )
             {
                 this.mFactory.recycleCard( pNode.getComponent(MJCard2D) );
                 _.remove( this.vHoldCards, (v : cc.Node )=> { return v == pNode } );
@@ -453,7 +454,7 @@ export default class MJPlayerCardHold extends cc.Component {
     protected onDoubleClickCardNode( pNode : cc.Node )
     {
         console.log( "double click card node" );
-        if ( this.mDelegate && this.mDelegate.onSelfRequestChuCard( pNode.getComponent(MJCard2D).mCardNum, pNode.convertToWorldSpaceAR(cc.Vec2.ZERO) ) )
+        if ( this.mReqChuCallBack && this.mReqChuCallBack( pNode.getComponent(MJCard2D).mCardNum, pNode.convertToWorldSpaceAR(cc.Vec2.ZERO) ) )
         {
             this.mFactory.recycleCard( pNode.getComponent(MJCard2D) );
             _.remove( this.vHoldCards, (v : cc.Node )=> { return v == pNode } );
@@ -472,7 +473,7 @@ export default class MJPlayerCardHold extends cc.Component {
         let obx = pNode.getBoundingBox();
         if ( pNode.position.y - nodeOrgPos.y > obx.height )
         {
-            if ( this.mDelegate && this.mDelegate.onSelfRequestChuCard( pNode.getComponent(MJCard2D).mCardNum, pNode.convertToWorldSpaceAR(cc.Vec2.ZERO) ) )
+            if ( this.mReqChuCallBack && this.mReqChuCallBack( pNode.getComponent(MJCard2D).mCardNum, pNode.convertToWorldSpaceAR(cc.Vec2.ZERO) ) )
             {
                 this.mFactory.recycleCard( pNode.getComponent(MJCard2D) );
                 _.remove( this.vHoldCards, (v : cc.Node )=> { return v == pNode } );

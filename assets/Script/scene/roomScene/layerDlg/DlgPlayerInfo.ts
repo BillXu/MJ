@@ -32,15 +32,15 @@ export default class DlgPlayerInfo extends DlgBase {
     @property(cc.Node)
     mEmojiNode : cc.Node = null ;
 
-    @property([cc.Component.EventHandler])
-    mOnDlgResult : cc.Component.EventHandler[] = [] ;  // ( targetID : number , emojiName : string )
+    //@property([cc.Component.EventHandler])
+   // mOnDlgResult : cc.Component.EventHandler[] = [] ;  // ( targetID : number , emojiName : string )
 
     mLastTimeSendEmoji : number = 0 ;
     mLastTimeReplay : number = 0 ;
 
     showDlg( pfResult? : ( jsResult : Object ) => void, jsUserData? : any, pfOnClose? : ( pTargetDlg : DlgBase ) => void )
     {
-        super.showDlg(null) ;
+        super.showDlg(pfResult,jsUserData,pfOnClose) ;
 
         let id : number = jsUserData as number ;
         this.mPlayerInfo.refreshInfo(id);
@@ -77,8 +77,17 @@ export default class DlgPlayerInfo extends DlgBase {
 
         let node = event.getCurrentTarget();
         let str = node.getChildByName("Background").getComponent(cc.Sprite).spriteFrame.name ;
-        cc.Component.EventHandler.emitEvents( this.mOnDlgResult, this.mPlayerInfo.getUID() ,str );
+        //cc.Component.EventHandler.emitEvents( this.mOnDlgResult, this.mPlayerInfo.getUID() ,str );
+        if ( this.pFuncResult != null )
+        {
+            this.pFuncResult( str );
+        }
         
         this.closeDlg();
+    }
+
+    getUID() : number
+    {
+        return this.mPlayerInfo.getUID() ;
     }
 }

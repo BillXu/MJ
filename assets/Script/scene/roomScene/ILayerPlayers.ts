@@ -1,4 +1,6 @@
-import MJRoomScene from "../roomScene/MJRoomScene";
+import IRoomLayer from "./IRoomLayer";
+import { eChatMsgType } from "./roomDefine";
+import { IRoomPlayerData } from "./IRoomSceneData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -10,15 +12,12 @@ import MJRoomScene from "../roomScene/MJRoomScene";
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
-
-@ccclass
-export default class MJRoomSceneSZ extends MJRoomScene {
-
-    onLoad ()
-    {
-        super.onLoad();
-    }
-
-    // update (dt) {}
+ 
+export default interface ILayerPlayers extends IRoomLayer {
+    onPlayerNetStateChanged( playerIdx : number , isOnline : boolean ) : void ;
+    onPlayerChatMsg( playerIdx : number , type : eChatMsgType , strContent : string ) : void ;
+    onInteractEmoji( InvokeIdx : number , targetIdx : number , emoji : string ) : void ;
+    onPlayerSitDown( p : IRoomPlayerData ) : void;
+    onPlayerStandUp( idx : number ) : void ;
+    onPlayerReady( idx : number ) : void ;
 }

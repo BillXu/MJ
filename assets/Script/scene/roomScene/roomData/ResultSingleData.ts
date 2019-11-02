@@ -1,4 +1,6 @@
 import { eMJActType ,eFanxingType } from "../roomDefine";
+import { ISingleResultDlgDataItem, ISingleResultDlgData } from "../layerDlg/ILayerDlgData";
+import MJRoomData from "./MJRoomData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -14,12 +16,12 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 
-export class ResultItem
+export class ResultItem implements ISingleResultDlgDataItem
 {
     mHuScore : number ;
     mGangScore : number  ;
     mOffset : number ; 
-    mIdx : number ;
+    idx : number ;
     mIsZiMo : boolean = false ; 
     mHuTypes : eFanxingType[] = []; 
 
@@ -30,7 +32,7 @@ export class ResultItem
     {
         this.mHuScore = 0 ;
         this.mGangScore = 0 ;
-        this.mIdx = -1 ;
+        this.idx = -1 ;
         if ( this.mHuTypes != null )
         {
             this.mHuTypes.length = 0 ;
@@ -44,7 +46,7 @@ export class ResultItem
 
     isEmpty() : boolean
     {
-        return this.mIdx == -1 ;
+        return this.idx == -1 ;
     }
 
     haveHu() : boolean
@@ -186,12 +188,17 @@ export class ResultItem
 
 } 
 
-export default class ResultSingleData {
+export default class ResultSingleData implements ISingleResultDlgData {
 
     mResults : ResultItem[] = []; 
 
     mIsLiuJu : boolean = true ;
     mDianPaoIdx : number = -1 ;
+    mRoomData : MJRoomData = null ;
+    init( data : MJRoomData )
+    {
+        this.mRoomData = data ;
+    }
 
     parseResult( js : Object ) : void
     {
@@ -227,7 +234,7 @@ export default class ResultSingleData {
                 {
                     this.mResults[idx].mGangScore += offset ;
                 }
-                this.mResults[idx].mIdx = idx ;
+                this.mResults[idx].idx = idx ;
             }
 
             if ( actType == eMJActType.eMJAct_Hu )
@@ -244,7 +251,7 @@ export default class ResultSingleData {
             let chip : number  = itemPlayer["chips"];
             let holdCards : number[] = itemPlayer["holdCard"];
             let itp = this.mResults[idx];
-            itp.mIdx = idx ;
+            itp.idx = idx ;
             itp.mFinalChip = chip ;
             itp.mOffset = offset ;
             for ( let i = 0; i < holdCards.length; i++)
@@ -252,9 +259,33 @@ export default class ResultSingleData {
                 itp.mAnHoldCards.push( holdCards[i] );
             }
         }
+
+        // init data from room data 
+        if ( this.mRoomData == null )
+        {
+            cc.error( "why room data is null for single result data" );
+            return ;
+        }
+        
+        for ( const item of this.mRoomData.mPlayers )
+        {
+            if ( null == item || item.isEmpty() )
+            {
+                continue ;
+            }
+
+            let pr = this.mResults[item.mPlayerBaseData.svrIdx];
+            
+            if ( pr.isEmpty() == false )
+            {
+                item.mPlayerBaseData.chip = pr.mFinalChip ;
+                item.mPlayerCard.vHoldCard.length = 0 ;
+                item.mPlayerCard.vHoldCard = item.mPlayerCard.vHoldCard.concat(pr.mAnHoldCards );
+            }
+        }
     }
 
-    parseHuInfo( jsHuInfo : Object ) : void
+    protected parseHuInfo( jsHuInfo : Object ) : void
     {
         let isZiMo = jsHuInfo["isZiMo"] == 1 ;
         let detail = jsHuInfo["detail"] ;
@@ -306,6 +337,21 @@ export default class ResultSingleData {
 
             }
         }
+    }
+
+    isLiuJu() : boolean 
+    {
+        return this.mIsLiuJu ;
+    }
+
+    getSelfIdx() : number 
+    {
+        return this.mRoomData.getSelfIdx();
+    }
+
+    getResultItems() : ISingleResultDlgDataItem[] 
+    {
+        return this.mResults ;
     }
 
     // update (dt) {}

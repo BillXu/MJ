@@ -28,8 +28,7 @@ export default class DlgActOpts extends cc.Component {
     @property(cc.Node)
     mOptNodeHu : cc.Node = null ;
 
-    @property([cc.Component.EventHandler])
-    mOnDglResult : cc.Component.EventHandler[] = [] ; // ( actTpe : eMJActType ) 
+    mOnDglResult : (actTpe : eMJActType)=>void = null ; // ( actTpe : eMJActType ) 
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -39,7 +38,7 @@ export default class DlgActOpts extends cc.Component {
 
     }
 
-    showDlg( actOpts : eMJActType[] )
+    showDlg( actOpts : eMJActType[] , lpCallBack : (actTpe : eMJActType)=>void )
     {
         this.mOptNodeEat.active = _.find(actOpts,( t : eMJActType )=>{ return t == eMJActType.eMJAct_Chi ;}) != null ;
         this.mOptNodePeng.active = _.find(actOpts,( t : eMJActType )=>{ return t == eMJActType.eMJAct_Peng ;}) != null ;
@@ -53,6 +52,7 @@ export default class DlgActOpts extends cc.Component {
             return isGang ; }) != null ;
         this.mOptNodeHu.active = _.find(actOpts,( t : eMJActType )=>{ return t == eMJActType.eMJAct_Hu ;}) != null ;
         this.node.active = true ;
+        this.mOnDglResult = lpCallBack ;
     }
 
     onClickButton( event : cc.Event.EventTouch , type : string )
@@ -62,7 +62,10 @@ export default class DlgActOpts extends cc.Component {
         {
             actType = parseInt( this.mOptNodeGang.name );
         }
-        cc.Component.EventHandler.emitEvents(this.mOnDglResult,actType ) ;
+        if ( this.mOnDglResult != null )
+        {
+            this.mOnDglResult(actType);
+        }
         this.node.active = false ;
     }
     // update (dt) {}

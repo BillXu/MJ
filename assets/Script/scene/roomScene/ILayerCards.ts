@@ -1,4 +1,5 @@
-import MJRoomScene from "../roomScene/MJRoomScene";
+import IRoomLayer from "./ILayer";
+import { PlayerActedCard } from "./roomData/MJPlayerCardData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -9,16 +10,12 @@ import MJRoomScene from "../roomScene/MJRoomScene";
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+export default interface ILayerCards extends IRoomLayer {
 
-const {ccclass, property} = cc._decorator;
-
-@ccclass
-export default class MJRoomSceneSZ extends MJRoomScene {
-
-    onLoad ()
-    {
-        super.onLoad();
-    }
-
-    // update (dt) {}
+    onDistributedCards() : void ;
+    onPlayerActMo( idx : number , card : number ) : void;
+    onPlayerActChu( idx : number , card : number ) : void
+    onPlayerActed( idx : number , actedData : PlayerActedCard ) ;
+    onMJActError() : void ;
+    setBottomSvrIdx( nSvrIdx : number );
 }

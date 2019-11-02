@@ -1,5 +1,3 @@
-import ILayer from "../ILayer";
-import MJRoomData from "../roomData/MJRoomData";
 import DlgActOpts from "./DlgActOpts/DlgActOpts";
 import { eMJActType, eEatType, eChatMsgType } from "../roomDefine";
 import DlgEatOpts from "./DlgEatOpts";
@@ -8,16 +6,15 @@ import DlgDismiss from "./DlgDimiss";
 import PlayerInfoDataCacher from "../../../clientData/PlayerInfoDataCacher";
 import Prompt from "../../../globalModule/Prompt";
 import DlgResultTotal from "./DlgResultTotal/DlgResultTotal";
-import ResultTotalData from "../roomData/ResultTotalData";
 import DlgResultSingle from "./DlgResultSingle/DlgResultSingle";
-import ResultSingleData from "../roomData/ResultSingleData";
 import DlgChat from "./DlgChat";
 import DlgLocation from "./DlgLocation";
 import DlgVoice from "./DlgVoice/DlgVoice";
 import DlgPlayerInfo from "./DlgPlayerInfo";
 import DlgShowMore from "./DlgShowMore";
-import { ILayerDlg } from "./ILayerDlg";
-import IResultSingleData from "../../roomSceneSZ/layerDlg/dlgResultSingle/IResultSingleDate";
+import ILayerDlg from "../ILayerDlg";
+import IRoomSceneData from "../IRoomSceneData";
+import ILayerDlgData from "./ILayerDlgData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -32,7 +29,7 @@ import IResultSingleData from "../../roomSceneSZ/layerDlg/dlgResultSingle/IResul
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerDlg extends ILayer implements ILayerDlg {
+export default class LayerDlg extends cc.Component implements ILayerDlg {
 
     @property(DlgActOpts)
     mDlgActOpts: DlgActOpts = null;
@@ -78,7 +75,7 @@ export default class LayerDlg extends ILayer implements ILayerDlg {
     @property(DlgShowMore)
     mDlgShowMore : DlgShowMore = null ;
 
-    protected mRoomData : MJRoomData = null ;
+    protected mData : ILayerDlgData = null ;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -87,150 +84,22 @@ export default class LayerDlg extends ILayer implements ILayerDlg {
 
     }
 
-    refresh( data : MJRoomData ) : void
-    {
-        this.mRoomData = data ;
-        if ( this.mDlgDismiss.isShow() )
-        {
-            this.mDlgDismiss.closeDlg();
-        }
-
-        if ( data.mBaseData.applyDismissIdx >= 0 && data.mBaseData.applyDismissIdx < data.mOpts.seatCnt )
-        {
-            this.showDlgDismiss(data);
-        }
-  
-        this.mDlgLocation.closeDlg();
-
-        this.mBtnCopyRoomNum.active = this.mBtnInvite.active = ( data.mBaseData.isRoomOpened == false && data.mBaseData.isInGamingState() == false );
-    }
-
-    onGameStart()
-    {
-        this.mBtnCopyRoomNum.active = this.mBtnInvite.active = false ;
-        if (  this.mDlgResultSingle != null )
-        {
-            this.mDlgResultSingle.closeDlg();
-        }
-    }
-
-    // dlg act opts 
-    showDlgActOpts( actOpts : eMJActType[] )
-    {
-        if ( actOpts.length == 1 && ( actOpts[0] == eMJActType.eMJAct_Pass || actOpts[0] == eMJActType.eMJAct_Chu )  )
-        {
-            return ;
-        }
-
-        this.mDlgActOpts.showDlg(actOpts);
-    }
-
-    protected onDlgActOptsResult( act : eMJActType )
-    {
-        this.mRoomData.doChosedAct(act) ;
-    }
-
-    // dlg eat opts ;
-    showDlgEatOpts( vEatOpts : eEatType[], nTargetCard : number )
-    {
-        this.mDlgEatOpts.showDlg(vEatOpts,nTargetCard) ;
-    }
-
-    protected onDlgEatOptsResult( type : eEatType, nTargetCard : number )
-    {
-        this.mRoomData.doChoseEatType(type) ;
-    }
-    
-    // dlg gang opts 
-    showDlgGangOpts( gangOpts : number[] )
-    {
-        this.mDlgGangOpts.showDlg( gangOpts );
-    }
-
-    protected onDlgGangOptsResult( gangCard : number )
-    {
-        this.mRoomData.doChosedGangCard( gangCard ) ;
-    }
-
-    // dlg dimisss 
-    showDlgDismiss( data : MJRoomData )
-    {
-        this.mDlgDismiss.showDlgDismiss(data);
-    }
-
-    protected onDlgDismissResult( isAgree : boolean )
-    {
-        this.mRoomData.doReplyDismiss( isAgree ) ;
-    }
-
-    onReplayDismissRoom( idx : number , isAgree : boolean ) : void
-    {
-        this.mDlgDismiss.onPlayerRespone(idx,isAgree) ;
-        if ( isAgree == false )
-        {
-            let p = this.mRoomData.mPlayers[idx];
-            if ( p == null )
-            {
-                cc.error( "player is null ? idx = " + idx );
-                return ;
-            }
-            
-            let pd = PlayerInfoDataCacher.getInstance().getPlayerInfoByID( p.mPlayerBaseData.uid ) ;
-            let name = " uid = " + p.mPlayerBaseData.uid ;
-            if ( pd != null )
-            {
-                name = pd.name ;
-            }
-
-            Prompt.promptText( "玩家【"+ name + "】拒绝解散房间" );
-        }
-    }
-
-    // dlg total result
-    showDlgResultTotal( result : ResultTotalData, data : MJRoomData )
-    {
-        this.mDlgResultSingle.setBtn(true);
-        this.mDlgResultTotal.refreshDlg(data,result) ;
-        if ( this.mDlgResultSingle.isDlgShowing() )
-        {
-            return ;
-        }
-        this.mDlgResultTotal.showDlg();
-    }
-
-    // dlg result single 
-    showDlgResultSingle( result : IResultSingleData )
-    {
-        //this.mDlgResultSingle.showDlg(this.mRoomData.getSelfIdx(),result ) ;
-    }
-
-    protected onDlgResultSingleResult( isAllBtn : boolean )
-    {
-        if ( isAllBtn )
-        {
-            this.mDlgResultTotal.showDlg(null) ;
-        }
-        else
-        {
-            this.mRoomData.doReady();
-        }
-    }
-
     // dlg chat 
     protected showDlgChat()
     {
         this.mDlgChat.showDlg(null) ;
+        this.mDlgChat.mOnDlgResult = this.onDlgChatResult.bind(this);
     }
 
     protected onDlgChatResult( isEmoji : boolean , strContent : string )
     {
-        this.mRoomData.doSendPlayerChat( isEmoji ? eChatMsgType.eChatMsg_Emoji : eChatMsgType.eChatMsg_SysText, strContent ) ;
+        this.mData.reqSendChat( isEmoji ? eChatMsgType.eChatMsg_Emoji : eChatMsgType.eChatMsg_SysText, strContent ) ;
     }
 
     // dlg localtion 
     protected showDlgLocaltion()
     {
-        this.mDlgLocation.showDlg(null,this.mRoomData);
+        this.mDlgLocation.showDlg(null,this.mData.getLocationDlgData() );
     }
 
     // dlg voice 
@@ -243,24 +112,8 @@ export default class LayerDlg extends ILayer implements ILayerDlg {
 
     protected onDlgVoiceResult( strFileID : string )
     {
-        this.mRoomData.doSendPlayerChat(eChatMsgType.eChatMsg_Voice,strFileID) ;
-    }
-
-    // dlg player info 
-    showDlgPlayerInfo( nTargetPlayerID : number )
-    {
-        this.mDlgPlayerInfo.showDlg( null , nTargetPlayerID );
-    }
-
-    protected onDlgPlayerInfoResult( uid : number, emoji : string )
-    {
-        let pp = this.mRoomData.getPlayerDataByUID(uid);
-        if ( pp == null )
-        {
-            return ;
-        }
-
-        this.mRoomData.doSendPlayerInteractEmoji( pp.mPlayerBaseData.svrIdx,emoji )
+        //this.mRoomData.doSendPlayerChat(eChatMsgType.eChatMsg_Voice,strFileID) ;
+        this.mData.reqSendChat( eChatMsgType.eChatMsg_Voice,strFileID );
     }
 
     protected onBtnCopyRoomID()
@@ -298,12 +151,12 @@ export default class LayerDlg extends ILayer implements ILayerDlg {
         {
             case DlgShowMore.BTN_DISMISS:
             {
-                this.mRoomData.doApplyDismissRoom();
+                this.mData.reqApplyDismiss();
             }
             break ;
             case DlgShowMore.BTN_LEAVE:
             {
-                this.mRoomData.doApplyLeave();
+                this.mData.reqApplyLeave();
             }
             break;
             case DlgShowMore.BTN_SETTING:
@@ -312,5 +165,151 @@ export default class LayerDlg extends ILayer implements ILayerDlg {
             }
             break ;
         }
+    }
+
+    // interface IlayerDlg
+    refresh( data : IRoomSceneData ) : void 
+    {
+        this.mData = data.getLayerDlgData() ;
+        if ( this.mDlgDismiss.isShow() )
+        {
+            this.mDlgDismiss.closeDlg();
+        }
+
+        if ( this.mData.isShowDismissDlg() )
+        {
+            this.mDlgDismiss.showDlg(null,this.mData.getDismissDlgData(),null ) ;
+        }
+  
+        this.mDlgLocation.closeDlg();
+
+        this.mBtnCopyRoomNum.active = this.mBtnInvite.active = this.mData.isSeatFull() == false;
+    }
+
+    onGameStart() : void
+    {
+        this.mBtnCopyRoomNum.active = this.mBtnInvite.active = false ;
+        if (  this.mDlgResultSingle != null )
+        {
+            this.mDlgResultSingle.closeDlg();
+        }
+    }
+
+    onGameEnd()
+    {
+
+    }
+
+    onApplyDismisRoom( idx : number ) : void 
+    {
+        this.mDlgDismiss.showDlg(null,this.mData.getDismissDlgData(),null ) ;
+    }
+
+    onReplayDismissRoom( idx : number , isAgree : boolean ) : void 
+    {
+        this.mDlgDismiss.onPlayerRespone(idx,isAgree) ;
+        if ( isAgree == false )
+        {
+            let uid = this.mData.getPlayerUIDByIdx(idx);
+            if ( -1 == uid )
+            {
+                cc.error( "player is null ? idx = " + idx );
+                return ;
+            }
+            
+            let pd = PlayerInfoDataCacher.getInstance().getPlayerInfoByID( uid ) ;
+            let name = " uid = " + uid ;
+            if ( pd != null )
+            {
+                name = pd.name ;
+            }
+
+            Prompt.promptText( "玩家【"+ name + "】拒绝解散房间" );
+        }
+    }
+
+    // dlg act opts 
+    showActOpts( actOpts : eMJActType[] ) : void 
+    {
+        if ( actOpts.length == 1 && ( actOpts[0] == eMJActType.eMJAct_Pass || actOpts[0] == eMJActType.eMJAct_Chu )  )
+        {
+            return ;
+        }
+
+        this.mDlgActOpts.showDlg(actOpts,this.onDlgActOptsResult.bind(this) );
+    }
+
+    protected onDlgActOptsResult( act : eMJActType )
+    {
+        if ( eMJActType.eMJAct_AnGang == act || eMJActType.eMJAct_BuGang == act || eMJActType.eMJAct_MingGang == act )
+        {
+            let vGantOpts = this.mData.getGangOpts();
+            if ( vGantOpts.length == 1 )
+            {
+                this.mData.reqAct(act,vGantOpts[0]);
+            }
+            else
+            {
+                let self = this ;
+                this.mDlgGangOpts.showDlg( vGantOpts , ( card : number )=>{ self.mData.reqAct( act, card );} );
+            }
+        }
+        else if ( act == eMJActType.eMJAct_Chi )
+        {
+            let vEatOpts = this.mData.getEatOpts();
+            if ( 1 == vEatOpts.length )
+            {
+                this.mData.reqAct( act, vEatOpts[0] );
+            }
+            else
+            {
+                let self = this ;
+                this.mDlgEatOpts.showDlg(vEatOpts,this.mData.getEatTargetCard(),( eatType : eEatType )=>{ self.mData.reqAct(act,eatType );}) ;
+            }
+        }
+        else
+        {
+            this.mData.reqAct(act,null);
+        }
+    }
+
+    showDlgResultSingle() : void 
+    {
+        this.mDlgResultSingle.showDlg( this.mData.getSingleResultDlgData() , this.onDlgResultSingleResult.bind( this ) ) ;
+    }
+
+    protected onDlgResultSingleResult( isAllBtn : boolean )
+    {
+        if ( isAllBtn )
+        {
+            this.mDlgResultTotal.showDlg(null) ;
+        }
+        else
+        {
+            this.mData.reqDoReady();
+        }
+    }
+
+    // dlg total result
+    showDlgResultTotal() : void 
+    {
+        this.mDlgResultSingle.setBtn(true);
+        this.mDlgResultTotal.refreshDlg(this.mData.getTotalResultDlgData()) ;
+        if ( this.mDlgResultSingle.isDlgShowing() )
+        {
+            return ;
+        }
+        this.mDlgResultTotal.showDlg();
+    }
+
+    // dlg player info 
+    showDlgPlayerInfo( targetPlayerUID : number ) 
+    {
+        this.mDlgPlayerInfo.showDlg( this.onDlgPlayerInfoResult.bind(this) , targetPlayerUID );
+    }
+
+    protected onDlgPlayerInfoResult( emoji : string )
+    {
+        this.mData.reqSendInteractiveEmoji( this.mDlgPlayerInfo.getUID(),emoji ) ;
     }
 }

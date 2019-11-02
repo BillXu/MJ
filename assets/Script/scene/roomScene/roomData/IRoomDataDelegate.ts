@@ -1,10 +1,11 @@
 import MJRoomBaseData from "./MJRoomBaseData";
 import MJPlayerData from "./MJPlayerData";
-import { eChatMsgType, eMJActType, eEatType } from "../roomDefine";
+import { eChatMsgType, eMJActType } from "../roomDefine";
 import PlayerInfoData from "../../../clientData/playerInfoData";
-import ResultSingleData from "./ResultSingleData";
 import ResultTotalData from "./ResultTotalData";
 import IResultSingleData from "../../roomSceneSZ/layerDlg/dlgResultSingle/IResultSingleDate";
+import { PlayerActedCard } from "./MJPlayerCardData";
+import { IRoomPlayerData } from "../IRoomSceneData";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -19,33 +20,25 @@ import IResultSingleData from "../../roomSceneSZ/layerDlg/dlgResultSingle/IResul
  export default interface IRoomDataDelegate {
 
     onRecivedRoomInfo( info : MJRoomBaseData ) : void ;
-    onPlayerSitDown( p : MJPlayerData ) : void;
-    onRecivedAllPlayers( vPlayers : MJPlayerData[] ) : void;
-    onMJActError() : void;
+    onRecivedAllPlayers( vPlayers : IRoomPlayerData[] ) : void;
+    
     onPlayerNetStateChanged( playerIdx : number , isOnline : boolean ) : void ;
     onPlayerChatMsg( playerIdx : number , type : eChatMsgType , strContent : string ) : void ;
     onInteractEmoji( InvokeIdx : number , targetIdx : number , emoji : string ) : void ;
+    onPlayerSitDown( p : IRoomPlayerData ) : void;
     onPlayerStandUp( idx : number ) : void ;
     onPlayerReady( idx : number ) : void ;
 
     onDistributedCards() : void ;
     onPlayerActMo( idx : number , card : number ) : void ;
     onPlayerActChu( idx : number , card : number ) : void ;
-    showActOptsAboutOtherCard( vActs : eMJActType[] ) : void ;
-    onPlayerActChi( idx : number , card : number , withA : number , withB : number, invokeIdx : number ) : void ;
-    onPlayerActPeng( idx : number , card : number, invokeIdx : number ) : void ;
-    onPlayerActMingGang( idx : number , card : number, invokeIdx : number, newCard : number ) : void ;
-    onPlayerActAnGang( idx : number , card : number , NewCard : number ) : void ;
-    onPlayerActBuHua( idx : number , huaCard : number , NewCard : number ) : void ;
-    onPlayerActBuGang( idx : number , card : number , NewCard : number ) : void ;
-    onPlayerActHu( idx : number, card : number , invokeIdx : number ) : void ;
-    showActOptsWhenRecivedCards( vActs : eMJActType[] ) : void ;
-    showEatOpts( vEatOpts : eEatType[] , ntargetCard : number ) : void ;
-    showGangOpts( vGangOpts : number[] ) : void ;
+    showActOpts( vActs : eMJActType[] ) : void ;
+    onPlayerActed( idx : number , actedData : PlayerActedCard );
+    onMJActError() : void;
 
     onGameStart() : void ;
-    onGameEnd( result : IResultSingleData  ) : void ; 
-    onRoomOvered( result : ResultTotalData ) : void ;
+    onGameEnd() : void ; 
+    onRoomOvered() : void ;
     onApplyDismisRoom( idx : number ) : void ;
     onReplayDismissRoom( idx : number , isAgree : boolean ) : void ;
     onRoomDoClosed( isDismissed : boolean ) : void ;
