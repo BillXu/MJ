@@ -55,7 +55,7 @@ export default class DlgResultTotal extends DlgBase {
             let pd = vReuslts[idx] ;
             p.node.active = true ;
             p.setDataItem( pd ) ;
-            p.refreshIcons( data.isPlayerApplyDismiss(pd.uid),data.isPlayerRoomOwner(pd.uid), data.isPlayerBigWiner(pd.uid), data.isPlayerTuHao( pd.uid ) ) ;
+            p.refreshIcons( data.isPlayerApplyDismiss(pd.uid),data.isPlayerRoomOwner(pd.uid), data.isPlayerBigWiner(pd.uid), data.isPlayerTuHao( pd.uid ), data.isSelf( pd.uid) ) ;
         }
     }
 

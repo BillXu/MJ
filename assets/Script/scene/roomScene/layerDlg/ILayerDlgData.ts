@@ -57,6 +57,7 @@ export interface ITotalResultDlgData
     isPlayerRoomOwner( uid : number ) : boolean ;
     isPlayerBigWiner( uid : number ) : boolean ;
     isPlayerTuHao( uid : number ) : boolean ;
+    isSelf( uid : number ) : boolean;
     getResultItems() : ITotalResultDlgDataItem[] ;
 }
 

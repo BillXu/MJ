@@ -139,6 +139,11 @@ export default class ResultTotalData implements ITotalResultDlgData {
         return false ;
     }
 
+    isSelf( uid : number ) : boolean
+    {
+        return this.mRoomData.getPlayerUIDByIdx(this.mRoomData.getSelfIdx()) == uid ;
+    }
+
     getResultItems() : ITotalResultDlgDataItem[] 
     {
         return this.mResults ;

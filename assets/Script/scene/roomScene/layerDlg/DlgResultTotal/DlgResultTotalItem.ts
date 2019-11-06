@@ -20,6 +20,9 @@ export default class DlgResultTotalItem extends cc.Component {
     @property(PlayerInfoItem)
     mPlayerInfo : PlayerInfoItem = null ;
 
+    @property(cc.Node)
+    mSelfBg : cc.Node = null ;
+
     @property(cc.Label)
     huPaiCnt: cc.Label = null;
 
@@ -77,12 +80,13 @@ export default class DlgResultTotalItem extends cc.Component {
         this.pWaitTime.string = "等待操作时间：" + Math.floor(data.waitTime) + "分钟" ;
     }
 
-    refreshIcons( isDissmiss : boolean , isOwner : boolean , isBigWin : boolean , isTuHao : boolean )
+    refreshIcons( isDissmiss : boolean , isOwner : boolean , isBigWin : boolean , isTuHao : boolean , isSelf : boolean )
     {
         this.dismissIcon.active = isDissmiss ;
         this.pOwnerIcon.active = isOwner ;
         this.pBigWinIcon.active = isBigWin ;
         this.pTuHaoIcon.active = isTuHao ;
+        this.mSelfBg.active = isSelf ;
     }
 
     // update (dt) {}

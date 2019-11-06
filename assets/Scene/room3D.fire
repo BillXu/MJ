@@ -27659,6 +27659,9 @@
     "mPlayerInfo": {
       "__id__": 569
     },
+    "mSelfBg": {
+      "__id__": 542
+    },
     "huPaiCnt": {
       "__id__": 584
     },
@@ -30316,6 +30319,9 @@
     "_enabled": true,
     "mPlayerInfo": {
       "__id__": 630
+    },
+    "mSelfBg": {
+      "__id__": 603
     },
     "huPaiCnt": {
       "__id__": 645
@@ -32975,6 +32981,9 @@
     "mPlayerInfo": {
       "__id__": 691
     },
+    "mSelfBg": {
+      "__id__": 664
+    },
     "huPaiCnt": {
       "__id__": 706
     },
@@ -35632,6 +35641,9 @@
     "_enabled": true,
     "mPlayerInfo": {
       "__id__": 752
+    },
+    "mSelfBg": {
+      "__id__": 725
     },
     "huPaiCnt": {
       "__id__": 767
@@ -71103,7 +71115,7 @@
     "mFacotry": {
       "__id__": 1530
     },
-    "mMingHoldMargin": 20,
+    "mMingHoldMargin": 40,
     "mHold": {
       "__id__": 1546
     },
@@ -71726,7 +71738,7 @@
     "mFacotry": {
       "__id__": 1530
     },
-    "mMingHoldMargin": 20,
+    "mMingHoldMargin": 30,
     "mHold": {
       "__id__": 1563
     },
@@ -72349,7 +72361,7 @@
     "mFacotry": {
       "__id__": 1530
     },
-    "mMingHoldMargin": 26,
+    "mMingHoldMargin": 40,
     "mHold": {
       "__id__": 1580
     },

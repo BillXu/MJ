@@ -1002,7 +1002,7 @@ export default abstract class MJRoomData extends IModule implements IRoomInfoDat
 
     getPlayerUIDByIdx( idx : number ) : number 
     {
-        if ( this.mPlayers[idx] == null )
+        if ( idx < 0 || idx >= this.mPlayers.length || this.mPlayers[idx] == null )
         {
             return -1 ;
         }
