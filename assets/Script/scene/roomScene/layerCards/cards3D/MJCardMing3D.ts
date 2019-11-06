@@ -56,9 +56,10 @@ export default class MJCardMing3D extends cc.Component {
         this.mMingCards.length = 0 ;
     }
 
-    refresh( actedCards : PlayerActedCard[] )
+    refresh( actedCards : PlayerActedCard[] , isself : boolean )
     {
         this.clear();
+        this.isSelf = isself ;
         for ( let v of actedCards )
         {
             this.addMingGroup(v);
@@ -173,7 +174,8 @@ export default class MJCardMing3D extends cc.Component {
             return x ;
         }
 
-        mjCards.forEach( (mj : MJCard )=>{ mj.isSelf = this.isSelf ; } )
+        let self = this ;
+        mjCards.forEach( (mj : MJCard )=>{ mj.isSelf = self.isSelf ; } )
 
         var card = mjCards[0] ;
         if ( dir == eArrowDirect.eDirect_Left )

@@ -162,7 +162,7 @@ export default class MJCardHold3D extends cc.Component {
                 self.mHoldCards.push(mj);
                 let x = mj.world_x_Size * 0.5 + ( self.mHoldCards.length -1 ) * ( mj.world_x_Size + self.mXAnHoldMargin ) + mj.world_x_Size ;
                 mj.node.position = cc.v3( x , y,z);
-            }, 1000 * 0.2 * idx );
+            }, 1000 * 0.1 * idx );
         }
 
         let self = this ;
@@ -173,7 +173,7 @@ export default class MJCardHold3D extends cc.Component {
                 let p = this.mHoldCards[self.mHoldCards.length-1].node ;
                 p.position = cc.v3(p.x + self.mNewMoMargin , p.y, p.z );
             }
-        }, 1000 * 0.2 * ( idx + 5) );
+        }, 1000 * 0.1 * ( idx + 5) );
 
         this.setupToucheEvents( isSelf && false == isReply );
     }

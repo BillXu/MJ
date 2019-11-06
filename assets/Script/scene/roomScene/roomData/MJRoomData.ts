@@ -1096,9 +1096,10 @@ export default abstract class MJRoomData extends IModule implements IRoomInfoDat
             }
             break ;
             case eMJActType.eMJAct_Hu:
+            case eMJActType.eMJAct_Pass:
             {
                 let msg = {} ;
-                msg["actType"] = eMJActType.eMJAct_Hu;
+                msg["actType"] = act;
                 msg["card"] = this.mBaseData.otherCanActCard ;
                 this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
             }
@@ -1106,7 +1107,7 @@ export default abstract class MJRoomData extends IModule implements IRoomInfoDat
             case eMJActType.eMJAct_Chu:
             {
                 let msg = {} ;
-                msg["actType"] = eMJActType.eMJAct_Chu;
+                msg["actType"] = act;
                 msg["card"] = detail ;
                 this.sendRoomMsg(msg,eMsgType.MSG_PLAYER_ACT) ;
             }

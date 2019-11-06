@@ -6,6 +6,7 @@ import MJCardMing3D from "./MJCardMing3D";
 import { IPlayerCardData } from "../ILayerCardsData";
 import { PlayerActedCard } from "../../roomData/MJPlayerCardData";
 import { eMJActType } from "../../roomDefine";
+import IChuCardArrow from "../IChuCardArrow";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -38,6 +39,8 @@ export default class PlayerMJCard extends cc.Component implements IPlayerMJCard 
     mMing : MJCardMing3D = null ;
 
     mDelegate : MJPlayerCardHoldDelegate = null ; 
+    mChuArrow : IChuCardArrow = null ;
+
     mData : IPlayerCardData = null ;
     mIsReply : boolean = false ;
     mIsSelf : boolean = false ;
@@ -238,6 +241,11 @@ export default class PlayerMJCard extends cc.Component implements IPlayerMJCard 
         this.mDelegate = del ;
     }
 
+    setChuArrow( del : IChuCardArrow )
+    {
+        this.mChuArrow = del ;
+    }
+
     onRefresh( cardData : IPlayerCardData, isReplay : boolean , isSelf : boolean ) : void 
     {
         this.mIsReply = isReplay ;
@@ -246,7 +254,7 @@ export default class PlayerMJCard extends cc.Component implements IPlayerMJCard 
         this.mChu.mFacotry = this.mFacotry ;
         this.mHold.mFacotry = this.mFacotry ;
         this.mMing.mFacotry = this.mFacotry ;
-        this.mMing.refresh( cardData.getMings() ) ;
+        this.mMing.refresh( cardData.getMings() ,isSelf ) ;
         this.mChu.refresh( cardData.getChus() );
         this.mHold.refresh( cardData.getHolds(),isReplay,isSelf );
         if ( isSelf && isReplay == false )
@@ -262,7 +270,9 @@ export default class PlayerMJCard extends cc.Component implements IPlayerMJCard 
         {
             return false ;
         }
-        this.mChu.addChuCard(number,ptWorldPos ) ;
+
+        let p = this.mChu.addChuCard(number,ptWorldPos ) ;
+        this.mChuArrow.moveArrowToWorldPos(p);
         return true ;
     }
 
@@ -290,6 +300,7 @@ export default class PlayerMJCard extends cc.Component implements IPlayerMJCard 
     
     onDistributedCards() : void 
     {
+        this.layoutHoldAndMing();
         this.mHold.distribute(this.mData.getHolds(), this.mIsReply , this.mIsSelf ) ;
         let self = this ;
         setTimeout(() => {
@@ -304,7 +315,8 @@ export default class PlayerMJCard extends cc.Component implements IPlayerMJCard 
 
     onActChu( card : number ) : void
     {
-        this.mChu.addChuCard(card,this.mHold.removeHold(card,1) ) ;
+        let p = this.mChu.addChuCard(card,this.mHold.removeHold(card,1) ) ;
+        this.mChuArrow.moveArrowToWorldPos(p);
     }
 
     onActed( actedData : PlayerActedCard ) 

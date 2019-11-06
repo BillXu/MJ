@@ -1,5 +1,6 @@
 import { PlayerActedCard } from "../roomData/MJPlayerCardData";
 import { IPlayerCardData } from "./ILayerCardsData";
+import IChuCardArrow from "./IChuCardArrow";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -19,6 +20,7 @@ export interface MJPlayerCardHoldDelegate
 
 export default interface IPlayerMJCard {
     setHoldCardDelegate( del : MJPlayerCardHoldDelegate );
+    setChuArrow( del : IChuCardArrow );
     onRefresh( cardData : IPlayerCardData ,isReplay : boolean , isSelf : boolean ) : void ;
     clear() : void ;
     showHoldAfterHu() : void ;

@@ -11,6 +11,7 @@ import PlayerMJCard from "./cards3D/PlayerMJCard";
 import MJPlayerCard2D from "./cards2D/MJPlayerCard2D";
 import LayerCardsData from "./LayerCardsData";
 import MJFactory from "./cards3D/MJFactory";
+import IChuCardArrow from "../IChuCardArrow";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -25,7 +26,7 @@ import MJFactory from "./cards3D/MJFactory";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LayerPlayerCards extends cc.Component implements ILayerCards,MJPlayerCardHoldDelegate {
+export default class LayerPlayerCards extends cc.Component implements ILayerCards,MJPlayerCardHoldDelegate,IChuCardArrow {
 
     @property(IIndicator)
     mIndicator : IIndicator = null ;
@@ -61,11 +62,11 @@ export default class LayerPlayerCards extends cc.Component implements ILayerCard
     }
 
     start () {
-        //this.mData = new LayerCardsData(); // just for test ;
-        //if ( this.isLoadedMJRes )
-        //{
+        // this.mData = new LayerCardsData(); // just for test ;
+        // if ( this.isLoadedMJRes )
+        // {
         //    this.localRefresh( this.mData );
-        //}
+        // }
     }
 
     protected setCardType( is3D : boolean )
@@ -73,6 +74,7 @@ export default class LayerPlayerCards extends cc.Component implements ILayerCard
         for ( let idx = 0 ; idx < this.mPlayerCardNodes.length ; ++idx )
         {
             this.mPlayerCards[idx] = this.mPlayerCardNodes[idx].getComponent( is3D ? "PlayerMJCard" : "MJPlayerCard2D" );
+            this.mPlayerCards[idx].setChuArrow(this);
         }
     }
 
@@ -161,7 +163,8 @@ export default class LayerPlayerCards extends cc.Component implements ILayerCard
     //     this.mHuCard = card ;
     // }
 
-    protected moveArrowToWorldPos( ptWorldPos : cc.Vec3|cc.Vec2 )
+    // interface IChuCardArrow
+    moveArrowToWorldPos( ptWorldPos : cc.Vec3|cc.Vec2 )
     {
         this.mLastChuArrowNode.active = true ;
         ptWorldPos = this.mLastChuArrowNode.parent.convertToNodeSpaceAR(<cc.Vec2>ptWorldPos);
